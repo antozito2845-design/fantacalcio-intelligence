@@ -1,0 +1,56 @@
+F03 VISUAL CERTIFICATION
+Date: 2026-08-22
+
+PALETTE
+Deep #050b18 canvas, #06101f sidebar, layered #0a1930/#0d203d/#112847
+surfaces, cyan #26d5d8 primary accent, electric blue #5d8cff secondary.
+Success #43df9b, warning #ffb84d, danger #ff6678 and info #55b8ff.
+All colors are exposed as semantic custom properties; light equivalents exist.
+
+TYPOGRAPHY
+Dependency-free Inter-first professional system stack with safe platform
+fallbacks. Dedicated display, title, body, label, metadata, table and metric
+scales. Analytical numbers use tabular figures.
+
+SHELL AND SURFACES
+Fixed midnight sidebar with compact active marker and Lucide navigation.
+Sticky translucent topbar with search, neutral league placeholder, notification
+action and initials avatar. Cards use thin blue borders, layered gradients,
+restrained shadow and a very soft cyan glow. Dashboard density follows the
+reference: four KPI cards, three-column analytical grid, formation placeholder,
+matchup, scouting and compact table.
+
+DOMAIN COLOR
+P amber, D green, C blue, A violet. Difficulty uses green/amber/red/gray plus
+dot and text. Confidence uses percentage, shield, text alternative and
+high/medium/low thresholds. Statuses and trends always include text or icons.
+
+RESPONSIVE
+Wide desktop uses full sidebar and three-column dashboard. At <=1279px the
+content reflows to two columns. At <=1024px the sidebar collapses to icons and
+topbar reduces. At <=767px sidebar hides, a menu foundation appears, panels
+become single-column, table gains contained horizontal scrolling and controls
+retain touch-sized targets. This covers 1440, 1280, 1024, 768 and ~390 layout
+strategies without pretending mobile business workflows are final.
+
+ACCESSIBILITY
+Semantic aside/nav/header/main/section/table landmarks, ordered headings,
+visible focus, native form labels/select, aria-labels on icon buttons, accessible
+progress and metric semantics, non-color state cues, aria-live loading/error,
+reduced motion and jsx-a11y lint baseline.
+
+REFERENCE DERIVATION
+Derived: midnight data-dense mood, fixed left rail, elevated topbar, cyan/blue
+accents, thin borders, KPI row, analytical panels, pitch composition and compact
+data table. Reinterpreted: no real player identities/photos/logos, no dense fake
+business dataset, fewer panels, reusable primitives, restrained glow, neutral
+initials avatar and a development-only component showcase.
+
+VISUAL QA NOTE
+The supplied reference was studied directly. Build, routes and CSS responsive
+strategies were verified. Browser-plugin screenshot automation was unavailable
+due to an environment EPERM on C:\Users\user\AppData; final cross-viewport
+pixel inspection should be repeated manually when that runtime permission is
+restored. This is a residual QA limitation, not a design-system build failure.
+
+MATCHES_REFERENCE_DIRECTION=True

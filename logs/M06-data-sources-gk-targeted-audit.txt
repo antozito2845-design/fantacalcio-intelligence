@@ -1,0 +1,812 @@
+
+================================================================================
+M06.2 DATA SOURCES + GK TARGETED AUDIT
+================================================================================
+ROOT=C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence
+TIMESTAMP=2026-08-31T15:59:46
+
+================================================================================
+1. WORKSPACE SAFETY
+================================================================================
+BRANCH=stabilization/m01-local-green
+HEAD=a40557e4132189fbb7aa02e869cf126072e03945
+
+================================================================================
+2. TARGETED BACKEND FILE INVENTORY
+================================================================================
+TARGETED_BACKEND_FILES=67
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\availability\PlayerAvailabilityStatus.java
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\fixture\importer\FixtureImportController.java
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\fixture\importer\FixtureImportResponse.java
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\fixture\importer\FixtureImportService.java
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\identity\enrichment\IdentityEnrichmentImportController.java
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\identity\enrichment\IdentityEnrichmentImportResponse.java
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\identity\enrichment\IdentityEnrichmentImportService.java
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt\TransfermarktCandidate.java
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt\TransfermarktCandidateMatcher.java
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt\TransfermarktDiscoveryClient.java
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt\TransfermarktDiscoveryController.java
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt\TransfermarktDiscoveryProperties.java
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt\TransfermarktDiscoveryResponse.java
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt\TransfermarktDiscoveryService.java
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt\TransfermarktPersistenceResponse.java
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt\TransfermarktProfile.java
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt\TransfermarktProfileParser.java
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt\TransfermarktProvenancePersistenceService.java
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt\TransfermarktSearchParser.java
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\importer\admin\ImportBatchAdminController.java
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\importer\admin\ImportBatchAdminService.java
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\importer\admin\ImportBatchDetailResponse.java
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\importer\admin\ImportBatchPageResponse.java
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\importer\admin\ImportBatchSummaryResponse.java
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\importer\admin\ImportRowErrorResponse.java
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\importer\CsvImportPayload.java
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\importer\PlayerImportController.java
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\importer\PlayerImportResponse.java
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\importer\PlayerImportService.java
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\ingestion\FantacalcioListoneClient.java
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\ingestion\FantacalcioListoneParser.java
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\ingestion\FantacalcioListoneProperties.java
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\ingestion\FantacalcioListoneSyncController.java
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\ingestion\FantacalcioListoneSyncResponse.java
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\ingestion\FantacalcioListoneSyncService.java
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\player\PlayerSeasonStatisticsResponse.java
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\statistics\importer\PlayerStatisticsImportController.java
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\statistics\importer\PlayerStatisticsImportResponse.java
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\statistics\importer\PlayerStatisticsImportService.java
+FILE=backend\src\main\resources\db\migration\V19__strengthen_player_import_tracking.sql
+FILE=backend\src\main\resources\db\migration\V21__create_fixture_import_tracking.sql
+FILE=backend\src\main\resources\db\migration\V25__create_player_statistics_import.sql
+FILE=backend\src\main\resources\db\migration\V28__add_identity_transfer_provenance.sql
+FILE=backend\src\main\resources\db\migration\V39__complete_historical_player_statistics.sql
+FILE=backend\src\main\resources\db\migration\V43__extend_identity_profile_for_transfermarkt.sql
+FILE=backend\src\main\resources\db\migration\V44__allow_fantacalcio_identity_provenance.sql
+FILE=backend\src\main\resources\db\migration\V45__allow_uefa_identity_provenance.sql
+FILE=backend\src\main\resources\db\migration\V5__create_player_import_staging.sql
+FILE=backend\src\main\resources\db\migration\V61__allow_fantacalcio_authoritative_reconciliation.sql
+FILE=backend\src\main\resources\db\migration\V66_1__correct_transfermarkt_competition_classifications.sql
+FILE=backend\src\test\java\it\fantacalciointelligence\backend\fixture\importer\FixtureImportControllerSecurityTest.java
+FILE=backend\src\test\java\it\fantacalciointelligence\backend\fixture\importer\FixtureImportServiceTest.java
+FILE=backend\src\test\java\it\fantacalciointelligence\backend\identity\enrichment\IdentityEnrichmentImportServiceTest.java
+FILE=backend\src\test\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt\TransfermarktCandidateMatcherTest.java
+FILE=backend\src\test\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt\TransfermarktDiscoveryIdentityVerificationTest.java
+FILE=backend\src\test\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt\TransfermarktDiscoveryNameFallbackTest.java
+FILE=backend\src\test\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt\TransfermarktDiscoveryPropertiesTest.java
+FILE=backend\src\test\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt\TransfermarktProfileParserTest.java
+FILE=backend\src\test\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt\TransfermarktProvenancePersistenceServiceTest.java
+FILE=backend\src\test\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt\TransfermarktSearchParserTest.java
+FILE=backend\src\test\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt\TransfermarktVerifiedIdentityOverrideTest.java
+FILE=backend\src\test\java\it\fantacalciointelligence\backend\importer\admin\ImportBatchAdminControllerTest.java
+FILE=backend\src\test\java\it\fantacalciointelligence\backend\importer\admin\ImportBatchAdminServiceTest.java
+FILE=backend\src\test\java\it\fantacalciointelligence\backend\importer\PlayerImportServiceTest.java
+FILE=backend\src\test\java\it\fantacalciointelligence\backend\ingestion\FantacalcioListoneParserTest.java
+FILE=backend\src\test\java\it\fantacalciointelligence\backend\statistics\importer\PlayerStatisticsImportControllerSecurityTest.java
+FILE=backend\src\test\java\it\fantacalciointelligence\backend\statistics\importer\PlayerStatisticsImportServiceTest.java
+
+================================================================================
+3. PLAYER STATISTICS CONTRACT
+================================================================================
+CONTRACT_FILE=backend\src\main\java\it\fantacalciointelligence\backend\player\PlayerSeasonStatisticsResponse.java
+LINE=9
+  String season,
+  String source,
+  String sourceExternalId,
+LINE=10
+  String source,
+  String sourceExternalId,
+  String club,
+LINE=12
+  String club,
+  List<String> historicalClubs,
+  Integer appearances,
+LINE=17
+  BigDecimal averageRating,
+  BigDecimal fantasyAverage,
+  Integer goals,
+LINE=25
+  Integer redCards,
+  Integer cleanSheets,
+  Integer goalsConceded,
+LINE=26
+  Integer cleanSheets,
+  Integer goalsConceded,
+  Integer saves,
+LINE=27
+  Integer goalsConceded,
+  Integer saves,
+  Integer penaltiesSaved,
+LINE=28
+  Integer saves,
+  Integer penaltiesSaved,
+  BigDecimal expectedGoals,
+LINE=36
+  OffsetDateTime importedAt,
+  OffsetDateTime sourceUpdatedAt,
+  Long importBatchId
+CONTRACT_FILE=backend\src\main\java\it\fantacalciointelligence\backend\player\PlayerDetailService.java
+LINE=9
+  
+  import it.fantacalciointelligence.backend.common.ResourceNotFoundException;
+  import org.springframework.stereotype.Service;
+LINE=51
+  .orElseThrow(() ->
+  new ResourceNotFoundException(
+  "Giocatore non trovato"
+LINE=62
+  jdbcClient.sql("""
+  SELECT source, fantasy_role
+  FROM player_roles
+LINE=66
+  AND season_id = :seasonId
+  ORDER BY source
+  """)
+LINE=74
+  roles.put(
+  row.get("source").toString(),
+  row.get("fantasy_role").toString()
+LINE=157
+  SELECT
+  projected_fantasy_average,
+  projected_appearances,
+LINE=175
+  new PlayerEvaluationResponse(
+  rs.getBigDecimal("projected_fantasy_average"),
+  (Integer) rs.getObject("projected_appearances"),
+LINE=194
+  s.code,
+  stats.source,
+  stats.source_external_id,
+LINE=195
+  stats.source,
+  stats.source_external_id,
+  club.name AS club_name,
+LINE=197
+  club.name AS club_name,
+  (SELECT STRING_AGG(history.club_name, '|' ORDER BY history.source_order)
+  FROM player_season_statistics_clubs history
+LINE=199
+  FROM player_season_statistics_clubs history
+  WHERE history.statistics_id = stats.id) AS historical_clubs,
+  stats.appearances,
+LINE=204
+  stats.average_rating,
+  stats.fantasy_average,
+  stats.goals,
+LINE=212
+  stats.red_cards,
+  stats.clean_sheets,
+  stats.goals_conceded,
+LINE=213
+  stats.clean_sheets,
+  stats.goals_conceded,
+  stats.saves,
+LINE=214
+  stats.goals_conceded,
+  stats.saves,
+  stats.penalties_saved,
+LINE=215
+  stats.saves,
+  stats.penalties_saved,
+  stats.expected_goals,
+LINE=227
+  stats.imported_at,
+  stats.source_updated_at,
+  stats.import_batch_id
+LINE=235
+  WHERE stats.player_id = :playerId
+  ORDER BY s.start_year DESC, stats.source
+  LIMIT 10
+LINE=242
+  rs.getString("code"),
+  rs.getString("source"),
+  rs.getString("source_external_id"),
+LINE=243
+  rs.getString("source"),
+  rs.getString("source_external_id"),
+  rs.getString("club_name"),
+LINE=245
+  rs.getString("club_name"),
+  splitHistoricalClubs(rs.getString("historical_clubs")),
+  rs.getObject("appearances", Integer.class),
+LINE=250
+  rs.getBigDecimal("average_rating"),
+  rs.getBigDecimal("fantasy_average"),
+  rs.getObject("goals", Integer.class),
+LINE=258
+  rs.getObject("red_cards", Integer.class),
+  rs.getObject("clean_sheets", Integer.class),
+  rs.getObject("goals_conceded", Integer.class),
+LINE=259
+  rs.getObject("clean_sheets", Integer.class),
+  rs.getObject("goals_conceded", Integer.class),
+  rs.getObject("saves", Integer.class),
+LINE=260
+  rs.getObject("goals_conceded", Integer.class),
+  rs.getObject("saves", Integer.class),
+  rs.getObject("penalties_saved", Integer.class),
+LINE=261
+  rs.getObject("saves", Integer.class),
+  rs.getObject("penalties_saved", Integer.class),
+  rs.getBigDecimal("expected_goals"),
+LINE=269
+  rs.getObject("imported_at", java.time.OffsetDateTime.class),
+  rs.getObject("source_updated_at", java.time.OffsetDateTime.class),
+  rs.getObject("import_batch_id", Long.class)
+LINE=288
+  
+  private List<String> splitHistoricalClubs(String value) {
+  return value == null || value.isBlank()
+CONTRACT_FILE=backend\src\main\java\it\fantacalciointelligence\backend\player\HistoricalPlayerDetailService.java
+LINE=11
+  
+  import it.fantacalciointelligence.backend.common.ResourceNotFoundException;
+  
+LINE=53
+  ON role_fantacalcio.player_id = p.id
+  AND role_fantacalcio.source = 'FANTACALCIO'
+  INNER JOIN seasons s
+LINE=59
+  AND stats_fantacalcio.season_id = s.id
+  AND stats_fantacalcio.source = 'FANTACALCIO'
+  LEFT JOIN clubs club
+LINE=85
+  .orElseThrow(() ->
+  new ResourceNotFoundException(
+  "Giocatore storico non trovato"
+LINE=99
+  """
+  SELECT source, fantasy_role
+  FROM player_roles
+LINE=104
+  AND fantasy_role IS NOT NULL
+  ORDER BY source
+  """,
+LINE=108
+  ).forEach(row -> {
+  Object source = row.get("source");
+  Object role = row.get("fantasy_role");
+LINE=111
+  
+  if (source != null && role != null) {
+  roles.put(
+LINE=113
+  roles.put(
+  source.toString(),
+  role.toString()
+LINE=124
+  s.code,
+  stats.source,
+  stats.source_external_id,
+LINE=125
+  stats.source,
+  stats.source_external_id,
+  club.name AS club_name,
+LINE=131
+  '|'
+  ORDER BY history.source_order
+  )
+LINE=135
+  WHERE history.statistics_id = stats.id
+  ) AS historical_clubs,
+  stats.appearances,
+LINE=140
+  stats.average_rating,
+  stats.fantasy_average,
+  stats.goals,
+LINE=148
+  stats.red_cards,
+  stats.clean_sheets,
+  stats.goals_conceded,
+LINE=149
+  stats.clean_sheets,
+  stats.goals_conceded,
+  stats.saves,
+LINE=150
+  stats.goals_conceded,
+  stats.saves,
+  stats.penalties_saved,
+LINE=151
+  stats.saves,
+  stats.penalties_saved,
+  stats.expected_goals,
+LINE=191
+  stats.imported_at,
+  stats.source_updated_at,
+  stats.import_batch_id
+LINE=202
+  CASE
+  WHEN stats.source = 'FANTACALCIO'
+  THEN 0
+LINE=206
+  END,
+  stats.source
+  """,
+LINE=212
+  rs.getString("code"),
+  rs.getString("source"),
+  rs.getString("source_external_id"),
+LINE=213
+  rs.getString("source"),
+  rs.getString("source_external_id"),
+  rs.getString("club_name"),
+LINE=215
+  rs.getString("club_name"),
+  splitHistoricalClubs(
+  rs.getString("historical_clubs")
+LINE=216
+  splitHistoricalClubs(
+  rs.getString("historical_clubs")
+  ),
+LINE=222
+  rs.getBigDecimal("average_rating"),
+  rs.getBigDecimal("fantasy_average"),
+  rs.getObject("goals", Integer.class),
+LINE=230
+  rs.getObject("red_cards", Integer.class),
+  rs.getObject("clean_sheets", Integer.class),
+  rs.getObject("goals_conceded", Integer.class),
+LINE=231
+  rs.getObject("clean_sheets", Integer.class),
+  rs.getObject("goals_conceded", Integer.class),
+  rs.getObject("saves", Integer.class),
+LINE=232
+  rs.getObject("goals_conceded", Integer.class),
+  rs.getObject("saves", Integer.class),
+  rs.getObject("penalties_saved", Integer.class),
+LINE=233
+  rs.getObject("saves", Integer.class),
+  rs.getObject("penalties_saved", Integer.class),
+  rs.getBigDecimal("expected_goals"),
+LINE=245
+  rs.getObject(
+  "source_updated_at",
+  java.time.OffsetDateTime.class
+LINE=267
+  
+  private List<String> splitHistoricalClubs(String value) {
+  return value == null || value.isBlank()
+
+================================================================================
+4. IMPORT AND PROVENANCE CONTRACT
+================================================================================
+PROVENANCE_RELEVANT_FILES=66
+PROVENANCE_FILE=backend\src\main\java\it\fantacalciointelligence\backend\availability\PlayerAvailabilityStatus.java
+PROVENANCE_FILE=backend\src\main\java\it\fantacalciointelligence\backend\fixture\importer\FixtureImportController.java
+PROVENANCE_FILE=backend\src\main\java\it\fantacalciointelligence\backend\fixture\importer\FixtureImportResponse.java
+PROVENANCE_FILE=backend\src\main\java\it\fantacalciointelligence\backend\fixture\importer\FixtureImportService.java
+PROVENANCE_FILE=backend\src\main\java\it\fantacalciointelligence\backend\identity\enrichment\IdentityEnrichmentImportController.java
+PROVENANCE_FILE=backend\src\main\java\it\fantacalciointelligence\backend\identity\enrichment\IdentityEnrichmentImportResponse.java
+PROVENANCE_FILE=backend\src\main\java\it\fantacalciointelligence\backend\identity\enrichment\IdentityEnrichmentImportService.java
+PROVENANCE_FILE=backend\src\main\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt\TransfermarktCandidate.java
+PROVENANCE_FILE=backend\src\main\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt\TransfermarktCandidateMatcher.java
+PROVENANCE_FILE=backend\src\main\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt\TransfermarktDiscoveryClient.java
+PROVENANCE_FILE=backend\src\main\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt\TransfermarktDiscoveryController.java
+PROVENANCE_FILE=backend\src\main\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt\TransfermarktDiscoveryProperties.java
+PROVENANCE_FILE=backend\src\main\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt\TransfermarktDiscoveryResponse.java
+PROVENANCE_FILE=backend\src\main\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt\TransfermarktDiscoveryService.java
+PROVENANCE_FILE=backend\src\main\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt\TransfermarktPersistenceResponse.java
+PROVENANCE_FILE=backend\src\main\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt\TransfermarktProfile.java
+PROVENANCE_FILE=backend\src\main\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt\TransfermarktProfileParser.java
+PROVENANCE_FILE=backend\src\main\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt\TransfermarktProvenancePersistenceService.java
+PROVENANCE_FILE=backend\src\main\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt\TransfermarktSearchParser.java
+PROVENANCE_FILE=backend\src\main\java\it\fantacalciointelligence\backend\importer\admin\ImportBatchAdminController.java
+PROVENANCE_FILE=backend\src\main\java\it\fantacalciointelligence\backend\importer\admin\ImportBatchAdminService.java
+PROVENANCE_FILE=backend\src\main\java\it\fantacalciointelligence\backend\importer\admin\ImportBatchDetailResponse.java
+PROVENANCE_FILE=backend\src\main\java\it\fantacalciointelligence\backend\importer\admin\ImportBatchPageResponse.java
+PROVENANCE_FILE=backend\src\main\java\it\fantacalciointelligence\backend\importer\admin\ImportBatchSummaryResponse.java
+PROVENANCE_FILE=backend\src\main\java\it\fantacalciointelligence\backend\importer\admin\ImportRowErrorResponse.java
+PROVENANCE_FILE=backend\src\main\java\it\fantacalciointelligence\backend\importer\CsvImportPayload.java
+PROVENANCE_FILE=backend\src\main\java\it\fantacalciointelligence\backend\importer\PlayerImportController.java
+PROVENANCE_FILE=backend\src\main\java\it\fantacalciointelligence\backend\importer\PlayerImportResponse.java
+PROVENANCE_FILE=backend\src\main\java\it\fantacalciointelligence\backend\importer\PlayerImportService.java
+PROVENANCE_FILE=backend\src\main\java\it\fantacalciointelligence\backend\ingestion\FantacalcioListoneClient.java
+PROVENANCE_FILE=backend\src\main\java\it\fantacalciointelligence\backend\ingestion\FantacalcioListoneParser.java
+PROVENANCE_FILE=backend\src\main\java\it\fantacalciointelligence\backend\ingestion\FantacalcioListoneProperties.java
+PROVENANCE_FILE=backend\src\main\java\it\fantacalciointelligence\backend\ingestion\FantacalcioListoneSyncController.java
+PROVENANCE_FILE=backend\src\main\java\it\fantacalciointelligence\backend\ingestion\FantacalcioListoneSyncResponse.java
+PROVENANCE_FILE=backend\src\main\java\it\fantacalciointelligence\backend\ingestion\FantacalcioListoneSyncService.java
+PROVENANCE_FILE=backend\src\main\java\it\fantacalciointelligence\backend\player\PlayerSeasonStatisticsResponse.java
+PROVENANCE_FILE=backend\src\main\java\it\fantacalciointelligence\backend\statistics\importer\PlayerStatisticsImportController.java
+PROVENANCE_FILE=backend\src\main\java\it\fantacalciointelligence\backend\statistics\importer\PlayerStatisticsImportResponse.java
+PROVENANCE_FILE=backend\src\main\java\it\fantacalciointelligence\backend\statistics\importer\PlayerStatisticsImportService.java
+PROVENANCE_FILE=backend\src\main\resources\db\migration\V19__strengthen_player_import_tracking.sql
+PROVENANCE_FILE=backend\src\main\resources\db\migration\V25__create_player_statistics_import.sql
+PROVENANCE_FILE=backend\src\main\resources\db\migration\V28__add_identity_transfer_provenance.sql
+PROVENANCE_FILE=backend\src\main\resources\db\migration\V39__complete_historical_player_statistics.sql
+PROVENANCE_FILE=backend\src\main\resources\db\migration\V43__extend_identity_profile_for_transfermarkt.sql
+PROVENANCE_FILE=backend\src\main\resources\db\migration\V44__allow_fantacalcio_identity_provenance.sql
+PROVENANCE_FILE=backend\src\main\resources\db\migration\V45__allow_uefa_identity_provenance.sql
+PROVENANCE_FILE=backend\src\main\resources\db\migration\V5__create_player_import_staging.sql
+PROVENANCE_FILE=backend\src\main\resources\db\migration\V61__allow_fantacalcio_authoritative_reconciliation.sql
+PROVENANCE_FILE=backend\src\main\resources\db\migration\V66_1__correct_transfermarkt_competition_classifications.sql
+PROVENANCE_FILE=backend\src\test\java\it\fantacalciointelligence\backend\fixture\importer\FixtureImportControllerSecurityTest.java
+PROVENANCE_FILE=backend\src\test\java\it\fantacalciointelligence\backend\fixture\importer\FixtureImportServiceTest.java
+PROVENANCE_FILE=backend\src\test\java\it\fantacalciointelligence\backend\identity\enrichment\IdentityEnrichmentImportServiceTest.java
+PROVENANCE_FILE=backend\src\test\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt\TransfermarktCandidateMatcherTest.java
+PROVENANCE_FILE=backend\src\test\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt\TransfermarktDiscoveryIdentityVerificationTest.java
+PROVENANCE_FILE=backend\src\test\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt\TransfermarktDiscoveryNameFallbackTest.java
+PROVENANCE_FILE=backend\src\test\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt\TransfermarktDiscoveryPropertiesTest.java
+PROVENANCE_FILE=backend\src\test\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt\TransfermarktProfileParserTest.java
+PROVENANCE_FILE=backend\src\test\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt\TransfermarktProvenancePersistenceServiceTest.java
+PROVENANCE_FILE=backend\src\test\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt\TransfermarktSearchParserTest.java
+PROVENANCE_FILE=backend\src\test\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt\TransfermarktVerifiedIdentityOverrideTest.java
+PROVENANCE_FILE=backend\src\test\java\it\fantacalciointelligence\backend\importer\admin\ImportBatchAdminControllerTest.java
+PROVENANCE_FILE=backend\src\test\java\it\fantacalciointelligence\backend\importer\admin\ImportBatchAdminServiceTest.java
+PROVENANCE_FILE=backend\src\test\java\it\fantacalciointelligence\backend\importer\PlayerImportServiceTest.java
+PROVENANCE_FILE=backend\src\test\java\it\fantacalciointelligence\backend\ingestion\FantacalcioListoneParserTest.java
+PROVENANCE_FILE=backend\src\test\java\it\fantacalciointelligence\backend\statistics\importer\PlayerStatisticsImportControllerSecurityTest.java
+PROVENANCE_FILE=backend\src\test\java\it\fantacalciointelligence\backend\statistics\importer\PlayerStatisticsImportServiceTest.java
+
+================================================================================
+5. FRONTEND GK CONTRACT
+================================================================================
+FRONTEND_FILE=frontend\src\features\core\api.ts
+LINE=11
+  club: z.string(),
+  clubSlug: z.string(),
+  fantacalcioRole: z.string(),
+  gazzettaRole: z.string().nullable(),
+  fantamarktRole: z.string().nullable(),
+LINE=31
+  club: z.string().nullable(),
+  clubSlug: z.string().nullable(),
+  fantacalcioRole: z.string(),
+  appearances: nullableNumber,
+  fantasyAverage: nullableNumber,
+LINE=33
+  fantacalcioRole: z.string(),
+  appearances: nullableNumber,
+  fantasyAverage: nullableNumber,
+  goals: nullableNumber,
+  assists: nullableNumber,
+LINE=47
+  const evaluationSchema = z
+  .object({
+  projectedFantasyAverage: nullableNumber,
+  projectedAppearances: nullableNumber,
+  projectedStarts: nullableNumber,
+LINE=70
+  minutesPlayed: nullableNumber.optional(),
+  averageRating: nullableNumber.optional(),
+  fantasyAverage: nullableNumber.optional(),
+  goals: nullableNumber.optional(),
+  assists: nullableNumber.optional(),
+LINE=78
+  yellowCards: nullableNumber.optional(),
+  redCards: nullableNumber.optional(),
+  cleanSheets: nullableNumber.optional(),
+  goalsConceded: nullableNumber.optional(),
+  saves: nullableNumber.optional(),
+LINE=79
+  redCards: nullableNumber.optional(),
+  cleanSheets: nullableNumber.optional(),
+  goalsConceded: nullableNumber.optional(),
+  saves: nullableNumber.optional(),
+  penaltiesSaved: nullableNumber.optional(),
+LINE=80
+  cleanSheets: nullableNumber.optional(),
+  goalsConceded: nullableNumber.optional(),
+  saves: nullableNumber.optional(),
+  penaltiesSaved: nullableNumber.optional(),
+  expectedGoals: nullableNumber.optional(),
+LINE=81
+  goalsConceded: nullableNumber.optional(),
+  saves: nullableNumber.optional(),
+  penaltiesSaved: nullableNumber.optional(),
+  expectedGoals: nullableNumber.optional(),
+  expectedAssists: nullableNumber.optional(),
+LINE=217
+  teamsCount: numeric,
+  totalBudget: numeric,
+  goalkeepersCount: numeric,
+  defendersCount: numeric,
+  midfieldersCount: numeric,
+FRONTEND_FILE=frontend\src\pages\PlayerDetailPage.tsx
+LINE=9
+  
+  const value = (v: number | null | undefined, suffix = '') =>
+  v == null ? 'Dato non disponibile' : `${v}${suffix}`;
+  
+  type StatisticColumn = {
+LINE=16
+  };
+  
+  function isFantasyGoalkeeper(roles: Record<string, string>): boolean {
+  const fantasyRole = Object.entries(roles).find(
+  ([source]) => source.toUpperCase() === 'FANTACALCIO',
+LINE=18
+  function isFantasyGoalkeeper(roles: Record<string, string>): boolean {
+  const fantasyRole = Object.entries(roles).find(
+  ([source]) => source.toUpperCase() === 'FANTACALCIO',
+  )?.[1];
+  return fantasyRole?.toUpperCase() === 'P';
+LINE=23
+  }
+  
+  function statisticColumns(goalkeeper: boolean): StatisticColumn[] {
+  if (goalkeeper) {
+  return [
+LINE=24
+  
+  function statisticColumns(goalkeeper: boolean): StatisticColumn[] {
+  if (goalkeeper) {
+  return [
+  { label: 'Presenze', value: (statistic) => value(statistic.appearances) },
+LINE=28
+  { label: 'Presenze', value: (statistic) => value(statistic.appearances) },
+  { label: 'Minuti giocati', value: (statistic) => value(statistic.minutesPlayed) },
+  { label: 'Gol subiti', value: (statistic) => value(statistic.goalsConceded) },
+  { label: 'Parate effettuate', value: (statistic) => value(statistic.saves) },
+  { label: 'Rigori parati', value: (statistic) => value(statistic.penaltiesSaved) },
+LINE=29
+  { label: 'Minuti giocati', value: (statistic) => value(statistic.minutesPlayed) },
+  { label: 'Gol subiti', value: (statistic) => value(statistic.goalsConceded) },
+  { label: 'Parate effettuate', value: (statistic) => value(statistic.saves) },
+  { label: 'Rigori parati', value: (statistic) => value(statistic.penaltiesSaved) },
+  {
+LINE=30
+  { label: 'Gol subiti', value: (statistic) => value(statistic.goalsConceded) },
+  { label: 'Parate effettuate', value: (statistic) => value(statistic.saves) },
+  { label: 'Rigori parati', value: (statistic) => value(statistic.penaltiesSaved) },
+  {
+  label: 'Porte inviolate / Clean sheet',
+LINE=33
+  {
+  label: 'Porte inviolate / Clean sheet',
+  value: (statistic) => value(statistic.cleanSheets),
+  },
+  ];
+LINE=41
+  { label: 'Gol', value: (statistic) => value(statistic.goals) },
+  { label: 'Assist', value: (statistic) => value(statistic.assists) },
+  { label: 'Fantamedia', value: (statistic) => value(statistic.fantasyAverage) },
+  ];
+  }
+LINE=57
+  retry: false,
+  });
+  const goalkeeper = q.data ? isFantasyGoalkeeper(q.data.roles) : false;
+  const columns = statisticColumns(goalkeeper);
+  return (
+LINE=58
+  });
+  const goalkeeper = q.data ? isFantasyGoalkeeper(q.data.roles) : false;
+  const columns = statisticColumns(goalkeeper);
+  return (
+  <AppShell>
+LINE=87
+  <div className={styles.grid}>
+  {[
+  ['Media prevista', value(q.data.evaluation.projectedFantasyAverage)],
+  ['Affidabilità', value(q.data.evaluation.reliabilityScore)],
+  ['Potenziale', value(q.data.evaluation.potentialScore)],
+FRONTEND_FILE=frontend\src\pages\HistoricalPlayerDetailPage.tsx
+LINE=9
+  
+  const value = (current: number | null | undefined) =>
+  current == null ? 'Dato non disponibile' : String(current);
+  
+  const sourceLabel = (statistic: PlayerSeasonStatistics) =>
+LINE=16
+  : statistic.source;
+  
+  function isGoalkeeper(roles: Record<string, string>) {
+  return (
+  Object.entries(roles)
+LINE=19
+  return (
+  Object.entries(roles)
+  .find(([source]) => source.toUpperCase() === 'FANTACALCIO')?.[1]
+  ?.toUpperCase() === 'P'
+  );
+LINE=40
+  : '/players/history';
+  
+  const goalkeeper = query.data ? isGoalkeeper(query.data.roles) : false;
+  
+  return (
+LINE=90
+  <th>Minuti</th>
+  
+  {goalkeeper ? (
+  <>
+  <th>Gol subiti</th>
+LINE=111
+  <tr key={`${statistic.source}-${statistic.sourceExternalId ?? index}`}>
+  <td>{sourceLabel(statistic)}</td>
+  <td>{statistic.club ?? query.data.club ?? 'Dato non disponibile'}</td>
+  <td>{value(statistic.appearances)}</td>
+  <td>{value(statistic.minutesPlayed)}</td>
+LINE=115
+  <td>{value(statistic.minutesPlayed)}</td>
+  
+  {goalkeeper ? (
+  <>
+  <td>{value(statistic.goalsConceded)}</td>
+LINE=117
+  {goalkeeper ? (
+  <>
+  <td>{value(statistic.goalsConceded)}</td>
+  <td>{value(statistic.saves)}</td>
+  <td>{value(statistic.penaltiesSaved)}</td>
+LINE=118
+  <>
+  <td>{value(statistic.goalsConceded)}</td>
+  <td>{value(statistic.saves)}</td>
+  <td>{value(statistic.penaltiesSaved)}</td>
+  <td>{value(statistic.cleanSheets)}</td>
+LINE=119
+  <td>{value(statistic.goalsConceded)}</td>
+  <td>{value(statistic.saves)}</td>
+  <td>{value(statistic.penaltiesSaved)}</td>
+  <td>{value(statistic.cleanSheets)}</td>
+  </>
+LINE=120
+  <td>{value(statistic.saves)}</td>
+  <td>{value(statistic.penaltiesSaved)}</td>
+  <td>{value(statistic.cleanSheets)}</td>
+  </>
+  ) : (
+LINE=124
+  ) : (
+  <>
+  <td>{value(statistic.fantasyAverage)}</td>
+  <td>{value(statistic.goals)}</td>
+  <td>{value(statistic.assists)}</td>
+
+================================================================================
+6. TARGETED TEST INVENTORY
+================================================================================
+TARGETED_TEST_FILES=135
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\auction\AuctionApiPriceServiceTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\auction\AuctionPriceControllerTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\auction\AuctionPricePersistenceServiceIntegrationTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\auction\B67AuctionPricePersistenceIntegrationTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\auction\B67AuctionValueScorerTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\auctionlive\LiveAuctionStrategyServiceTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\auctionranking\AuctionRankingServiceTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\auctionstate\AuctionContextAdapterIntegrationTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\auctionstate\AuctionIdempotencyConcurrencyIntegrationTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\auctionstate\AuctionPurchaseConcurrencyIntegrationTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\auctionstate\AuctionSessionActiveOwnershipIntegrationTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\auctionstate\AuctionSessionMutationOwnershipIntegrationTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\auctionstate\AuctionSessionOwnershipIntegrationTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\auctionstate\AuctionStateLifecycleIntegrationTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\auctionstate\AuctionStatePathAndErrorApiTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\auctionstate\AuctionStateSecurityTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\auctionstate\AuctionStateValidationApiTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\auctionstrategy\IntelligentAuctionStrategyServiceTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\availability\PlayerAvailabilityControllerSecurityTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\availability\PlayerAvailabilityServiceTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\calendarintelligence\B69RoleAwareFixtureWindowServiceTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\calendarintelligence\B69RoleMatchupScorerTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\calendarintelligence\CalendarCandidateServiceIntegrationTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\calendarintelligence\CalendarCombinationScorerTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\calendarintelligence\CalendarCombinationServiceTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\catalog\readiness\CatalogReadinessServiceTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\common\SecretSanitizerTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\config\AdminEndpointSecurityTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\config\MutationAuthorizationSecurityTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\config\ProductionProfileSmokeTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\config\RateLimitBasicAuthenticationIntegrationTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\config\RateLimitFilterTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\config\SecurityConfigurationTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\config\UserBootstrapProvisioningIntegrationTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentServiceTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\evaluation\PlayerEvaluationGenerationServiceTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\fixture\B69FixtureMatchupControllerTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\fixture\B69FixtureMatchupServiceTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\fixture\importer\FixtureImportControllerSecurityTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\fixture\importer\FixtureImportServiceTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\fixture\strength\ClubStrengthGenerationServiceTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\freshness\DataFreshnessControllerSecurityTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\freshness\DataFreshnessServiceTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\identity\enrichment\IdentityEnrichmentImportServiceTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\identity\enrichment\NationalityNormalizerTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt\IdentityAutomationPropertiesTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt\TransfermarktCandidateMatcherTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt\TransfermarktDiscoveryIdentityVerificationTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt\TransfermarktDiscoveryNameFallbackTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt\TransfermarktDiscoveryPropertiesTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt\TransfermarktProfileParserTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt\TransfermarktProvenancePersistenceServiceTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt\TransfermarktSearchParserTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt\TransfermarktVerifiedIdentityOverrideTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\importer\admin\ImportBatchAdminControllerTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\importer\admin\ImportBatchAdminServiceTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\importer\PlayerImportServiceTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\ingestion\AutomatedDataUpdateServiceTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\ingestion\AutomationRunServiceIntegrationTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\ingestion\B71AutomatedDataUpdateServiceTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\ingestion\B71AutomationFailurePolicyTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\ingestion\B71AutomationRetryPolicyIntegrationTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\ingestion\FantacalcioListoneParserTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\ingestion\RemoteCsvClientTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\ingestion\SourceIngestionPropertiesTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\ingestion\SourceIngestionRecoveryConcurrencyTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\ingestion\SourceIngestionSanitizationTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\ingestion\SourceIngestionSecurityTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\ingestion\SourceIngestionServiceIntegrationTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\intelligence\IntelligenceCatalogPolicyTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceProfileCalculatorTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceProfileSourcePolicyTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceServiceTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\lineup\B68LineupScorerTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\lineup\RecommendedLineupServiceTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\liveauction\LiveAuctionAlternativeServiceTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\liveauction\LiveAuctionBudgetGuardTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\liveauction\LiveAuctionCalendarBatchServiceTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\liveauction\LiveAuctionControllerSecurityTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\liveauction\LiveAuctionControllerTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\liveauction\LiveAuctionDecisionEngineTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\liveauction\LiveAuctionDecisionPolicyTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\liveauction\LiveAuctionDecisionServiceBatchTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\liveauction\LiveAuctionDecisionServiceValidationTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\player\HistoricalPlayerCatalogServiceTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\player\HistoricalPlayerDetailServiceTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\player\PlayerCatalogControllerTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\reconciliation\identity\PlayerIdentityResolutionServiceTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\reconciliation\identity\VerifiedSourceIdentityLinkTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\reconciliation\PlayerReconciliationBatchSnapshotTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\reconciliation\PlayerReconciliationServiceTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\reconciliation\preview\ReconciliationPreviewServiceTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\reconciliation\review\ReconciliationReviewServiceTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\refresh\DataRefreshControllerSecurityTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\refresh\DataRefreshRecoveryConcurrencyTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\refresh\DataRefreshSchedulerTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\refresh\DataRefreshServiceTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\registration\RegistrationStatusEligibilityTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\scouting\B70ArrivalScoutingIntegrationTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\scouting\B70NewListoneArrivalIntegrationTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\scouting\B70PendingScoutingArrivalIntegrationTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\scouting\ForeignPlayerScoutingServiceTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\season\CurrentSeasonHttpIntegrationTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\season\CurrentSeasonResolverTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\seasonclub\SeasonClubMembershipIntegrationTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\squad\SquadConcurrencyIntegrationTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\squad\SquadOwnershipHttpIntegrationTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\squad\SquadServiceTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\squadanalysis\SquadAnalysisServiceTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\squadconstruction\CalendarCombinationEngineTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\squadconstruction\DynamicBudgetEngineTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\squadconstruction\SquadConstructionServiceTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\squadconstruction\SquadTargetScorerTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\statistics\importer\PlayerStatisticsImportControllerSecurityTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\statistics\importer\PlayerStatisticsImportServiceTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\strategic\RealPositionNormalizerTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\strategic\StrategicCsvValueMapperTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\strategic\StrategicDataObservationIntegrationTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\strategic\StrategicDataQualityPolicyTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\strategicintelligence\AdvancedStrategicIntelligenceTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\system\SystemStatusServiceTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\transfer\detection\TransferDetectionServiceTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\transfer\TransferVerificationConcurrencyTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\transfer\TransferVerificationSecurityTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\transfer\TransferVerificationServiceTest.java
+TEST=backend\src\test\java\it\fantacalciointelligence\backend\validation\RequestValidationHttpIntegrationTest.java
+TEST=frontend\src\components\data-display\data-display.test.tsx
+TEST=frontend\src\features\admin\AdminPage.test.tsx
+TEST=frontend\src\features\admin\api.test.ts
+TEST=frontend\src\features\core\api.test.ts
+TEST=frontend\src\features\core\PlayerFlows.test.tsx
+TEST=frontend\src\features\core\SquadManagementFlows.test.tsx
+TEST=frontend\src\layouts\AppShell.test.tsx
+TEST=frontend\src\pages\HistoricalPlayerDetailPage.test.tsx
+TEST=frontend\src\pages\HistoricalPlayersPage.test.tsx
+
+================================================================================
+7. BACKEND RUNTIME
+================================================================================
+BACKEND_HEALTH_HTTP=None
+BACKEND_HEALTH_BODY="URLError: <urlopen error [WinError 10061] Impossibile stabilire la connessione. Rifiuto persistente del computer di destinazione>"
+BACKEND_UP=NO
+
+================================================================================
+RUNTIME BLOCKED
+================================================================================
+REASON=Backend locale non attivo
+STATIC_AUDIT_COMPLETED=YES
+RUNTIME_GK_COMPLETED=NO
+DATABASE_MUTATIONS=NONE
+FILES_MODIFIED_BY_AUDIT=NONE
+LOG_FILE=C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\logs\M06-data-sources-gk-targeted-audit.txt

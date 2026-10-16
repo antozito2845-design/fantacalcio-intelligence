@@ -1,0 +1,49 @@
+===== D02.23 REAL SQUAD MANAGEMENT =====
+
+AUDIT=Audit end-to-end completato su fantasy_squads, fantasy_squad_players, Flyway V10/V11/V57, configurazione lega, controller/service squad, creazione, rosa current/active, aggiunta/rimozione, vincoli, ownership, AuthProvider, API/query keys, SquadPage, catalogo, Dashboard, Lineup e Live Auction. L'architettura esistente è stata mantenuta e ampliata solo nei gap reali.
+
+BACKEND_ROOT_CAUSE_OR_GAPS=Il backend supportava già creazione vuota, rosa corrente, add/remove, player canonici, limiti ruolo, budget, duplicati, ownership e locking concorrente. Mancavano la modifica del prezzo di acquisto e la verifica ownership della rosa durante la creazione di una sessione Live Auction.
+
+FRONTEND_ROOT_CAUSE_OR_GAPS=SquadPage esisteva ma trattava ogni errore come rosa assente, non aggiornava immediatamente la cache, non esponeva modifica prezzo e messaggi completi sui vincoli. Il catalogo non aveva CTA di acquisto. Lineup, Dashboard e launcher Live Auction non gestivano in modo sufficientemente esplicito rosa vuota/incompleta.
+
+FILES_MODIFIED=backend: AuctionStateController.java, SecurityConfiguration.java, SquadController.java, SquadManagementController.java, SquadService.java, UpdateSquadPlayerPriceRequest.java, AuctionStateSecurityTest.java, SquadOwnershipHttpIntegrationTest.java, SquadServiceTest.java. frontend: api/queryKeys.ts, features/core/api.ts, features/core/api.test.ts, features/core/SquadManagementFlows.test.tsx, features/intelligence/IntelligencePages.test.tsx, pages/SquadPage.tsx, pages/PlayersPage.tsx, pages/LineupPage.tsx, pages/LiveAuctionPage.tsx, pages/RealDashboardPage.tsx.
+
+BACKEND_ENDPOINTS=POST /api/v1/squads; GET /api/v1/squad; GET /api/v1/squads; GET /api/v1/squads/{squadId}; POST /api/v1/squad/players; POST /api/v1/squads/{squadId}/players; DELETE /api/v1/squad/players/{playerId}; DELETE /api/v1/squads/{squadId}/players/{playerId}; PATCH /api/v1/squad/players/{playerId}; PATCH /api/v1/squads/{squadId}/players/{playerId}. Tutte le mutazioni richiedono autenticazione; gli endpoint con squadId applicano owner/admin.
+
+CREATION_FLOW=Un utente autenticato senza rosa riceve il 404 current-squad, carica la configurazione lega attiva e inserisce un nome. POST /api/v1/squads crea una rosa realmente vuota, attiva e associata al principal. Il frontend mostra dinamicamente 8 squadre, budget 1000, P3/D8/C8/A6, modificatore difesa e capitano dai dati backend, senza hardcode dei vincoli nella logica di gestione.
+ADD_PLAYER_FLOW=Ricerca da SquadPage o CTA catalogo; selezione esclusiva di player restituiti dal catalogo; prezzo > 0; POST sulla rosa corrente; risposta backend inserita immediatamente nella cache TanStack e invalidazione di analisi/formazione.
+REMOVE_PLAYER_FLOW=DELETE sulla rosa corrente con aggiornamento immediato di giocatori, budget e reparti nella cache; player assente restituisce 404.
+UPDATE_PRICE_FLOW=Implementati request validato @Min(1), service transazionale con lock della rosa, ricalcolo budget e riserva minima per slot, endpoint PATCH current ed esplicito owner/admin, UI inline modifica/salva/annulla e test backend/frontend.
+
+ROLE_LIMIT_VALIDATION=Backend autoritativo già presente e mantenuto; limite letto dalla league configuration, verificato prima dell'insert e sotto lock. UI mostra current/maximum, slot mancanti e reparto completo senza bypassare il backend. Copertura esistente anche sui casi concorrenti.
+BUDGET_VALIDATION=Backend impedisce prezzo oltre residuo e richiede almeno un credito per ogni slot ancora libero; la stessa regola vale su add e update prezzo. UI calcola solo il massimo indicativo per feedback, mentre il backend resta autoritativo. Test insufficient-budget e concorrenza verdi.
+DUPLICATE_VALIDATION=Vincolo/controllo backend mantenuto con HTTP 409; SquadPage e catalogo disabilitano anche il duplicato già visibile in cache e mostrano feedback, senza sostituire la validazione server. Test backend esistente e test frontend error-state/API verdi.
+OWNERSHIP_SECURITY=Basic Auth mantenuta. Rosa current risolta dal principal; endpoint con ID applicano owner/admin e non espongono la rosa altrui. Aggiunta verifica ownership anche prima di creare una sessione Live Auction, impedendo a utente B di associare la rosa di A. Coperti 401 e cross-user 404; nessuna password nuova in repository, localStorage o report.
+
+CATALOG_INTEGRATION=Per utente autenticato con rosa attiva il catalogo mostra Aggiungi/Aggiungi alla rosa, chiede il prezzo, usa il player ID canonico, aggiorna subito la cache e blocca duplicati. Se la rosa manca propone il collegamento alla creazione. Paginazione e filtri restano invariati.
+LINEUP_INTEGRATION=LineupPage riconosce automaticamente la rosa current e passa il suo ID; sotto 11 giocatori non invoca il motore e mostra conteggio/invito a completare. Nessuna formazione fake. Dashboard applica la stessa cache e la stessa soglia.
+LIVE_AUCTION_INTEGRATION=Il launcher recupera automaticamente la rosa current, mostra nome, giocatori e budget reale e crea la sessione con tale squadId. Stati vuoto/incompleto sono espliciti; una rosa vuota può avviare una sessione senza acquisti simulati. Ownership verificata lato backend.
+
+FAKE_DATA_ADDED=NO
+PRODUCTION_DATA_CHANGED=NO
+FLYWAY_HISTORY_CHANGED=NO
+
+BACKEND_TESTS=629
+BACKEND_FAILURES=0
+BACKEND_ERRORS=0
+BACKEND_SKIPPED=4
+BACKEND_BUILD=PASS - .\mvnw.cmd clean test - BUILD SUCCESS
+
+FRONTEND_TEST_FILES=16 passed; nuovi/aggiornati: SquadManagementFlows.test.tsx, api.test.ts, IntelligencePages.test.tsx
+FRONTEND_TESTS=94 passed
+TYPECHECK=PASS - npm run typecheck
+FRONTEND_BUILD=PASS - npm run build - Vite production build completata
+
+GIT_COMMIT=NO
+GIT_PUSH=NO
+
+KNOWN_REAL_LIMITATIONS=Certificazione esclusivamente locale come richiesto; nessun deploy o test production eseguito. Rinomina/eliminazione dell'intera rosa non sono state aggiunte perché non necessarie ai flussi D02.23. La formazione richiede almeno 11 giocatori e resta soggetta ai requisiti reali di ruolo, disponibilità e fixture del motore backend. I fixture usati dai test restano confinati al database test con transazioni/cleanup; nessun dato test è stato introdotto in production o nelle migration.
+
+D02_23_STATUS=PASS
+
+===== END =====

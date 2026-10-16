@@ -1,0 +1,48 @@
+===== D02.20 FRONTEND 403 DIAGNOSIS =====
+
+PRODUCTION_CURRENT_HTTP=HTTP/1.1 200 OK (curl -I http://127.0.0.1/ at 2026-08-24 21:47 CEST)
+NGINX_USER=www-data (master process root; worker processes www-data:www-data)
+NGINX_ROOT=/opt/fantacalcio/frontend
+NGINX_INDEX=index.html
+
+CURRENT_FRONTEND_PATH=/opt/fantacalcio/frontend
+CURRENT_INDEX_EXISTS=YES
+CURRENT_INDEX_OWNER=fantacalcio:fantacalcio
+CURRENT_INDEX_MODE=644 (-rw-r--r--)
+
+FAILED_ARTIFACT_FOUND=YES (/tmp/fantacalcio-d02-19)
+FAILED_ARTIFACT_STRUCTURE=CORRECT SOURCE LAYOUT: /tmp/fantacalcio-d02-19/frontend-dist/index.html and /tmp/fantacalcio-d02-19/frontend-dist/assets/*; no nested dist directory. The deploy source used a trailing slash, /tmp/fantacalcio-d02-19/frontend-dist/, and the destination was /opt/fantacalcio/frontend/.
+FAILED_ARTIFACT_OWNER=ubuntu:ubuntu for artifact root, frontend-dist, assets, index.html, JS and CSS files
+FAILED_ARTIFACT_MODES=artifact root 700; frontend-dist 700; frontend-dist/assets 700; index.html 664; README.md 664; all inspected JS/CSS files 664. The 700 directories deny traversal to www-data.
+
+NGINX_403_LOG_EVIDENCE=2026/08/24 17:04:04 [error] 9694#9694: *248 "/opt/fantacalcio/frontend/index.html" is forbidden (13: Permission denied), client: 127.0.0.1, server: _, request: "GET / HTTP/1.1", host: "127.0.0.1"; matching access log: 127.0.0.1 - - [24/Aug/2026:17:04:04 +0200] "GET / HTTP/1.1" 403 162 "-" "curl/8.5.0". The immediately following rollback check returned 200.
+
+ROOT_CAUSE=A) FILE/DIRECTORY PERMISSIONS. The uploaded artifact directories frontend-dist and frontend-dist/assets had mode 700. D02.19 executed rsync -a --delete --chown=fantacalcio:fantacalcio from frontend-dist/ to /opt/fantacalcio/frontend/. Archive mode preserved the source directory modes while --chown changed only ownership; consequently the deployed frontend root/assets directories were not traversable by the Nginx worker user www-data. Nginx found the configured index path but returned EACCES, exactly as recorded by "is forbidden (13: Permission denied)". This is not ownership (B), wrong rsync source/destination (C), nested dist (D), missing index (E), root/index mismatch (F), or another independent cause (G).
+ROOT_CAUSE_CONFIDENCE=HIGH
+
+REQUIRED_FIX=Before any future deploy, ensure the frontend artifact directories are web-traversable and make the deploy enforce known modes instead of preserving upload-created 700 directory modes (for example, rsync with explicit directory/file modes such as --chmod=D755,F644 while retaining the intended ownership). Validate index.html and assets as www-data before the HTTP gate. No fix was applied in D02.20.
+DEPLOY_FIX_SCOPE=Frontend artifact packaging/upload and frontend rsync deployment only; no backend, database, Nginx configuration, Tailscale, firewall, or OCI change is required.
+
+NGINX_SERVER_BLOCK=/etc/nginx/sites-enabled/fantacalcio-intelligence; listen 80 and [::]:80; server_name _
+NGINX_TRY_FILES=$uri $uri/ /index.html
+CURRENT_PATH_CHAIN=/ 755 root:root; /opt 755 root:root; /opt/fantacalcio 755 fantacalcio:fantacalcio; frontend 755 fantacalcio:fantacalcio; index.html 644 fantacalcio:fantacalcio
+CURRENT_ASSETS_MODES=assets directory 755 fantacalcio:fantacalcio; inspected current JS/CSS files 644 fantacalcio:fantacalcio
+BACKUP_FRONTEND_PATH=/opt/fantacalcio/frontend.bak-d02-19
+BACKUP_INDEX_EXISTS=YES
+BACKUP_INDEX_OWNER=fantacalcio:fantacalcio
+BACKUP_INDEX_MODE=644 (-rw-r--r--)
+BACKUP_ASSETS_MODES=assets directory 755 fantacalcio:fantacalcio; inspected backup JS/CSS files 644 fantacalcio:fantacalcio
+RECURSIVE_COMPARISON=Current production and backup are recursively identical (diff -qr produced no differences), with directories 755 and files 644. Failed artifact has the expected index/assets layout and new build files, but its relevant directories are 700 and files are 664.
+INDEX_HASH_COMPARISON=Current and backup index.html are identical: SHA-256 268858f626dd4e0c3d06861813ff936e53c1aa8e719b81f7d0416adab4dca994
+RSYNC_D02_19=sudo rsync -a --delete --chown=fantacalcio:fantacalcio /tmp/fantacalcio-d02-19/frontend-dist/ /opt/fantacalcio/frontend/
+
+SERVER_CHANGED=NO
+DATABASE_CHANGED=NO
+NGINX_CHANGED=NO
+PERMISSIONS_CHANGED=NO
+GIT_COMMIT=NO
+GIT_PUSH=NO
+
+D02_20_STATUS=PASS
+
+===== END =====

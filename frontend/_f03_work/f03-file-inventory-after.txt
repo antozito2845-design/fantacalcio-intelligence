@@ -1,0 +1,40 @@
+F03 FILE INVENTORY AFTER
+Captured: 2026-08-22 Europe/Rome
+
+NEW FILES
+- src/components/ui/index.tsx
+- src/components/ui/ui.module.css
+- src/components/ui/ui.test.tsx
+- src/components/data-display/index.tsx
+- src/components/data-display/data-display.module.css
+- src/components/data-display/data-display.test.tsx
+- src/layouts/AppShell.tsx
+- src/layouts/AppShell.module.css
+- src/pages/DesignSystemPage.tsx
+- src/pages/DesignSystemPage.module.css
+- _f03_work/f03-file-inventory-before.txt
+- _f03_work/f03-preimplementation-audit.txt
+- _f03_work/f03-file-inventory-after.txt
+- _f03_work/f03-validation-output.txt
+- f03-design-system.txt
+- f03-visual-certification.txt
+
+MODIFIED FILES
+- src/styles/tokens.css: complete semantic dark/light token system.
+- src/styles/global.css: global reset, focus, selection, reduced motion.
+- src/app/router/AppRouter.tsx: home, /design-system, wildcard 404.
+- src/app/bootstrap/App.test.tsx: shell, preview, router and theme tests.
+- src/pages/NotFoundPage.tsx: updated return label.
+- vite.config.ts: deterministic single-worker Vitest pool on Windows.
+- eslint.config.js: excludes F03 work evidence.
+
+DEPENDENCIES
+- Added: none.
+- Lucide React and jsx-a11y were already present and reused.
+- No UI framework, chart library, state library, Storybook or Playwright added.
+
+RETAINED
+- F01/F02 files and architecture.
+- Legacy FoundationPage files remain intentionally retained; no destructive
+  cleanup was performed before F03 certification.
+- Backend baseline remains untouched by F03.

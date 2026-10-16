@@ -1,0 +1,171 @@
+B72 — FINAL BACKEND CERTIFICATION + 404 FIX + AUTHENTICATED SMOKE + SAFE CLEANUP
+Data: 2026-08-21 — Europe/Rome
+
+1. ORIGINAL B72 STATUS
+La prima B72 aveva superato targeted 164/164 e full clean 619 test, ma lo smoke autenticato aveva rilevato GET /api/v1/does-not-exist = HTTP 500. Stato iniziale: NEEDS_DIAGNOSIS.
+
+2. 404 DEFECT DIAGNOSIS
+Tipo reale confermato: org.springframework.web.servlet.resource.NoResourceFoundException.
+ApiExceptionHandler non aveva un handler specifico; l'eccezione raggiungeva @ExceptionHandler(Exception.class), che restituiva HTTP 500.
+File: src/main/java/it/fantacalciointelligence/backend/common/ApiExceptionHandler.java.
+
+3. BACKUP
+Creato prima delle modifiche: _b72_work/b72-404-fix-backup.
+Copiati ApiExceptionHandler.java e RequestValidationHttpIntegrationTest.java con SHA-256, senza sovrascrivere backup precedenti.
+
+4. 404 FIX
+Aggiunto esclusivamente un handler per NoResourceFoundException.
+Risposta: HTTP 404, contratto ApiErrorResponse esistente, messaggio fisso sanitizzato "Risorsa non trovata".
+Generic Exception handler e SecurityConfiguration invariati. Nessuna migration modificata.
+
+5. REGRESSION TEST
+Aggiunto a RequestValidationHttpIntegrationTest il caso:
+- anonimo GET /api/v1/does-not-exist -> 401 secondo policy corrente;
+- Basic Auth valido GET /api/v1/does-not-exist -> 404;
+- body con status=404, error=Not Found, messaggio sanitizzato e path corretto;
+- nessuno stacktrace o credenziale nel body.
+L'assert finale usa campi/status strutturali; eliminato un controllo testuale globale sulle cifre "500" perché poteva coincidere casualmente con i nanosecondi del timestamp.
+
+6. TARGETED RESULT
+Maven Wrapper, DB test e flag esterni OFF.
+Classi: BackendApplicationTests, RequestValidationHttpIntegrationTest, SecurityConfigurationTest, AdminEndpointSecurityTest.
+Tests run: 19; Failures: 0; Errors: 0; Skipped: 0; BUILD SUCCESS.
+
+7. FULL CLEAN RESULT
+Comando: .\mvnw.cmd -Dmaven.repo.local=C:\Users\user\.m2\repository clean test
+Ricompilati 308 sorgenti main e 126 sorgenti test.
+Tests run: 620; Failures: 0; Errors: 0; Skipped: 4; BUILD SUCCESS.
+
+8. TEMP AUTH USER
+Username: b72_smoke_admin.
+Password casuale forte generata in memoria, mai stampata o salvata.
+Account creato esclusivamente da SecurityUserBootstrap nel DB fantacalcio_intelligence_test.
+Encoder reale: DelegatingPasswordEncoder; hash verificato con prefisso {bcrypt}. Ruolo: ADMIN.
+
+9. RUNTIME STARTUP
+Spring Boot avviato temporaneamente su 8080 contro fantacalcio_intelligence_test.
+Spring context, JPA, Flyway 70 migration/schema 69 e Tomcat: PASS.
+Scheduler, source ingestion, listone, Transfermarkt discovery e identity automation: OFF.
+
+10. PUBLIC SMOKE
+GET /api/v1/system/status -> 200.
+GET /api/v1/seasons -> 200.
+GET /actuator/health -> 200, status UP.
+
+11. SECURITY SMOKE
+GET /api/v1/admin/catalog/readiness senza credenziali -> 401.
+Lo stesso namespace con account temporaneo valido -> non 401 e non 500.
+
+12. AUTHENTICATED UNKNOWN ROUTE
+Basic Auth b72_smoke_admin, GET /api/v1/does-not-exist -> 404.
+Body ApiErrorResponse coerente e sanitizzato. Nessun 500, stacktrace, secret o password.
+UNKNOWN_AUTHENTICATED_ROUTE_404=True.
+
+13. AUTHENTICATED READ-ONLY SMOKE
+GET /api/v1/admin/catalog/readiness -> 404 business coerente (readiness assente), non 401/500.
+GET /api/v1/admin/data-freshness -> 200.
+GET /api/v1/admin/automation/latest -> 200.
+Solo GET; nessuna importazione, sync, discovery, enrichment o trigger scheduler.
+
+14. TEMP USER REMOVAL
+Prima della cancellazione verificati username, email bootstrap e ruolo ADMIN.
+DELETE esatta sul solo fantacalcio_intelligence_test: 1 riga.
+Conteggio finale b72_smoke_admin: 0.
+
+15. SERVER STOP
+Processo Java e wrapper avviati dallo smoke arrestati per PID esatti.
+Listener finali 8080/8081: 0. SERVER=SPENTO.
+
+16. DATABASE SAFETY
+Ogni comando Maven/Spring ha usato jdbc:postgresql://localhost:5432/fantacalcio_intelligence_test.
+Ricerca log JDBC verso fantacalcio_intelligence senza suffisso _test: 0.
+automation_runs RUNNING finali: 0. Account temporaneo finale: 0.
+REAL_DB_EVIDENCE=0.
+
+17. FLYWAY
+70 migration validate; schema version 69; nessun checksum mismatch o failure. V68/V69 non modificate.
+
+18. PROTECTED HASHES
+B68LineupScorer.java=E7F2B277AE2CA363DE68CA65BA1A9DE89A3BB445096699ED02CB7479498654EA PASS
+B70ArrivalScoutingService.java=DDA6D86FF514A4E91A73CDE2A67732CA9BA13258D0CE81C5DB4FD7C380F93F77 PASS
+B70PendingScoutingArrivalService.java=609CE9A9138CD880B3EB9BE7788C55F5B683DACF2FE19F8EF46DE13F5B25A9BE PASS
+B70NewListoneArrivalService.java=52A4F04A68C283DBF6BDAFCF81541A8E30C6DF31F20B5AD977E44498D9A0F13B PASS
+
+19. CLEANUP INVENTORY
+Creati e mantenuti b72-cleanup-inventory.txt e b72-cleanup-manifest.txt.
+279 righe: 257 SAFE_DELETE, 22 KEEP, 0 REVIEW_REQUIRED.
+Ogni riga include path, size, SHA-256, classificazione e motivazione.
+CSV/JSON/SQL/dump, dati, script e backup B72 classificati KEEP.
+
+20. SAFE CLEANUP
+Prima della rimozione, path e SHA-256 di tutti i SAFE_DELETE sono stati riverificati.
+Eliminati 257 file intermedi B63-B71 e, una volta vuote, _b67_work, _b68_work, _b69_work, _b70_work, _b71_work.
+Nessuna wildcard delete; file rimossi singolarmente dal manifest.
+Sorgenti eliminati: 0. Test eliminati: 0. Migration eliminate: 0.
+
+21. SPACE FREED
+13.389.329 byte liberati (circa 12,77 MiB).
+
+22. POST CLEANUP TEST
+Prima esecuzione: il backend restituiva correttamente 404, ma un assert testuale sulle cifre "500" ha intercettato casualmente il timestamp; test corretto senza modifica alla produzione.
+Targeted finale: 19 test, 0 failure/error, BUILD SUCCESS.
+Full clean definitiva: 620 test, 0 failure, 0 error, 4 skipped, BUILD SUCCESS.
+Comando definitivo: .\mvnw.cmd -Dmaven.repo.local=C:\Users\user\.m2\repository clean test.
+
+23. GIT DIFF
+git diff --check: PASS, exit 0. Solo avvisi LF/CRLF, nessun whitespace error.
+Nessun commit, push, reset, checkout, clean o rebase.
+
+24. FINAL PROJECT TREE
+Presenti: pom.xml, mvnw, mvnw.cmd, .mvn, src/main, src/test, db/migration, application.properties, application-prod.properties.
+Java main: 308 (invariato).
+Java test: 126 (invariato).
+Migration: 70 (invariato).
+Scheduler: 1; secondo scheduler: false; timezone: Europe/Rome.
+Nessuna URL live Transfermarkt/Fantacalcio osservata nei log B72.
+
+25. FINAL B72 CERTIFICATION
+Il difetto 404 è corretto con fix minimo e copertura HTTP reale. Targeted, full clean, smoke autenticato, cleanup manifest-driven e full clean post-cleanup sono verdi. Backend pronto per il frontend.
+
+SERVER=SPENTO
+BACKEND_BUILD=PASS
+SPRING_CONTEXT=PASS
+SECURITY=PASS
+VALIDATION=PASS
+UNKNOWN_AUTHENTICATED_ROUTE_404=True
+AUTHENTICATED_SMOKE_TEST=PASS
+TEMP_TEST_CREDENTIALS_CREATED=True
+TEMP_TEST_USERNAME=b72_smoke_admin
+TEMP_TEST_PASSWORD_REDACTED=True
+TEMP_TEST_DATABASE_ONLY=True
+TEMP_TEST_USER_REMOVED=True
+FLYWAY=PASS
+TEST_DB_ONLY=True
+REAL_DB_EVIDENCE=0
+LIVE_EXTERNAL_NETWORK_REQUIRED=False
+DATA_QUALITY_AUDIT=PASS
+AUCTION_ENGINE=PASS
+LINEUP_ENGINE=PASS
+CALENDAR_MATCHUP=PASS
+SCOUTING_MARKET=PASS
+PRODUCTION_AUTOMATION=PASS
+SCHEDULER_COUNT=1
+SECOND_SCHEDULER=False
+TIMEZONE=Europe/Rome
+B68_B70_PROTECTED=True
+TARGETED_BUILD_SUCCESS=True
+FULL_CLEAN_BUILD_SUCCESS=True
+RUNTIME_SMOKE_TEST=PASS
+CLEANUP_INVENTORY_CREATED=True
+SAFE_CLEANUP_EXECUTED=True
+SOURCE_FILES_DELETED=0
+TEST_SOURCE_FILES_DELETED=0
+MIGRATIONS_DELETED=0
+POST_CLEANUP_BUILD_SUCCESS=True
+GIT_DIFF_CHECK=PASS
+GIT_COMMIT=NO
+GIT_PUSH=NO
+B72_FINAL_STATUS=CERTIFIED
+BACKEND_STATUS=COMPLETE
+PROJECT_STATE=SAFE
+NEXT=FRONTEND

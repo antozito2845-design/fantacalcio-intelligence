@@ -1,0 +1,78 @@
+FANTACALCIO INTELLIGENCE - F02 FINAL VALIDATION OUTPUT
+Data: 2026-08-22
+Working directory: C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\frontend
+
+TOOLCHAIN
+node --version -> v22.21.0
+npm CLI --version -> 10.9.4
+npx CLI --version -> 10.9.4
+npm ci -> PASS (package-lock riproducibile; 0 vulnerabilita riportate in install)
+
+TYPECHECK
+Comando: npm run typecheck
+Script: tsc -b --pretty false
+Exit code: 0
+Esito: PASS
+
+LINT
+Comando: npm run lint
+Script: eslint . --max-warnings 0
+Exit code: 0
+Warnings consentiti: 0
+Esito: PASS
+
+TEST
+Comando: npm run test:run
+Runner: Vitest v4.1.11
+Test Files: 3 passed (3)
+Tests: 9 passed (9)
+Exit code: 0
+Esito: PASS
+
+Copertura comportamentale dei test foundation:
+1. bootstrap/render app;
+2. home route e contenuto foundation;
+3. route 404 e navigazione home;
+4. env path valido;
+5. env mancante/relativo rifiutato (2 assertion cases);
+6. HTTP success JSON;
+7. HTTP ApiErrorResponse;
+8. HTTP body non JSON;
+9. HTTP network error;
+10. HTTP timeout.
+
+Il conteggio Vitest e 9 test case: alcune verifiche richieste sono aggregate nello
+stesso test case di env/router senza ridurre la copertura dei comportamenti.
+
+BUILD
+Comando: npm run build
+Script: tsc -b && vite build
+Vite: v8.2.2
+Modules transformed: 78
+dist/index.html: 0.53 kB (gzip 0.30 kB)
+dist/assets/index-czQF0eU6.css: 2.06 kB (gzip 0.86 kB)
+dist/assets/index-DSpgB7fw.js: 307.32 kB (gzip 96.99 kB)
+Build time finale: 2.64 s
+Exit code: 0
+Esito: PASS
+
+FORMAT
+Comando: npm run format:check
+Script: prettier --check .
+Output: All matched files use Prettier code style!
+Exit code: 0
+Esito: PASS
+
+GIT/BACKEND SAFETY
+- git status backend finale coincide con l'insieme preesistente osservato prima di F02.
+- git diff --name-only -- backend mostra solo i 22 file tracked gia modificati prima.
+- nessun backend file cancellato.
+- frontend risulta untracked perche non e stato eseguito git add/commit.
+- commit: NO; push: NO.
+
+FINAL MATRIX
+TYPECHECK=PASS
+LINT=PASS
+TESTS=PASS
+BUILD=PASS
+FORMAT_CHECK=PASS

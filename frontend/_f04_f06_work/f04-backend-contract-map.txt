@@ -1,0 +1,76 @@
+F04 BACKEND CONTRACT MAP
+Source: Java controllers, records and SecurityConfiguration read directly on 2026-08-22.
+
+PUBLIC READ SURFACE USED
+GET /api/v1/system/status
+- Response SystemStatusResponse: status, application, version, environment, checkedAt. No nullable fields declared.
+
+GET /api/v1/seasons
+- Response List<SeasonResponse>: id, code, startYear, endYear, current.
+
+GET /api/v1/clubs
+- Response List<ClubResponse>: id, name, shortName, slug, countryCode, active.
+
+GET /api/v1/players
+- Query: season default current; optional search, club, role; page default 0; size default 25.
+- Response PageResponse<PlayerCatalogResponse>: content, page, size, totalElements, totalPages.
+- Player: id, name, club, clubSlug, fantacalcioRole, gazzettaRole, fantamarktRole, sourcesCount. Role sources may be null.
+
+GET /api/v1/players/{playerId}
+- Query season default current; response PlayerDetailResponse. 404 if absent.
+
+GET /api/v1/auction/intelligence-rankings
+- Query season=current, budget=1000, teams=8, defenseModifier=true, optional role/club/maximumPrice/recommendation, excludeUnavailable=true, limit=50.
+- Response AuctionRankingResponse with totalPlayers and players[]; nullable filters, availability and matchday.
+- Validation: budget 150..1000, teams 6..12, limit 1..100.
+
+GET /api/v1/auction/prices/{playerId}; GET /api/v1/auction/rankings
+- Public auction price/ranking alternatives. Query season, budget, teams, defenseModifier and optional role/club.
+
+GET /api/v1/fixtures/matchday/{matchday}
+- Query season=current. Response List<MatchdayFixtureResponse>: fixtureId, matchday, homeClub, awayClub, homeDifficulty, awayDifficulty.
+
+GET /api/v1/fixtures/club/{club}; GET /api/v1/fixtures/club/{club}/matchups
+- Query season=current, fromMatchday=1, toMatchday=5. Responses include score/level and role-aware matchup evidence.
+
+GET /api/v1/lineups/recommended
+- Query season=current, required matchday, optional squadId and unavailablePlayerIds.
+- Response RecommendedLineupResponse: formation/completeness/score, starters, bench, substitutions, warnings. squadId nullable.
+
+GET /api/v1/scouting/arrivals
+- Required season; optional recommendation, role, club.
+- Response List<B70ArrivalScoutingResponse>; previous-club/league/country/transfer fields may be null.
+
+GET /api/v1/pairings
+- Required role; season=current, budget=1000, teams=8, defenseModifier=true, from/to matchday and limit.
+
+GET /api/v1/league/configuration
+- Public read. PUT is ADMIN-only.
+
+AUTHENTICATED SURFACE
+GET /api/v1/squads?season=current
+- HTTP Basic required. Read-only validation endpoint selected for login.
+- 200 credentials valid; 401 credentials invalid. Response List<SquadSummaryResponse>.
+POST/DELETE /api/v1/squad/** and /api/v1/squads/** require authentication.
+/api/v1/auction/sessions/** requires authentication plus OWNER/ADMIN service checks.
+
+ADMIN READ SURFACE USED
+GET /api/v1/admin/catalog/readiness?season=current
+- ROLE_ADMIN. 200 => admin; 403 after successful /squads probe => authenticated non-admin; 401 => invalid.
+- Response CatalogReadinessResponse includes counts, role summary, quality, readiness, freshness, blockers/warnings and issues.
+
+GET /api/v1/admin/data-freshness?season=current
+- Response DataFreshnessResponse with nullable batch timestamps/ages in source entries.
+
+GET /api/v1/admin/automation/latest?season=current
+- Response AutomationRunResponse; run ids, completion and error fields nullable; 404 if no run.
+
+OTHER ADMIN GROUPS AUDITED
+- imports, reconciliation, transfer verification/detection, ingestion, refresh, provisioning, identity readiness/discovery, evaluation and club-strength generation.
+- Mutations remain intentionally unimplemented in F04-F06.
+
+SECURITY AND ERRORS
+- HTTP Basic, stateless, CSRF disabled, explicit CORS allow-list, credentials allowed.
+- Public paths are explicitly allow-listed; /admin/** requires ROLE_ADMIN; remaining unspecified paths require authentication.
+- Expected mapped statuses: 400, 401, 403, 404, 409, defensive 422, 429, 500+.
+- Pagination exists on players. No request/correlation id is exposed by the inspected security/CORS response headers.

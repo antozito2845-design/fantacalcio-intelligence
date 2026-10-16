@@ -1,0 +1,27 @@
+15:30:20 [vite] (client) Pre-transform error: Failed to resolve import "./AuctionCopilot.module.css" from "src/pages/AuctionPage.tsx". Does the file exist?
+  Plugin: vite:import-analysis
+  File: C:/Users/user/OneDrive/Desktop/Fantafoot/fantacalcio-intelligence/frontend/src/pages/AuctionPage.tsx:8:19
+  6  |  import { AppShell } from "@/layouts/AppShell";
+  7  |  import base from "@/features/core/FeaturePage.module.css";
+  8  |  import styles from "./AuctionCopilot.module.css";
+     |                      ^
+  9  |  var _jsxFileName = "C:/Users/user/OneDrive/Desktop/Fantafoot/fantacalcio-intelligence/frontend/src/pages/AuctionPage....
+  10 |  import { jsxDEV as _jsxDEV, Fragment as _Fragment } from "react/jsx-dev-runtime";
+15:30:20 [vite] Internal server error: Failed to resolve import "./AuctionCopilot.module.css" from "src/pages/AuctionPage.tsx". Does the file exist?
+  Plugin: vite:import-analysis
+  File: C:/Users/user/OneDrive/Desktop/Fantafoot/fantacalcio-intelligence/frontend/src/pages/AuctionPage.tsx:8:19
+  6  |  import { AppShell } from "@/layouts/AppShell";
+  7  |  import base from "@/features/core/FeaturePage.module.css";
+  8  |  import styles from "./AuctionCopilot.module.css";
+     |                      ^
+  9  |  var _jsxFileName = "C:/Users/user/OneDrive/Desktop/Fantafoot/fantacalcio-intelligence/frontend/src/pages/AuctionPage....
+  10 |  import { jsxDEV as _jsxDEV, Fragment as _Fragment } from "react/jsx-dev-runtime";
+      at TransformPluginContext._formatLog (file:///C:/Users/user/OneDrive/Desktop/Fantafoot/fantacalcio-intelligence/frontend/node_modules/vite/dist/node/chunks/node.js:31147:39)
+      at TransformPluginContext.error (file:///C:/Users/user/OneDrive/Desktop/Fantafoot/fantacalcio-intelligence/frontend/node_modules/vite/dist/node/chunks/node.js:31144:14)
+      at normalizeUrl (file:///C:/Users/user/OneDrive/Desktop/Fantafoot/fantacalcio-intelligence/frontend/node_modules/vite/dist/node/chunks/node.js:28083:18)
+      at async file:///C:/Users/user/OneDrive/Desktop/Fantafoot/fantacalcio-intelligence/frontend/node_modules/vite/dist/node/chunks/node.js:28153:30
+      at async Promise.all (index 7)
+      at async TransformPluginContext.transform (file:///C:/Users/user/OneDrive/Desktop/Fantafoot/fantacalcio-intelligence/frontend/node_modules/vite/dist/node/chunks/node.js:28119:4)
+      at async EnvironmentPluginContainer.transform (file:///C:/Users/user/OneDrive/Desktop/Fantafoot/fantacalcio-intelligence/frontend/node_modules/vite/dist/node/chunks/node.js:30932:14)
+      at async loadAndTransform (file:///C:/Users/user/OneDrive/Desktop/Fantafoot/fantacalcio-intelligence/frontend/node_modules/vite/dist/node/chunks/node.js:20671:26)
+15:30:20 [vite] (client) [console.error] [vite] Failed to reload /src/pages/AuctionPage.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above)

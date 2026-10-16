@@ -1,0 +1,43 @@
+===== D02.15 REAL DATA SCOPE =====
+=== IMPORT BATCHES ===
+4|FANTACALCIO|players-fantacalcio-2026-2027.csv|FAILED|rows=0
+5|FANTACALCIO|players-fantacalcio-2026-2027.csv|COMPLETED|rows=494
+6|GAZZETTA|players-gazzetta-2026-2027.csv|COMPLETED|rows=577
+7|GAZZETTA|players-gazzetta-2026-2027.csv|COMPLETED|rows=577
+8|FANTACALCIO|players-fantacalcio-2026-2027.csv|COMPLETED|rows=494
+9|GAZZETTA|players-gazzetta-2026-2027.csv|COMPLETED|rows=577
+10|FANTAMARKT|players-fantamarkt-2026-2027.csv|COMPLETED|rows=622
+11|FANTAMARKT|players-fantamarkt-2026-2027.csv|COMPLETED|rows=638
+12|FANTACALCIO|players-fantacalcio-2026-2027.csv|COMPLETED|rows=499
+13|FANTACALCIO|players-fantacalcio-2026-2027.csv|COMPLETED|rows=511
+14|FANTACALCIO|players-fantacalcio-2026-2027.csv|COMPLETED|rows=513
+15|FANTACALCIO|players-fantacalcio-2026-2027.csv|COMPLETED|rows=513
+
+=== STATISTICS IMPORT BATCHES ===
+1|FANTACALCIO|fantacalcio-serie-a-2024-25.csv|COMPLETED|rows=679
+2|FANTACALCIO|fantacalcio-serie-a-2025-26.csv|COMPLETED|rows=663
+3|TRANSFERMARKT|transfermarkt-international-2024-2025.csv|COMPLETED|rows=614
+4|TRANSFERMARKT|transfermarkt-international-2025-2026.csv|COMPLETED|rows=366
+22|TRANSFERMARKT|b66-recovery-transfermarkt-2024-2025.csv|COMPLETED|rows=30
+23|TRANSFERMARKT|b66-recovery-transfermarkt-2025-2026.csv|COMPLETED|rows=29
+
+=== FIXTURE IMPORT BATCHES ===
+1|LEGA_SERIE_A|fixtures-test-import.csv|FAILED|rows=0
+2|LEGA_SERIE_A|fixtures-test-import.csv|COMPLETED|rows=2
+3|LEGA_SERIE_A|serie-a-2026-2027-fixtures.csv|COMPLETED|rows=380
+4|LEGA_SERIE_A|season-membership.csv|PROCESSING|rows=0
+5|LEGA_SERIE_A|fixtures-test.csv|PROCESSING|rows=0
+6|LEGA_SERIE_A|season-membership.csv|PROCESSING|rows=0
+7|LEGA_SERIE_A|fixtures-test.csv|PROCESSING|rows=0
+
+=== PLAYERS CREATED BY SOURCE MAPPING ===
+FANTACALCIO=997
+FANTAMARKT=495
+GAZZETTA=457
+
+=== PLAYER IMPORT ROWS BY BATCH ===
+ERRORE:  la colonna "import_batch_id" non esiste
+RIGA 49:     import_batch_id || '=' || COUNT(*)
+             ^
+PSQL_EXIT_CODE=1
+===== D02.15 END =====

@@ -1,0 +1,32 @@
+F04-F06 VALIDATION OUTPUT
+Date: 2026-08-22
+
+TYPECHECK=PASS
+LINT=PASS
+TESTS=PASS
+Test Files: 7 passed (7)
+Tests: 47 passed (47)
+BUILD=PASS
+Modules transformed: 1962
+FORMAT_CHECK=PASS
+
+RUNTIME
+Backend dev server: started on 8080, probed, stopped.
+Frontend Vite server: started on 127.0.0.1:5173, verified, stopped.
+Public API probes: PASS
+Invalid credentials 401: PASS
+Valid user 200: PASS
+User admin probe 403: PASS
+Admin probe 200: PASS
+Browser real dashboard: PASS
+Browser user login/logout: PASS
+Browser admin capability: PASS
+Browser refresh session loss: PASS
+Browser dark/light: PASS
+Responsive 1440/1280/1024/768/390: PASS, no global overflow
+Important console errors on clean smoke tabs: 0
+CORS/mixed-content/wrong-endpoint errors: 0
+RUNTIME_INTEGRATION_SMOKE=PASS
+
+BACKEND_MODIFIED=False
+BACKEND_FILES_DELETED=0

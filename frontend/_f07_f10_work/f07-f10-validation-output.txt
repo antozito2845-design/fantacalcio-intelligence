@@ -1,0 +1,9 @@
+F07-F10 VALIDATION — 2026-08-22
+TYPECHECK=PASS
+LINT=PASS
+TESTS=PASS — Test Files 8 passed; Tests 55 passed
+BUILD=PASS — Vite 1969 modules; production assets generated
+FORMAT_CHECK=PASS
+RUNTIME_INTEGRATION_SMOKE=PASS
+Runtime evidence: /players 498 real profiles; search Akanji; /players/50 real evaluation; auction real ranking/strategy; players=200; auction=200; valid protected squad=200; invalid credentials=401; protected browser redirect PASS; console errors 0; dark/light PASS; widths 1440/1280/1024/768/390 no uncontrolled overflow after correction.
+Backend server and browser-created tab stopped/closed after verification.

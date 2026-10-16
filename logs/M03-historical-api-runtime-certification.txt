@@ -1,0 +1,148 @@
+
+================================================================================
+M03.4C - HISTORICAL API RUNTIME CERTIFICATION
+================================================================================
+
+================================================================================
+1. BACKEND HEALTH
+================================================================================
+URL=http://localhost:8080/actuator/health
+HTTP_STATUS=200
+BODY={"groups": ["liveness", "readiness"], "status": "UP"}
+
+================================================================================
+2. OPERATIONAL CATALOG REGRESSION
+================================================================================
+URL=http://localhost:8080/api/v1/players?page=0&size=25
+HTTP_STATUS=200
+OPERATIONAL_PAGE=0
+OPERATIONAL_SIZE=25
+OPERATIONAL_TOTAL_ELEMENTS=498
+OPERATIONAL_TOTAL_PAGES=20
+OPERATIONAL_CONTENT_COUNT=25
+OPERATIONAL_SAMPLE=[{"id": 44, "name": "Abankwah", "active": null, "season": null, "club": "Udinese", "role": "D", "appearances": null, "fantasyAverage": null, "goals": null, "assists": null}, {"id": 45, "name": "Aboukhlal", "active": null, "season": null, "club": "Torino", "role": "C", "appearances": null, "fantasyAverage": null, "goals": null, "assists": null}, {"id": 419, "name": "Adams A.", "active": null, "season": null, "club": "Venezia", "role": "A", "appearances": null, "fantasyAverage": null, "goals": null, "assists": null}, {"id": 420, "name": "Adams C.", "active": null, "season": null, "club": "Torino", "role": "A", "appearances": null, "fantasyAverage": null, "goals": null, "assists": null}, {"id": 46, "name": "Addai", "active": null, "season": null, "club": "Como", "role": "C", "appearances": null, "fantasyAverage": null, "goals": null, "assists": null}, {"id": 47, "name": "Adopo", "active": null, "season": null, "club": "Cagliari", "role": "C", "appearances": null, "fantasyAverage": null, "goals": null, "assists": null}, {"id": 48, "name": "Adorante", "active": null, "season": null, "club": "Venezia", "role": "A", "appearances": null, "fantasyAverage": null, "goals": null, "assists": null}, {"id": 421, "name": "Adzic", "active": null, "season": null, "club": "Sassuolo", "role": "C", "appearances": null, "fantasyAverage": null, "goals": null, "assists": null}, {"id": 49, "name": "Ahanor", "active": null, "season": null, "club": "Atalanta", "role": "D", "appearances": null, "fantasyAverage": null, "goals": null, "assists": null}, {"id": 50, "name": "Akanji", "active": null, "season": null, "club": "Inter", "role": "D", "appearances": null, "fantasyAverage": null, "goals": null, "assists": null}]
+OPERATIONAL_CATALOG_498=YES
+
+================================================================================
+3. HISTORICAL 2024/2025
+================================================================================
+URL=http://localhost:8080/api/v1/players/history?season=2024%2F2025&page=0&size=25
+HTTP_STATUS=200
+HISTORY_2425_PAGE=0
+HISTORY_2425_SIZE=25
+HISTORY_2425_TOTAL_ELEMENTS=679
+HISTORY_2425_TOTAL_PAGES=28
+HISTORY_2425_CONTENT_COUNT=25
+HISTORY_2425_SAMPLE=[{"id": 44, "name": "Abankwah", "active": true, "season": "2024/2025", "club": "Udinese", "role": "D", "appearances": 3, "fantasyAverage": 5.83, "goals": 0, "assists": 0}, {"id": 750, "name": "Abdou Harroui", "active": false, "season": "2024/2025", "club": "Verona", "role": "C", "appearances": 10, "fantasyAverage": 6.35, "goals": 1, "assists": 2}, {"id": 683, "name": "Adam Masina", "active": false, "season": "2024/2025", "club": "Torino", "role": "D", "appearances": 25, "fantasyAverage": 6.1, "goals": 1, "assists": 3}, {"id": 420, "name": "Adams C.", "active": true, "season": "2024/2025", "club": "Torino", "role": "A", "appearances": 36, "fantasyAverage": 6.62, "goals": 9, "assists": 4}, {"id": 677, "name": "Ademola Lookman", "active": false, "season": "2024/2025", "club": "Atalanta", "role": "A", "appearances": 31, "fantasyAverage": 7.95, "goals": 15, "assists": 4}, {"id": 47, "name": "Adopo", "active": true, "season": "2024/2025", "club": "Cagliari", "role": "C", "appearances": 35, "fantasyAverage": 5.81, "goals": 1, "assists": 1}, {"id": 893, "name": "Adrian Benedyczak", "active": false, "season": "2024/2025", "club": "Parma", "role": "A", "appearances": 7, "fantasyAverage": 5.79, "goals": 0, "assists": 0}, {"id": 682, "name": "Adrien Tameze", "active": false, "season": "2024/2025", "club": "Torino", "role": "C", "appearances": 15, "fantasyAverage": 5.6, "goals": 0, "assists": 0}, {"id": 421, "name": "Adzic", "active": true, "season": "2024/2025", "club": "Juventus", "role": "C", "appearances": 2, "fantasyAverage": 5.75, "goals": 0, "assists": 0}, {"id": 49, "name": "Ahanor", "active": true, "season": "2024/2025", "club": "Genoa", "role": "D", "appearances": 6, "fantasyAverage": 6.0, "goals": 0, "assists": 0}]
+HISTORY_2425_CERTIFIED=YES
+
+================================================================================
+4. HISTORICAL 2025/2026
+================================================================================
+URL=http://localhost:8080/api/v1/players/history?season=2025%2F2026&page=0&size=25
+HTTP_STATUS=200
+HISTORY_2526_PAGE=0
+HISTORY_2526_SIZE=25
+HISTORY_2526_TOTAL_ELEMENTS=663
+HISTORY_2526_TOTAL_PAGES=27
+HISTORY_2526_CONTENT_COUNT=25
+HISTORY_2526_SAMPLE=[{"id": 756, "name": "Abdelhamid Sabiri", "active": false, "season": "2025/2026", "club": "Fiorentina", "role": "C", "appearances": 1, "fantasyAverage": 6.0, "goals": 0, "assists": 0}, {"id": 750, "name": "Abdou Harroui", "active": false, "season": "2025/2026", "club": "Verona", "role": "C", "appearances": 18, "fantasyAverage": 5.89, "goals": 1, "assists": 0}, {"id": 45, "name": "Aboukhlal", "active": true, "season": "2025/2026", "club": "Torino", "role": "A", "appearances": 12, "fantasyAverage": 5.42, "goals": 0, "assists": 0}, {"id": 683, "name": "Adam Masina", "active": false, "season": "2025/2026", "club": "Torino", "role": "D", "appearances": 5, "fantasyAverage": 5.8, "goals": 0, "assists": 1}, {"id": 420, "name": "Adams C.", "active": true, "season": "2025/2026", "club": "Torino", "role": "A", "appearances": 33, "fantasyAverage": 6.67, "goals": 6, "assists": 3}, {"id": 46, "name": "Addai", "active": true, "season": "2025/2026", "club": "Como", "role": "A", "appearances": 12, "fantasyAverage": 6.54, "goals": 3, "assists": 0}, {"id": 677, "name": "Ademola Lookman", "active": false, "season": "2025/2026", "club": "Atalanta", "role": "A", "appearances": 11, "fantasyAverage": 6.45, "goals": 2, "assists": 0}, {"id": 47, "name": "Adopo", "active": true, "season": "2025/2026", "club": "Cagliari", "role": "C", "appearances": 38, "fantasyAverage": 5.86, "goals": 1, "assists": 1}, {"id": 893, "name": "Adrian Benedyczak", "active": false, "season": "2025/2026", "club": "Parma", "role": "A", "appearances": 13, "fantasyAverage": 6.27, "goals": 1, "assists": 1}, {"id": 974, "name": "Adrian Rus", "active": false, "season": "2025/2026", "club": "Pisa", "role": "D", "appearances": 0, "fantasyAverage": 0.0, "goals": 0, "assists": 0}]
+HISTORY_2526_CERTIFIED=YES
+
+================================================================================
+5. FORMER PLAYER SEARCH
+================================================================================
+URL=http://localhost:8080/api/v1/players/history?season=2024%2F2025&search=Belotti&page=0&size=25
+HTTP_STATUS=200
+FORMER_PLAYER_PAGE=0
+FORMER_PLAYER_SIZE=25
+FORMER_PLAYER_TOTAL_ELEMENTS=1
+FORMER_PLAYER_TOTAL_PAGES=1
+FORMER_PLAYER_CONTENT_COUNT=1
+FORMER_PLAYER_SAMPLE=[{"id": 653, "name": "Andrea Belotti", "active": false, "season": "2024/2025", "club": "Como", "role": "A", "appearances": 13, "fantasyAverage": 6.31, "goals": 2, "assists": 0}]
+FORMER_PLAYER_CERTIFIED=YES
+
+================================================================================
+6. ROLE FILTER
+================================================================================
+URL=http://localhost:8080/api/v1/players/history?season=2024%2F2025&role=A&page=0&size=25
+HTTP_STATUS=200
+ROLE_A_PAGE=0
+ROLE_A_SIZE=25
+ROLE_A_TOTAL_ELEMENTS=131
+ROLE_A_TOTAL_PAGES=6
+ROLE_A_CONTENT_COUNT=25
+ROLE_A_SAMPLE=[{"id": 420, "name": "Adams C.", "active": true, "season": "2024/2025", "club": "Torino", "role": "A", "appearances": 36, "fantasyAverage": 6.62, "goals": 9, "assists": 4}, {"id": 677, "name": "Ademola Lookman", "active": false, "season": "2024/2025", "club": "Atalanta", "role": "A", "appearances": 31, "fantasyAverage": 7.95, "goals": 15, "assists": 4}, {"id": 893, "name": "Adrian Benedyczak", "active": false, "season": "2024/2025", "club": "Parma", "role": "A", "appearances": 7, "fantasyAverage": 5.79, "goals": 0, "assists": 0}, {"id": 625, "name": "Alberto Cerri", "active": false, "season": "2024/2025", "club": "Como", "role": "A", "appearances": 3, "fantasyAverage": 5.33, "goals": 0, "assists": 0}, {"id": 888, "name": "Alessandro Gabrielloni", "active": false, "season": "2024/2025", "club": "Como", "role": "A", "appearances": 5, "fantasyAverage": 6.9, "goals": 1, "assists": 1}, {"id": 597, "name": "Alexis Sanchez", "active": false, "season": "2024/2025", "club": "Udinese", "role": "A", "appearances": 12, "fantasyAverage": 5.75, "goals": 0, "assists": 0}, {"id": 881, "name": "Ali Jasim", "active": false, "season": "2024/2025", "club": "Como", "role": "A", "appearances": 0, "fantasyAverage": 0.0, "goals": 0, "assists": 0}, {"id": 53, "name": "Almqvist", "active": true, "season": "2024/2025", "club": "Parma", "role": "A", "appearances": 26, "fantasyAverage": 5.9, "goals": 1, "assists": 1}, {"id": 800, "name": "Amin Sarr", "active": false, "season": "2024/2025", "club": "Verona", "role": "A", "appearances": 31, "fantasyAverage": 6.11, "goals": 4, "assists": 0}, {"id": 959, "name": "Amine Salama", "active": false, "season": "2024/2025", "club": "Torino", "role": "A", "appearances": 0, "fantasyAverage": 0.0, "goals": 0, "assists": 0}]
+ROLE_FILTER_CERTIFIED=YES
+
+================================================================================
+7. PAGINATION
+================================================================================
+PAGE0_PAGE=0
+PAGE0_SIZE=10
+PAGE0_TOTAL_ELEMENTS=679
+PAGE0_TOTAL_PAGES=68
+PAGE0_CONTENT_COUNT=10
+PAGE0_SAMPLE=[{"id": 44, "name": "Abankwah", "active": true, "season": "2024/2025", "club": "Udinese", "role": "D", "appearances": 3, "fantasyAverage": 5.83, "goals": 0, "assists": 0}, {"id": 750, "name": "Abdou Harroui", "active": false, "season": "2024/2025", "club": "Verona", "role": "C", "appearances": 10, "fantasyAverage": 6.35, "goals": 1, "assists": 2}, {"id": 683, "name": "Adam Masina", "active": false, "season": "2024/2025", "club": "Torino", "role": "D", "appearances": 25, "fantasyAverage": 6.1, "goals": 1, "assists": 3}, {"id": 420, "name": "Adams C.", "active": true, "season": "2024/2025", "club": "Torino", "role": "A", "appearances": 36, "fantasyAverage": 6.62, "goals": 9, "assists": 4}, {"id": 677, "name": "Ademola Lookman", "active": false, "season": "2024/2025", "club": "Atalanta", "role": "A", "appearances": 31, "fantasyAverage": 7.95, "goals": 15, "assists": 4}, {"id": 47, "name": "Adopo", "active": true, "season": "2024/2025", "club": "Cagliari", "role": "C", "appearances": 35, "fantasyAverage": 5.81, "goals": 1, "assists": 1}, {"id": 893, "name": "Adrian Benedyczak", "active": false, "season": "2024/2025", "club": "Parma", "role": "A", "appearances": 7, "fantasyAverage": 5.79, "goals": 0, "assists": 0}, {"id": 682, "name": "Adrien Tameze", "active": false, "season": "2024/2025", "club": "Torino", "role": "C", "appearances": 15, "fantasyAverage": 5.6, "goals": 0, "assists": 0}, {"id": 421, "name": "Adzic", "active": true, "season": "2024/2025", "club": "Juventus", "role": "C", "appearances": 2, "fantasyAverage": 5.75, "goals": 0, "assists": 0}, {"id": 49, "name": "Ahanor", "active": true, "season": "2024/2025", "club": "Genoa", "role": "D", "appearances": 6, "fantasyAverage": 6.0, "goals": 0, "assists": 0}]
+PAGE1_PAGE=1
+PAGE1_SIZE=10
+PAGE1_TOTAL_ELEMENTS=679
+PAGE1_TOTAL_PAGES=68
+PAGE1_CONTENT_COUNT=10
+PAGE1_SAMPLE=[{"id": 625, "name": "Alberto Cerri", "active": false, "season": "2024/2025", "club": "Como", "role": "A", "appearances": 3, "fantasyAverage": 5.33, "goals": 0, "assists": 0}, {"id": 944, "name": "Alberto Costa", "active": false, "season": "2024/2025", "club": "Juventus", "role": "D", "appearances": 8, "fantasyAverage": 5.81, "goals": 0, "assists": 0}, {"id": 813, "name": "Alberto Dossena", "active": false, "season": "2024/2025", "club": "Como", "role": "D", "appearances": 23, "fantasyAverage": 5.91, "goals": 0, "assists": 2}, {"id": 610, "name": "Alberto Grassi", "active": false, "season": "2024/2025", "club": "Empoli", "role": "C", "appearances": 28, "fantasyAverage": 5.71, "goals": 1, "assists": 0}, {"id": 920, "name": "Alberto Manzoni", "active": false, "season": "2024/2025", "club": "Atalanta", "role": "C", "appearances": 0, "fantasyAverage": 0.0, "goals": 0, "assists": 0}, {"id": 886, "name": "Alessandro Bellemo", "active": false, "season": "2024/2025", "club": "Como", "role": "C", "appearances": 0, "fantasyAverage": 0.0, "goals": 0, "assists": 0}, {"id": 663, "name": "Alessandro Berardi", "active": false, "season": "2024/2025", "club": "Verona", "role": "P", "appearances": 0, "fantasyAverage": 0.0, "goals": 0, "assists": 0}, {"id": 736, "name": "Alessandro Bianco", "active": false, "season": "2024/2025", "club": "Monza", "role": "C", "appearances": 35, "fantasyAverage": 5.7, "goals": 1, "assists": 0}, {"id": 962, "name": "Alessandro Calligaris", "active": false, "season": "2024/2025", "club": "Inter", "role": "P", "appearances": 0, "fantasyAverage": 0.0, "goals": 0, "assists": 0}, {"id": 868, "name": "Alessandro Dellavalle", "active": false, "season": "2024/2025", "club": "Torino", "role": "D", "appearances": 0, "fantasyAverage": 0.0, "goals": 0, "assists": 0}]
+PAGE0_IDS=[44, 750, 683, 420, 677, 47, 893, 682, 421, 49]
+PAGE1_IDS=[625, 944, 813, 610, 920, 886, 663, 736, 962, 868]
+HISTORICAL_PAGINATION_CERTIFIED=YES
+
+================================================================================
+8. CURRENT SEASON EXCLUSION
+================================================================================
+URL=http://localhost:8080/api/v1/players/history?season=2026%2F2027&page=0&size=25
+HTTP_STATUS=200
+CURRENT_SEASON_HISTORY_PAGE=0
+CURRENT_SEASON_HISTORY_SIZE=25
+CURRENT_SEASON_HISTORY_TOTAL_ELEMENTS=0
+CURRENT_SEASON_HISTORY_TOTAL_PAGES=0
+CURRENT_SEASON_HISTORY_CONTENT_COUNT=0
+CURRENT_SEASON_HISTORY_SAMPLE=[]
+CURRENT_SEASON_EXCLUDED=YES
+
+================================================================================
+9. MISSING SEASON CONTRACT
+================================================================================
+URL=http://localhost:8080/api/v1/players/history?page=0&size=25
+HTTP_STATUS=400
+BODY={"timestamp": "2026-08-29T13:52:43.706482Z", "status": 400, "error": "Bad Request", "message": "Parametro richiesta mancante", "path": "/api/v1/players/history"}
+MISSING_SEASON_RETURNS_400=YES
+
+================================================================================
+10. FINAL GIT STATUS
+================================================================================
+ M frontend/src/features/core/SquadManagementFlows.test.tsx
+ M frontend/src/layouts/GlobalSearch.tsx
+?? FANTAFOOT-FINAL-STATE.txt
+?? FANTAFOOT-FULL-AUDIT.txt
+?? FANTAFOOT-TARGETED-AUDIT.txt
+?? backend/src/main/java/it/fantacalciointelligence/backend/player/HistoricalPlayerCatalogController.java
+?? backend/src/main/java/it/fantacalciointelligence/backend/player/HistoricalPlayerCatalogResponse.java
+?? backend/src/main/java/it/fantacalciointelligence/backend/player/HistoricalPlayerCatalogService.java
+?? backend/src/test/java/it/fantacalciointelligence/backend/player/HistoricalPlayerCatalogServiceTest.java
+?? project-audit-current.txt
+?? project-file-list.txt
+
+================================================================================
+M03.4C FINAL SUMMARY
+================================================================================
+BACKEND_HEALTH_OK=YES
+OPERATIONAL_CATALOG_498=YES
+HISTORY_2425_CERTIFIED=YES
+HISTORY_2526_CERTIFIED=YES
+FORMER_PLAYER_CERTIFIED=YES
+ROLE_FILTER_CERTIFIED=YES
+HISTORICAL_PAGINATION_CERTIFIED=YES
+CURRENT_SEASON_EXCLUDED=YES
+MISSING_SEASON_RETURNS_400=YES
+DATABASE_MUTATIONS=NONE
+FILES_MODIFIED_BY_CERTIFICATION=NONE
+ALL_GREEN=YES
+LOG_FILE=C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\logs\M03-historical-api-runtime-certification.txt

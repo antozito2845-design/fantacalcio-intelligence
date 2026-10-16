@@ -1,0 +1,545 @@
+﻿
+
+================================================================================
+M10.1 AUCTION TRANSFORMATION AUDIT
+================================================================================
+MODE=READ_ONLY
+FILES_MODIFIED=NONE
+DATABASE_MUTATIONS=NONE
+MIGRATIONS_CREATED=NONE
+COMMIT_CREATED=NO
+PUSH_EXECUTED=NO
+ORACLE_CONTACTED=NO
+
+================================================================================
+1. GIT SAFETY
+================================================================================
+BRANCH=stabilization/m01-local-green
+HEAD=a40557e4132189fbb7aa02e869cf126072e03945
+
+================================================================================
+2. FRONTEND AUCTION INVENTORY
+================================================================================
+FRONTEND_MATCH=frontend\dist\assets\index-QW6ewS2w.css|strategy
+FRONTEND_MATCH=frontend\node_modules\@asamuzakjp\dom-selector\types\js\finder.d.ts|strategy
+FRONTEND_MATCH=frontend\node_modules\@eslint\eslintrc\node_modules\globals\index.d.ts|budget
+FRONTEND_MATCH=frontend\node_modules\@eslint\eslintrc\node_modules\globals\index.d.ts|strategy
+FRONTEND_MATCH=frontend\node_modules\@eslint\object-schema\dist\esm\index.d.ts|strategy
+FRONTEND_MATCH=frontend\node_modules\@eslint\object-schema\dist\esm\types.d.ts|strategy
+FRONTEND_MATCH=frontend\node_modules\@eslint\object-schema\dist\esm\types.ts|strategy
+FRONTEND_MATCH=frontend\node_modules\@mswjs\interceptors\src\interceptors\fetch\utils\decompression.ts|strategy
+FRONTEND_MATCH=frontend\node_modules\@types\node\dgram.d.ts|strategy
+FRONTEND_MATCH=frontend\node_modules\@types\node\http.d.ts|strategy
+FRONTEND_MATCH=frontend\node_modules\@types\node\http2.d.ts|strategy
+FRONTEND_MATCH=frontend\node_modules\@types\node\stream.d.ts|strategy
+FRONTEND_MATCH=frontend\node_modules\@types\node\stream\web.d.ts|strategy
+FRONTEND_MATCH=frontend\node_modules\@types\node\web-globals\streams.d.ts|strategy
+FRONTEND_MATCH=frontend\node_modules\@types\node\zlib.d.ts|strategy
+FRONTEND_MATCH=frontend\node_modules\@types\node\zlib\iter.d.ts|strategy
+FRONTEND_MATCH=frontend\node_modules\@typescript-eslint\utils\dist\ts-eslint\eslint\ESLintShared.d.ts|strategy
+FRONTEND_MATCH=frontend\node_modules\@vitest\pretty-format\dist\index.d.ts|budget
+FRONTEND_MATCH=frontend\node_modules\entities\dist\index.d.ts|strategy
+FRONTEND_MATCH=frontend\node_modules\entities\src\index.ts|strategy
+FRONTEND_MATCH=frontend\node_modules\eslint\lib\types\index.d.ts|strategy
+FRONTEND_MATCH=frontend\node_modules\globals\index.d.ts|strategy
+FRONTEND_MATCH=frontend\node_modules\lightningcss\node\ast.d.ts|strategy
+FRONTEND_MATCH=frontend\node_modules\msw\lib\core\experimental\compat.d.ts|strategy
+FRONTEND_MATCH=frontend\node_modules\msw\lib\core\experimental\on-unhandled-frame.d.ts|strategy
+FRONTEND_MATCH=frontend\node_modules\msw\lib\core\index.d.ts|strategy
+FRONTEND_MATCH=frontend\node_modules\msw\lib\core\on-unhandled-frame-0KmwUmeV.d.ts|strategy
+FRONTEND_MATCH=frontend\node_modules\msw\lib\core\sharedOptions.d.ts|strategy
+FRONTEND_MATCH=frontend\node_modules\msw\lib\core\utils\request\onUnhandledRequest.d.ts|strategy
+FRONTEND_MATCH=frontend\node_modules\msw\lib\core\ws\handleWebSocketEvent.d.ts|strategy
+FRONTEND_MATCH=frontend\node_modules\msw\src\core\experimental\compat.ts|strategy
+FRONTEND_MATCH=frontend\node_modules\msw\src\core\experimental\on-unhandled-frame.test.ts|strategy
+FRONTEND_MATCH=frontend\node_modules\msw\src\core\experimental\on-unhandled-frame.ts|strategy
+FRONTEND_MATCH=frontend\node_modules\msw\src\core\index.ts|strategy
+FRONTEND_MATCH=frontend\node_modules\msw\src\core\sharedOptions.ts|strategy
+FRONTEND_MATCH=frontend\node_modules\msw\src\core\utils\request\onUnhandledRequest.test.ts|strategy
+FRONTEND_MATCH=frontend\node_modules\msw\src\core\utils\request\onUnhandledRequest.ts|strategy
+FRONTEND_MATCH=frontend\node_modules\msw\src\core\ws\handleWebSocketEvent.ts|strategy
+FRONTEND_MATCH=frontend\node_modules\react-router\dist\development\data-CjO11-hU.d.ts|strategy
+FRONTEND_MATCH=frontend\node_modules\react-router\dist\development\index.d.ts|strategy
+FRONTEND_MATCH=frontend\node_modules\react-router\dist\development\index-react-server.d.ts|strategy
+FRONTEND_MATCH=frontend\node_modules\react-router\dist\development\index-react-server-client-3ykjivgQ.d.ts|strategy
+FRONTEND_MATCH=frontend\node_modules\react-router\dist\development\instrumentation-Dkmpzd13.d.ts|strategy
+FRONTEND_MATCH=frontend\node_modules\react-router\dist\development\lib\types\internal.d.ts|strategy
+FRONTEND_MATCH=frontend\node_modules\react-router\dist\production\data-CjO11-hU.d.ts|strategy
+
+================================================================================
+3. ROUTES AND NAV
+================================================================================
+
+================================================================================
+4. AUCTION PAGES
+================================================================================
+PAGE_FILE=frontend\src\pages\AuctionPage.tsx
+  import { useQuery } from '@tanstack/react-query';
+  const ranking = useQuery({
+  queryKey: ['auction-ranking', role],
+  queryFn: ({ signal }) => featureApi.ranking(role, signal),
+  const strategy = useQuery({
+  queryKey: ['auction-strategy'],
+  queryFn: ({ signal }) => featureApi.strategy(signal),
+  <span className={styles.eyebrow}>Decision engine</span>
+  <Link className={styles.button} to="/auction/live">
+  <h2>Ranking</h2>
+  {ranking.isPending ? (
+  <p>Calcolo ranking…</p>
+  ) : ranking.isError ? (
+  Ranking non disponibile.{' '}
+  <button className={styles.button} onClick={() => void ranking.refetch()}>
+  </button>
+  ) : ranking.data.players.length === 0 ? (
+  {ranking.data.players.map((p) => (
+  <tr key={p.playerId}>
+  <Link to={`/players/${p.playerId}`} state={{ from: '/auction' }}>
+  {p.playerName}
+  {p.minimumPrice}–{p.maximumPrice}
+  <td className={styles.score}>{p.recommendedPrice}</td>
+  {strategy.isPending ? (
+  ) : strategy.isError ? (
+  <p>{strategy.data.strategySummary}</p>
+  {strategy.data.roles.map((r) => (
+  <strong>{r.allocatedBudget} crediti</strong>
+  <small>{r.budgetPercentage}% del budget</small>
+  {strategy.data.globalWarnings.length > 0 && (
+  {strategy.data.globalWarnings.map((w) => (
+PAGE_FILE=frontend\src\pages\LiveAuctionPage.test.tsx
+  import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+  const session = {
+  totalBudget: 1000,
+  playerStateInitialized: false,
+  currentPlayerId: null as number | null,
+  currentPrice: null as number | null,
+  const players = [
+  { playerId: 11, playerName: 'Giocatore reale', role: 'A', availability: 'AVAILABLE' },
+  { playerId: 12, playerName: 'Alternativa reale', role: 'D', availability: 'AVAILABLE' },
+  interface TestPurchase {
+  sessionId: number;
+  playerId: number;
+  paidPrice: number | null;
+  session: typeof session;
+  spentBudget: number;
+  remainingBudget: number;
+  purchases: TestPurchase[];
+  players: Array<(typeof players)[number]>;
+  function snapshot(overrides: Partial<typeof session> = {}): TestSnapshot {
+  session: { ...session, ...overrides },
+  spentBudget: 879,
+  remainingBudget: 121,
+  purchases: [],
+  players,
+  function renderSession() {
+  const queryClient = new QueryClient({
+  defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
+  <QueryClientProvider client={queryClient}>
+  <Route path="/auction/live/:sessionId" element={<LiveAuctionPage />} />
+  </QueryClientProvider>,
+  it('attiva una sessione DRAFT e impedisce il doppio submit', async () => {
+  http.get('/api/v1/auction/sessions/7/state', () => HttpResponse.json(current)),
+  http.post('/api/v1/auction/sessions/7/activate', ({ request }) => {
+  current = snapshot({ status: 'ACTIVE', playerStateInitialized: true, version: 1 });
+  return HttpResponse.json(current.session);
+  renderSession();
+  const activate = await screen.findByRole('button', { name: 'Attiva sessione' });
+  it('nomina, valuta e aggiudica aggiornando budget e storico', async () => {
+  let current = snapshot({ status: 'ACTIVE', playerStateInitialized: true, version: 1 });
+  http.get('/api/v1/auction/sessions/7/state', () => HttpResponse.json(current)),
+  http.post('/api/v1/auction/sessions/7/nomination', async ({ request }) => {
+  expect(await request.json()).toEqual({ playerId: 11, currentPrice: 2 });
+  session: { ...current.session, currentPlayerId: 11, currentPrice: 2, version: 2 },
+  return HttpResponse.json(current.session);
+  http.post('/api/v1/auction/sessions/7/decision', async ({ request }) => {
+  currentPlayerId: 11,
+  currentPlayerName: 'Giocatore reale',
+  currentPrice: 2,
+  remainingBudget: 121,
+  budgetAfterBid: 118,
+  priceZone: 'VALUE_ZONE',
+  reasons: ['BUDGET_SAFE'],
+  http.post('/api/v1/auction/sessions/7/purchases', async ({ request }) => {
+  expect(body).toMatchObject({ playerId: 11, buyerType: 'USER', paidPrice: 3 });
+  session: { ...current.session, currentPlayerId: null, currentPrice: null, version: 3 },
+  spentBudget: 882,
+  remainingBudget: 118,
+  purchases: [
+  sessionId: 7,
+  playerId: 11,
+  paidPrice: 3,
+  players: players.map((player) =>
+  player.playerId === 11 ? { ...player, availability: 'ACQUIRED_BY_USER' } : player,
+  return HttpResponse.json(current.purchases[0]);
+  renderSession();
+  await userEvent.clear(await screen.findByLabelText('Prezzo corrente nomination'));
+  await userEvent.type(screen.getByLabelText('Prezzo corrente nomination'), '2');
+  await userEvent.click(screen.getByRole('button', { name: 'Registra nomination' }));
+  await userEvent.click(screen.getByRole('button', { name: 'Valuta offerta' }));
+  expect(screen.getByText(/budget dopo offerta 118/)).toBeVisible();
+  await userEvent.click(screen.getByRole('button', { name: 'Registra aggiudicazione' }));
+  expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  it('mostra il rifiuto backend per offerta troppo bassa o oltre budget', async () => {
+  playerStateInitialized: true,
+  currentPlayerId: 11,
+  currentPrice: 5,
+  http.get('/api/v1/auction/sessions/7/state', () => HttpResponse.json(current)),
+  http.post('/api/v1/auction/sessions/7/decision', () => {
+  return apiError(400, "proposedBid non puo' essere inferiore a currentPrice", '/decision');
+  return apiError(400, 'proposedBid supera il budget residuo', '/decision');
+  currentPlayerId: 11,
+  currentPlayerName: 'Giocatore reale',
+  currentPrice: 5,
+  remainingBudget: 121,
+  budgetAfterBid: 116,
+  priceZone: 'VALUE_ZONE',
+  reasons: ['BUDGET_SAFE'],
+  renderSession();
+  await userEvent.click(screen.getByRole('button', { name: 'Valuta offerta' }));
+  expect(await screen.findByRole('alert')).toHaveTextContent('inferiore a currentPrice');
+  await userEvent.click(screen.getByRole('button', { name: 'Valuta offerta' }));
+  expect(await screen.findByRole('alert')).toHaveTextContent('supera il budget residuo');
+  await userEvent.click(screen.getByRole('button', { name: 'Valuta offerta' }));
+  expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  it('spiega sessione assente, non autorizzata o backend irraggiungibile', async () => {
+  http.get('/api/v1/auction/sessions/7/state', () =>
+  apiError(404, 'Sessione asta non trovata', '/api/v1/auction/sessions/7/state'),
+  renderSession();
+  expect(await screen.findByRole('alert')).toHaveTextContent('Sessione asta non trovata');
+  it('chiude una sessione ACTIVE e rende lo stato non modificabile', async () => {
+
+================================================================================
+5. FRONTEND AUCTION API
+================================================================================
+API_FILE=frontend\src\api\dashboardApi.ts
+  query('/auction/intelligence-rankings', { season, budget: 500, teams: 8, limit: 5 }),
+API_FILE=frontend\src\features\core\api.test.ts
+  http.get('/api/v1/auction/intelligence-rankings', ({ request }) => {
+  http.get('/api/v1/auction/strategy', () =>
+  strategySummary: 'Bilanciata',
+  expect((await featureApi.strategy()).globalWarnings).toEqual(['Vincolo reale']);
+  http.post('/api/v1/auction/sessions', async ({ request }) => {
+  http.post('/api/v1/auction/sessions/4/activate', ({ request }) => {
+  http.post('/api/v1/auction/sessions/4/nomination', async ({ request }) => {
+  http.post('/api/v1/auction/sessions/4/decision', async ({ request }) => {
+  http.post('/api/v1/auction/sessions/4/purchases', async ({ request }) => {
+  http.post('/api/v1/auction/sessions/4/complete', () =>
+  expect((await featureApi.sessionDecision(() => 'Basic test', '4', 4)).action).toBe('RILANCIA');
+API_FILE=frontend\src\features\core\api.ts
+  export const strategySchema = z.object({
+  strategySummary: z.string(),
+  export const sessionSchema = z.object({
+  export const purchaseSchema = z.object({
+  export const sessionDecisionSchema = z
+  session: sessionSchema,
+  purchases: z.array(purchaseSchema),
+  `/auction/intelligence-rankings?${params({ role: role || undefined, limit: 100 })}`,
+
+================================================================================
+BACKEND_FILE=backend\src\main\java\it\fantacalciointelligence\backend\auction\AuctionApiPriceService.java
+  public class AuctionApiPriceService {
+  private final B67AuctionPriceModelService modelService;
+  public AuctionApiPriceService(
+  B67AuctionPriceModelService modelService
+  public AuctionPriceResponse calculate(
+  Long playerId,
+  int budget,
+  B67AuctionPriceModelService.AuctionPriceModelResult result =
+  budget,
+  item.playerId().equals(
+  playerId
+  if (!"PRICED".equals(result.pricingStatus())) {
+  budget,
+  * Used by ranking and downstream intelligence.
+  public List<AuctionPriceResponse> calculateAll(
+  int budget,
+  budget,
+  "PRICED".equals(
+  budget,
+  private AuctionPriceResponse toResponse(
+  B67AuctionPriceModelService.AuctionPriceModelResult result,
+  int budget,
+  B67AuctionPriceModelService.ALGORITHM_VERSION,
+  result.auctionRoleRank(),
+  result.auctionRolePercentile(),
+  return new AuctionPriceResponse(
+  result.playerId(),
+  result.playerName(),
+  result.role(),
+  budget,
+  result.minimumPrice(),
+  result.recommendedPrice(),
+  result.maximumPrice(),
+  result.budgetPercentage(),
+BACKEND_FILE=backend\src\main\java\it\fantacalciointelligence\backend\auction\AuctionPriceController.java
+  @RequestMapping("/api/v1/auction")
+  public class AuctionPriceController {
+  private final AuctionApiPriceService auctionApiPriceService;
+  private final AuctionRankingService auctionRankingService;
+  public AuctionPriceController(
+  AuctionApiPriceService auctionApiPriceService,
+  AuctionRankingService auctionRankingService
+  this.auctionApiPriceService = auctionApiPriceService;
+  this.auctionRankingService = auctionRankingService;
+  @GetMapping("/prices/{playerId}")
+  public AuctionPriceResponse calculatePrice(
+  @PathVariable Long playerId,
+  int budget,
+  return auctionApiPriceService.calculate(
+  playerId,
+  budget,
+  @GetMapping("/rankings")
+  public List<AuctionRankingResponse> calculateRanking(
+  int budget,
+  String role,
+  return auctionRankingService.calculateRanking(
+  budget,
+  role,
+BACKEND_FILE=backend\src\main\java\it\fantacalciointelligence\backend\auction\AuctionPriceModelService.java
+  public class AuctionPriceModelService {
+  "B51_AUCTION_PRICE_V1";
+  public AuctionPriceModelService(JdbcClient jdbcClient) {
+  public List<AuctionPriceModelResult> calculateAll(
+  int budget,
+  budget,
+  List<PlayerInput> players =
+  loadPlayers(seasonCode);
+  if (players.isEmpty()) {
+  Map<String, List<PlayerInput>> byRole =
+  groupByRole(players);
+  List<AuctionPriceModelResult> results =
+  for (String role : List.of("P", "D", "C", "A")) {
+  List<PlayerInput> rolePlayers =
+  byRole.getOrDefault(
+  role,
+  if (rolePlayers.isEmpty()) {
+  calculateRole(
+  role,
+  rolePlayers,
+  budget,
+  private List<AuctionPriceModelResult> calculateRole(
+  String role,
+  List<PlayerInput> players,
+  int budget,
+  List<PlayerInput> rankedPlayers =
+  players.stream()
+  .filter(player ->
+  player.rankingStatus()
+  .filter(player ->
+  player.b50RolePercentile()
+  List<PlayerInput> insufficientPlayers =
+  players.stream()
+  .filter(player ->
+  player.rankingStatus()
+  rankedPlayers
+  rankedPlayers.stream()
+  .map(PlayerInput::fantasyMarketValue)
+  List<ScoredPlayer> scored =
+  for (PlayerInput player : rankedPlayers) {
+  player.playerId()
+  player.fantasyMarketValue() == null
+  player.b50RolePercentile();
+  player.fantasyMarketValue()
+  b50Weight(role);
+  player.b50RolePercentile()
+  new ScoredPlayer(
+  player,
+  ScoredPlayer::auctionScore
+  item.player()
+  .playerId()
+  teams * roleSlots(role);
+  List<ScoredPlayer> contenders =
+  double leagueRoleBudget =
+  budget
+  * roleAllocation(
+  role,
+  double budgetFactor =
+  budget / 1000.0;
+  Map<Long, Double> provisionalPrices =
+  for (ScoredPlayer player : contenders) {
+  double rawPrice =
+  interpolatePrice(
+  role,
+  player.auctionScore()
+  rawPrice *= budgetFactor;
+  rawPrice *= teamFactor;
+  provisionalPrices.put(
+  player.player()
+  .playerId(),
+  rawPrice
+  provisionalPrices
+  boolean budgetCapApplied =
+  provisionalTotal > leagueRoleBudget;
+  if (budgetCapApplied) {
+  provisionalPrices.size();
+  double distributableBudget =
+  leagueRoleBudget
+  provisionalPrices
+  .mapToDouble(price ->
+  price - 1
+  ? distributableBudget
+  provisionalPrices.replaceAll(
+  (playerId, price) ->
+  price - 1
+  Map<Long, Integer> recommendedPrices =
+  * Players outside the auction-market slots still receive
+  * the minimum actionable price of 1 credit.
+  for (ScoredPlayer scoredPlayer : scored) {
+  recommendedPrices.put(
+  scoredPlayer.player()
+  .playerId(),
+  if (budgetCapApplied) {
+  int integerBudgetTarget =
+  leagueRoleBudget
+  List<PriceRemainder> remainders =
+  for (ScoredPlayer contender : contenders) {
+  Long playerId =
+  contender.player()
+  .playerId();
+  double exactPrice =
+  provisionalPrices.get(
+  playerId
+  int floorPrice =
+  exactPrice
+  recommendedPrices.put(
+  playerId,
+  floorPrice
+  assignedCredits += floorPrice;
+  new PriceRemainder(
+  playerId,
+  exactPrice
+  - floorPrice,
+  integerBudgetTarget
+  PriceRemainder::fraction
+  PriceRemainder::auctionScore,
+  PriceRemainder::playerId
+  Long playerId =
+  .playerId();
+  recommendedPrices.computeIfPresent(
+  playerId,
+  (ignored, currentPrice) ->
+
+================================================================================
+7. EXISTING INTELLIGENCE FEATURES
+================================================================================
+BUDGET_MODEL_FILES=66
+  backend\src\main\java\it\fantacalciointelligence\backend\auction\AuctionApiPriceService.java
+  backend\src\main\java\it\fantacalciointelligence\backend\auction\AuctionPriceController.java
+  backend\src\main\java\it\fantacalciointelligence\backend\auction\AuctionPriceModelService.java
+  backend\src\main\java\it\fantacalciointelligence\backend\auction\AuctionPricePersistenceService.java
+  backend\src\main\java\it\fantacalciointelligence\backend\auction\AuctionPriceResponse.java
+  backend\src\main\java\it\fantacalciointelligence\backend\auction\AuctionPriceService.java
+  backend\src\main\java\it\fantacalciointelligence\backend\auction\AuctionRankingResponse.java
+  backend\src\main\java\it\fantacalciointelligence\backend\auction\AuctionRankingService.java
+  backend\src\main\java\it\fantacalciointelligence\backend\auction\B67AuctionPriceModelService.java
+  backend\src\main\java\it\fantacalciointelligence\backend\auction\B67AuctionPricePersistenceService.java
+  backend\src\main\java\it\fantacalciointelligence\backend\auctionlive\LiveAuctionRoleStrategyResponse.java
+  backend\src\main\java\it\fantacalciointelligence\backend\auctionlive\LiveAuctionStrategyResponse.java
+  backend\src\main\java\it\fantacalciointelligence\backend\auctionlive\LiveAuctionStrategyService.java
+  backend\src\main\java\it\fantacalciointelligence\backend\auctionranking\AuctionRankingController.java
+  backend\src\main\java\it\fantacalciointelligence\backend\auctionranking\AuctionRankingItemResponse.java
+  backend\src\main\java\it\fantacalciointelligence\backend\auctionranking\AuctionRankingResponse.java
+  backend\src\main\java\it\fantacalciointelligence\backend\auctionranking\IntelligentAuctionRankingService.java
+  backend\src\main\java\it\fantacalciointelligence\backend\auctionstate\AuctionContextAdapter.java
+  backend\src\main\java\it\fantacalciointelligence\backend\auctionstate\AuctionPurchaseService.java
+  backend\src\main\java\it\fantacalciointelligence\backend\auctionstate\AuctionStateDtos.java
+  backend\src\main\java\it\fantacalciointelligence\backend\auctionstate\AuctionStateService.java
+  backend\src\main\java\it\fantacalciointelligence\backend\auctionstrategy\AuctionRoleStrategyResponse.java
+  backend\src\main\java\it\fantacalciointelligence\backend\auctionstrategy\AuctionStrategyController.java
+  backend\src\main\java\it\fantacalciointelligence\backend\auctionstrategy\AuctionStrategyResponse.java
+  backend\src\main\java\it\fantacalciointelligence\backend\auctionstrategy\IntelligentAuctionStrategyService.java
+  backend\src\main\java\it\fantacalciointelligence\backend\ingestion\AutomatedDataUpdateService.java
+  backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceController.java
+  backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceResponse.java
+  backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceService.java
+  backend\src\main\java\it\fantacalciointelligence\backend\league\LeagueConfigurationResponse.java
+ROLE_SLOT_FILES=45
+  backend\src\main\java\it\fantacalciointelligence\backend\auction\AuctionApiPriceService.java
+  backend\src\main\java\it\fantacalciointelligence\backend\auction\AuctionPriceModelService.java
+  backend\src\main\java\it\fantacalciointelligence\backend\auction\AuctionPriceService.java
+  backend\src\main\java\it\fantacalciointelligence\backend\auction\B67AuctionPriceModelService.java
+  backend\src\main\java\it\fantacalciointelligence\backend\auction\B67AuctionPricePersistenceService.java
+  backend\src\main\java\it\fantacalciointelligence\backend\auctionlive\LiveAuctionRoleStrategyResponse.java
+  backend\src\main\java\it\fantacalciointelligence\backend\auctionlive\LiveAuctionStrategyResponse.java
+  backend\src\main\java\it\fantacalciointelligence\backend\auctionlive\LiveAuctionStrategyService.java
+  backend\src\main\java\it\fantacalciointelligence\backend\auctionstate\AuctionContextAdapter.java
+  backend\src\main\java\it\fantacalciointelligence\backend\auctionstate\AuctionPurchaseService.java
+  backend\src\main\java\it\fantacalciointelligence\backend\auctionstrategy\AuctionRoleStrategyResponse.java
+  backend\src\main\java\it\fantacalciointelligence\backend\auctionstrategy\IntelligentAuctionStrategyService.java
+  backend\src\main\java\it\fantacalciointelligence\backend\calendarintelligence\B69RoleMatchupScorer.java
+  backend\src\main\java\it\fantacalciointelligence\backend\fixture\B69FixtureMatchupService.java
+  backend\src\main\java\it\fantacalciointelligence\backend\fixture\B69RoleDifficultyResponse.java
+  backend\src\main\java\it\fantacalciointelligence\backend\lineup\B68LineupScorer.java
+
+================================================================================
+8. LIVE AUCTION DEPENDENCY MAP
+================================================================================
+LIVE_AUCTION_REFERENCE=frontend\src\app\bootstrap\App.test.tsx
+LIVE_AUCTION_REFERENCE=frontend\src\app\router\AppRouter.tsx
+LIVE_AUCTION_REFERENCE=frontend\src\features\core\api.test.ts
+LIVE_AUCTION_REFERENCE=frontend\src\features\core\api.ts
+LIVE_AUCTION_REFERENCE=frontend\src\layouts\AppShell.test.tsx
+LIVE_AUCTION_REFERENCE=frontend\src\layouts\AppShell.tsx
+LIVE_AUCTION_REFERENCE=frontend\src\pages\AuctionPage.tsx
+LIVE_AUCTION_REFERENCE=frontend\src\pages\LiveAuctionPage.test.tsx
+LIVE_AUCTION_REFERENCE=frontend\src\pages\LiveAuctionPage.tsx
+
+================================================================================
+9. TARGET PRODUCT MODEL
+================================================================================
+TARGET_AUCTION_UX=Auction Copilot
+TARGET_REPLACES_USER_FACING_LIVE_AUCTION=YES
+BACKEND_PERSISTENT_AUCTION_DOMAIN_DELETE=NO_FOR_NOW
+TARGET_FEATURE=FANTASCORE_0_100
+TARGET_FEATURE=TIER_S_A_B_C_D
+TARGET_FEATURE=ROLE_SLOT
+TARGET_FEATURE=INDICATIVE_PRICE
+TARGET_FEATURE=TARGET_PRICE
+TARGET_FEATURE=MAX_PRICE
+TARGET_FEATURE=BUY_RAISE_WAIT_STOP
+TARGET_FEATURE=BUDGET_AFTER_PURCHASE
+TARGET_FEATURE=MINIMUM_BUDGET_RESERVE
+TARGET_FEATURE=SQUAD_FIT
+TARGET_FEATURE=RISK
+TARGET_FEATURE=CONFIDENCE
+TARGET_FEATURE=EXPLANATIONS
+TARGET_FEATURE=ALTERNATIVES
+TARGET_FEATURE=CONSERVATIVE_BALANCED_AGGRESSIVE
+
+================================================================================
+10. TARGET CLASSIFICATION
+================================================================================
+KEEP=Player catalog/detail/history/provenance
+KEEP=Squad ownership and roster
+KEEP=Calendar/matchup data
+KEEP=Scouting real data
+KEEP=Authentication
+KEEP=Backend persistent auction code temporarily for compatibility
+EVOLVE=AuctionPage -> Auction Copilot
+EVOLVE=Auction intelligence ranking -> FantaScore/Tier/Price recommendation
+EVOLVE=Strategy API -> budget allocation and decision strategy
+EVOLVE=Squad analysis -> auction squad-fit/needs
+EVOLVE=Lineup intelligence later -> three strategy modes
+REPLACE=Live Auction navigation/user experience
+REPLACE=/auction/live user-facing launcher with Auction Copilot flow
+REMOVE_FROM_NAV=Live Auction
+DO_NOT_DELETE_BACKEND_YET=Persistent auction sessions
+DO_NOT_INVENT=injuries/titolarity/odds/market data if unavailable
+
+================================================================================
+M10.1 FINAL SUMMARY
+================================================================================
+BRANCH_OK=YES
+HEAD_UNCHANGED=YES
+AUDIT_MODE=READ_ONLY
+FILES_MODIFIED=NONE
+DATABASE_MUTATIONS=NONE
+MIGRATIONS_CREATED=NONE
+COMMIT_CREATED=NO
+PUSH_EXECUTED=NO
+ORACLE_CONTACTED=NO
+LIVE_AUCTION_USER_FACING_TARGET=REPLACE
+AUCTION_INTELLIGENCE_TARGET=EVOLVE
+PERSISTENT_AUCTION_BACKEND_TARGET=KEEP_TEMPORARILY
+NEXT_STEP=M10.2_IMPLEMENTATION
+AUDIT_STATUS=COMPLETED
+LOG_FILE=C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\logs\M10-auction-transformation-audit.txt

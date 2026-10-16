@@ -1,0 +1,35 @@
+FANTACALCIO INTELLIGENCE
+F02.0 - TOOLCHAIN RECOVERY REPORT
+Data: 2026-08-22
+
+Esito: PASS.
+
+Node 22.21.0 e installato correttamente in C:\Program Files\nodejs. L'audit di
+where.exe, Get-Command, PATH processo/utente/macchina, installazione Node e prefix npm
+ha dimostrato che i MODULE_NOT_FOUND di F01 erano un effetto delle restrizioni del
+sandbox su AppData, non una corruzione reale: fuori dal sandbox npm/npx standard
+rispondono entrambi con 10.2.3.
+
+L'installazione Node include npm/npx 10.9.4 integri. Per rendere F02 deterministico e
+indipendente dal prefix globale, installazione, npm ci e verifiche sono state eseguite
+con il CLI npm incluso in Node. Non sono stati modificati PATH, Node o AppData.
+
+Baseline:
+- Node: v22.21.0
+- npm: 10.9.4
+- npx: 10.9.4
+- package manager: npm
+- lockfile unico: package-lock.json
+- versione riproducibile: .node-version = 22.21.0
+
+Compatibilita:
+- React/Vite/TypeScript e tool di test risultano operativi su Node 22.21.0.
+- jsdom e stato fissato alla linea 29 poiche jsdom 30.0.1 richiede Node 22.22.2+.
+- ESLint e stato fissato alla linea 9 per compatibilita peer con jsx-a11y, senza force
+  e senza legacy-peer-deps.
+
+F02_TOOLCHAIN=PASS
+NODE=v22.21.0
+NPM=10.9.4
+NPX=10.9.4
+NEXT=F02_PROJECT_FOUNDATION

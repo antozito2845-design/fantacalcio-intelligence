@@ -1,0 +1,284 @@
+D02.27 — DIAGNOSI STATISTICHE PORTIERI E RIMOZIONE FOUNDATION F03
+Data: 2026-08-27
+Branch: arena/01a043d3-fantacalcio-intelligence
+
+SCOPO E LIMITI
+La sola modifica applicativa di questo blocco rimuove dalla sidebar il riquadro tecnico
+“Foundation F03 / Design system preview”. La diagnosi portieri è stata eseguita in sola
+lettura su codice, schema, artefatti versionati e audit precedenti. Non sono state eseguite
+INSERT, UPDATE, DELETE, TRUNCATE, migration, import, refresh o chiamate a produzione.
+La rosa locale/test e i relativi giocatori non sono stati investigati né modificati.
+
+1. FLUSSO ATTUALE DEL DETTAGLIO
+
+Frontend:
+- `frontend/src/app/router/AppRouter.tsx` mappa `/players/:id` a
+  `frontend/src/pages/PlayerDetailPage.tsx`.
+- `frontend/src/features/core/api.ts` chiama `GET /players/{id}` tramite
+  `featureApi.player` e valida `playerDetailSchema`.
+- `playerDetailSchema.statistics` dichiara solo season, source, appearances, starts,
+  minutesPlayed, averageRating, fantasyAverage, goals e assists, poi usa `.passthrough()`.
+  Quindi eventuali proprietà JSON extra possono restare a runtime, ma non fanno parte del
+  contratto TypeScript usato dalla pagina.
+- `PlayerDetailPage` presenta sempre le colonne “Gol” e “Assist” per ogni ruolo e legge
+  `s.goals`/`s.assists` senza distinguere il ruolo P. Questo è il difetto UI osservato.
+
+Backend:
+- `backend/src/main/java/.../player/PlayerCatalogController.java` espone
+  `GET /api/v1/players/{playerId}` con parametro season di contesto.
+- `PlayerDetailService.findById` usa season solo per risolvere player, club e ruolo correnti;
+  la query delle statistiche non filtra la stagione e restituisce lo storico del player,
+  ordinato per stagione decrescente e source, con limite 10.
+- `PlayerDetailResponse` e `PlayerSeasonStatisticsResponse` contengono già i campi
+  `goalsConceded`, `saves`, `penaltiesSaved`, `cleanSheets`, `appearances`, `starts`,
+  `minutesPlayed`, source, sourceExternalId, importedAt, sourceUpdatedAt e importBatchId.
+- La query backend legge questi campi da `player_season_statistics`; non esiste una tabella
+  separata esclusivamente per portieri. Il ruolo fantasy P è in `player_roles`.
+
+2. MODELLO DATI E MIGRAZIONI CONSULTATE
+
+- `V2__create_core_football_schema.sql`: `player_season_statistics` nasce con goals,
+  assists, appearances, starts, minutes_played, goals_conceded, clean_sheets e
+  penalties_saved.
+- `V39__complete_historical_player_statistics.sql`: rende i valori statistici nullable,
+  aggiunge `source_external_id`, `penalties_taken`, `saves`, `source_updated_at`,
+  `import_batch_id` e vincoli di non negatività.
+- `V40__add_fbref_statistics_source.sql`: abilita FBREF come source della tabella raw.
+- `V41__support_fbref_multiclub_and_safe_links.sql`: aggiunge link statistici FBREF e
+  storico dei club per riga statistica.
+- `V47__create_international_competition_statistics.sql`: crea il layer Transfermarkt per
+  competizione, con appearances/minutes/goals/assists/cards/xG/xA, ma senza saves,
+  clean_sheets, goals_conceded o penalties_saved.
+- `V48__create_player_performance_feature_layer.sql`: layer derivato source-aware; non è il
+  system of record raw e non sostituisce le statistiche stagionali.
+
+Conclusione modello: il database è strutturalmente sufficiente per le cinque metriche
+richieste, ma il modello è aggregato per stagione/source. Una nuova migration è necessaria
+solo se si decide di conservare anche il dettaglio per giornata/fixture o eventi; non è
+necessaria per esporre i campi stagionali già presenti.
+
+3. FONTI E PIPELINE CONSULTATE
+
+Fantacalcio:
+- `scripts/statistics/acquire_fantacalcio_history.py` fissa le stagioni acquisite a
+  2024-25 e 2025-26 e normalizza esclusivamente colonne pubblicate dalla fonte.
+- La mappatura corrente usa `pg` per appearances, `gs` per goals_conceded e `rp` per
+  penalties_saved. Lascia intenzionalmente vuoti `minutes_played`, `clean_sheets` e
+  `saves`; non stima valori mancanti.
+- Gli archivi versionati sono `data/statistics/fantacalcio/fantacalcio-serie-a-2024-25.csv`
+  e `fantacalcio-serie-a-2025-26.csv`, con relativi HTML sorgente.
+- `scripts/statistics/certified_fantacalcio_history_import.sql` conserva NULL, registra
+  source/batch/provenienza e importa le colonne goalkeeper quando presenti. Il servizio
+  Java `PlayerStatisticsImportService` accetta e persiste tutti i campi richiesti, ma un
+  importer non può creare dati che il feed non pubblica.
+
+Transfermarkt:
+- `data/statistics/international/transfermarkt-international-statistics.csv` e il relativo
+  importer conservano presenze, minuti, gol, assist e cartellini per competizione.
+- `scripts/statistics/test_transfermarkt_international_history.py` verifica anche che gli
+  assist non dichiarati per un portiere restino NULL. Non risultano nel layout corrente i
+  cinque campi goalkeeper richiesti.
+
+FBref:
+- `scripts/fbref/fbref_build_dataset.py` ha un aggregatore predisposto per goals_conceded,
+  clean_sheets, saves e penalties_saved e per la somma multi-club per external_id.
+- `scripts/fbref/fbref_match_catalog.py` prevede file di preview in `data/fbref`, ma quella
+  directory/dataset non è presente nel checkout analizzato. Sono presenti codice e test,
+  non un feed dati FBref versionato pronto per l’import.
+- Il matcher mantiene FBref come fonte statistica e non come autorità identitaria: questo
+  vincolo va mantenuto nel piano futuro.
+
+Ingestion/refresh:
+- `SourceIngestionService` supporta un feed di tipo STATISTICS e invoca
+  `PlayerStatisticsImportService`; `SourceIngestionProperties` valida URL, source, season
+  e checksum/limiti.
+- Le proprietà repository hanno ingestion e scheduler disabilitati di default. Non è
+  presente in `application*.properties` un feed goalkeeper stagionale già certificato.
+- `DataRefreshService` aggiorna più layer, ma il refresh automatico non è prova che esista
+  un feed goalkeeper completo o che sia stato eseguito dopo una giornata.
+
+4. COPERTURA OSSERVABILE NEGLI ARTEFATTI VERSIONATI
+
+Questi numeri descrivono file/artefatti locali nel repository, non una nuova lettura del DB:
+
+`data/statistics/fantacalcio/fantacalcio-serie-a-2025-26.csv`:
+- 663 righe totali; 75 righe con ruolo storico P.
+- goals_conceded: 75/75 presenti.
+- penalties_saved: 75/75 presenti.
+- appearances: 75/75 presenti.
+- saves: 0/75; clean_sheets: 0/75; minutes_played: 0/75.
+
+`data/statistics/fantacalcio/fantacalcio-serie-a-2024-25.csv`:
+- 679 righe totali; 83 righe con ruolo storico P.
+- goals_conceded, penalties_saved e appearances: 83/83 presenti.
+- saves, clean_sheets e minutes_played: 0/83.
+
+Gli artefatti derivati mostrano la stessa lacuna e non devono essere confusi con il raw DB:
+- `b66-player-season-performance-base.csv`: 56 righe P per 2025/2026; goals_conceded e
+  penalties_saved 40/56, minutes 16/56, clean_sheets e saves 0/56.
+- `current-player-feature-context.csv` contiene 498 profili correnti, di cui 58 P.
+- `current-2026-2027-historical-coverage.csv` riporta per quei 58 P copertura Fanta
+  2025/2026 YES=40 e NO=18. È una copertura dello storico, non una statistica di gioco
+  2026/2027.
+- `player-performance-features.csv` è riferito al contesto 2026/2027, ma espone nei campi
+  wide solo goals_conceded_latest e penalties_saved_latest tra i segnali goalkeeper; non
+  contiene colonne dedicate clean_sheets/saves e non sostituisce il dettaglio raw.
+
+5. VERIFICA DATABASE LOCALE
+
+In questa sandbox la verifica live richiesta non è stata possibile senza violare il vincolo
+di non chiedere accesso a macchine locali:
+- `psql` non installato;
+- `pg_isready` non installato;
+- nessun processo PostgreSQL e nessun listener locale sulla porta 5432;
+- nessun driver Python PostgreSQL disponibile.
+
+Non ho usato credenziali, `.env` o connessioni remote e non ho dichiarato come corrente un
+conteggio non osservato. Il repository contiene però due audit read-only precedenti:
+- `backend/d02-13-local-db-audit.txt`, datato 2026-08-24: snapshot locale con seasons=3,
+  player_season_statistics=1342, player_statistics_import_batches=6 e
+  player_statistics_import_rows=2381. L’audit non contiene il breakdown P per metrica e
+  quindi non certifica la copertura di Carnesecchi né quella 2026/2027.
+- `backend/d02-14-2-schema-audit.txt`, datato 2026-08-24: conferma le colonne raw, inclusi
+  goals_conceded, clean_sheets, penalties_saved, saves, appearances e minutes_played.
+
+Query SELECT-only preparate per la verifica sul DB locale reale, ma NON eseguite in questo
+blocco:
+
+A) Stagioni disponibili:
+SELECT id, code, start_year, end_year, current_season
+FROM seasons
+WHERE code IN ('2025/2026', '2026/2027')
+ORDER BY start_year;
+
+B) Copertura per portieri e source:
+SELECT s.code, st.source, COUNT(*) AS stat_rows,
+       COUNT(*) FILTER (WHERE st.goals_conceded IS NOT NULL) AS goals_conceded_rows,
+       COUNT(*) FILTER (WHERE st.saves IS NOT NULL) AS saves_rows,
+       COUNT(*) FILTER (WHERE st.penalties_saved IS NOT NULL) AS penalties_saved_rows,
+       COUNT(*) FILTER (WHERE st.clean_sheets IS NOT NULL) AS clean_sheets_rows,
+       COUNT(*) FILTER (WHERE st.appearances IS NOT NULL) AS appearances_rows,
+       COUNT(*) FILTER (WHERE st.minutes_played IS NOT NULL) AS minutes_rows
+FROM player_season_statistics st
+JOIN seasons s ON s.id = st.season_id
+WHERE s.code IN ('2025/2026', '2026/2027')
+  AND EXISTS (
+      SELECT 1 FROM player_roles role
+      WHERE role.player_id = st.player_id
+        AND role.season_id = st.season_id
+        AND role.fantasy_role = 'P'
+  )
+GROUP BY s.code, st.source
+ORDER BY s.code, st.source;
+
+C) Storico del singolo portiere, senza modifiche:
+SELECT p.id, p.display_name, s.code, st.source, st.appearances,
+       st.minutes_played, st.goals, st.assists, st.goals_conceded,
+       st.saves, st.penalties_saved, st.clean_sheets,
+       st.source_external_id, st.imported_at, st.source_updated_at,
+       st.import_batch_id
+FROM players p
+JOIN player_season_statistics st ON st.player_id = p.id
+JOIN seasons s ON s.id = st.season_id
+WHERE LOWER(p.display_name) = LOWER('Carnesecchi')
+ORDER BY s.start_year DESC, st.source;
+
+D) Ultimi batch e osservazione della fonte:
+SELECT b.source, s.code, b.status, b.total_rows, b.valid_rows,
+       b.invalid_rows, b.imported_statistics, b.started_at,
+       b.completed_at, b.source_observed_at
+FROM player_statistics_import_batches b
+JOIN seasons s ON s.id = b.season_id
+WHERE s.code IN ('2025/2026', '2026/2027')
+ORDER BY b.started_at DESC, b.id DESC;
+
+E) Presenza portieri correnti per stagione:
+SELECT s.code, COUNT(DISTINCT r.player_id) AS goalkeeper_players
+FROM player_registrations r
+JOIN seasons s ON s.id = r.season_id
+JOIN player_roles role
+  ON role.player_id = r.player_id AND role.season_id = r.season_id
+WHERE s.code IN ('2025/2026', '2026/2027')
+  AND role.fantasy_role = 'P'
+GROUP BY s.code
+ORDER BY s.code;
+
+6. ROOT CAUSE CLASSIFICATION
+
+Il problema è una combinazione di cause:
+1. FRONTEND: causa immediata. `PlayerDetailPage` è role-agnostic e mostra Gol/Assist come
+   colonne principali anche per P.
+2. API/DTO CONTRACT: parzialmente incompleto lato frontend. Backend DTO/query hanno già i
+   campi goalkeeper, ma `playerDetailSchema` non li dichiara e la pagina non li consuma.
+3. DATABASE MODEL: non è il blocco principale. Le colonne stagionali richieste esistono;
+   manca solo un eventuale grain per giornata se si vuole auditare ogni match.
+4. IMPORT/PIPELINE: incompleta per i portieri. Fantacalcio acquisisce goals_conceded,
+   penalties_saved e appearances ma lascia saves, clean_sheets e minutes NULL; il layer
+   Transfermarkt non contiene le metriche goalkeeper; il percorso FBref non ha un dataset
+   pronto nel checkout.
+5. DATI AGGIORNATI: non certificabili ora per il DB locale né per 2026/2027. Il contesto
+   2026/2027 esiste, ma gli artefatti osservati rappresentano lo storico fino al 2025/2026.
+
+7. PIANO TECNICO MINIMO, DA APPROVARE
+
+Ordine proposto:
+
+1) Decisione sulla fonte: scegliere una fonte reale e licenziata che pubblichi per stagione
+   e, idealmente, per giornata/fixture goals_conceded, saves, penalties_saved e clean_sheets.
+   Definire external_id, source_url, source_observed_at, checksum, semantica zero vs NULL e
+   policy di conflitto. Non usare stime o proxy.
+
+2) Audit DB read-only: eseguire le query A-E sul DB locale per 2025/2026 e 2026/2027,
+   filtrando ruolo P con `player_roles`, e verificare un player reale per source/batch.
+   Questo deve precedere ogni import.
+
+3) Pipeline/import: aggiungere o completare un parser per gli header ufficiali della fonte
+   scelta, mantenendo NULL quando il feed non pubblica una metrica, validando non negatività,
+   stagione, ruolo/identity e idempotenza per player-season-source-external_id. Completare
+   prima lo storico 2025/2026; predisporre poi import incrementali 2026/2027 dopo ogni
+   giornata. Non sovrascrivere una fonte migliore senza policy esplicita.
+
+4) Schema: nessuna migration se basta l’aggregato stagionale già presente. Valutare una
+   nuova tabella migration solo se servono snapshot per giornata/fixture, ricalcolo
+   verificabile, o audit di correzioni della fonte. Mai modificare migration storiche.
+
+5) Backend/API: estendere il contratto frontend e, se necessario, il DTO solo per campi
+   già provenienti dal raw layer; esporre sempre source, stagione, provenienza e NULL.
+   Il dettaglio deve fornire il ruolo P in modo esplicito o derivabile da un contratto
+   stabile, senza usare goals/assists come sostituti delle metriche P.
+
+6) Frontend: per ruolo P mostrare come metriche principali Gol subiti, Parate, Rigori parati,
+   Clean sheet, Presenze e Minuti. Mostrare “Non disponibile” con source/coverage quando
+   un campo è NULL. Tenere eventuali gol/assist fuori dalle metriche principali del portiere.
+   Aggiungere test di contratto, mapping ruolo, NULL e storico multi-stagione.
+
+7) Verifica post-giornata: dopo un batch, controllare status/batch/source_updated_at,
+   cardinalità P, copertura per metrica, duplicati per chiave logica e differenza rispetto
+   alla fonte. Solo dopo questa verifica il dettaglio UI può dichiarare il dato aggiornato.
+
+8. COSA SI PUÒ FARE SUBITO E COSA NO
+
+Senza cambiare DB:
+- correggere il contratto frontend per leggere i campi già presenti nel DTO;
+- implementare la vista P con fallback “Non disponibile” e provenienza;
+- aggiungere test frontend/API su payload completi, NULL e storico;
+- eseguire l’audit SELECT-only sul DB quando è disponibile nel contesto autorizzato;
+- preparare un importer in dry-run/validazione senza persistenza, dopo aver scelto la fonte.
+
+Richiede nuova pipeline e possibile migration:
+- ottenere saves/clean_sheets/minutes reali se la fonte attuale non li pubblica;
+- completare e aggiornare i dati 2025/2026 e 2026/2027;
+- conservare il dettaglio per giornata/fixture, se richiesto;
+- modificare backend/API per nuovi campi o nuovo grain;
+- certificare il controllo post-giornata.
+
+DECISIONI RICHIESTE
+- fonte autorevole e legalmente utilizzabile per ciascuna metrica;
+- accettazione di NULL quando la fonte non pubblica il dato;
+- aggregato stagionale sufficiente oppure necessità di snapshot per giornata;
+- autorizzazione a un successivo blocco di pipeline/backend/frontend dopo l’audit DB.
+
+STATO DEL BLOCCO
+- Foundation F03 rimosso dalla sidebar.
+- Statistiche portieri: nessun codice o dato modificato; piano in attesa di approvazione.
+- Nessun accesso a produzione/deploy e nessuna modifica a backend, DB o migrazioni.

@@ -1,0 +1,17 @@
+F04 — REAL API INTEGRATION FOUNDATION
+Date: 2026-08-22
+
+- Java controllers, records, security rules and nullable fields audited read-only.
+- Zod boundary schemas model only dashboard-used contracts.
+- HTTP client supports all HTTP methods through RequestInit, query serialization in API adapters, JSON/text/no-content, caller abort, timeout, dynamic auth, status mapping and no client retry.
+- Invalid response is a first-class error kind; HMR-safe AppError recognition prevents remapping known HTTP failures as network failures.
+- Query keys cover system, seasons, clubs, players, auction, lineup, fixtures, scouting and admin.
+- Query policy retries network/timeout/5xx at most twice and never retries 4xx; no polling or aggressive focus refetch.
+- Real dev probes: system 200, seasons 200 (3), clubs 200 (20), players 200 (498), auction 200, fixtures 200, lineup 200 and scouting 200.
+- Protected probes: invalid 401, valid user 200, user admin probe 403, valid admin probe 200.
+- No new dependency and no backend source modification.
+
+F04_API_CONTRACTS=PASS
+F04_HTTP_CLIENT=PASS
+F04_QUERY_LAYER=PASS
+F04_REAL_API_PROBES=PASS

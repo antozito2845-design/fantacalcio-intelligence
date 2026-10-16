@@ -1,0 +1,290 @@
+BLOCCO 59 - AUCTION STATE & PURCHASE LIFECYCLE V1
+REPORT DI IMPLEMENTAZIONE E CERTIFICAZIONE
+Data: 2026-08-13 (Europe/Rome)
+
+1. COMMIT INIZIALE
+Commit verificato prima delle modifiche:
+0e5e6f4 feat: add live auction decision engine
+
+2. WORKING TREE INIZIALE
+`git status --short` era vuoto. `git diff --check` era pulito.
+Baseline eseguita prima delle modifiche: 347 test, 0 failure, 0 errori,
+1 skipped, BUILD SUCCESS. Non sono stati usati reset, clean Git, stash,
+staging, commit o push.
+
+3. AUDIT AUCTION / SQUAD / SECURITY / IDEMPOTENCY
+- Auction: auditati i package liveauction B58/B58.1, auctionlive legacy,
+  auction legacy, servizi strategici/ranking, controller e whitelist.
+- Squad: auditati fantasy_squads, fantasy_squad_players, configurazione lega,
+  budget iniziale, prezzi pagati e slot P/D/C/A.
+- Eligibility: player attivo, registration ACTIVE nella season, club attivo e
+  ruolo FANTACALCIO P/D/C/A sono tutti richiesti.
+- Persistence: ultima migration reale prima di B59 era V51; convenzioni Flyway,
+  FK, indici, vincoli e transazioni JdbcClient sono state riutilizzate.
+- Errori: riusati BadRequestException, ConflictException,
+  ResourceNotFoundException e l'handler applicativo esistente.
+- Idempotency: non esisteva un pattern purchase riutilizzabile completo; sono
+  stati adottati chiave obbligatoria, lookup sotto lock e unique DB.
+- Security: la whitelist `/api/v1/auction/**` avrebbe esposto le mutation; sono
+  stati inseriti matcher POST autenticati e più specifici prima del permitAll.
+- Test DB: riusato PostgreSQL TEST reale e il modello Spring transaction; la
+  race usa transaction boundary distinti.
+
+4. CLASSIFICAZIONE AVAILABLE / PARTIAL / MISSING
+AVAILABLE prima di B59: B58 read-only e sua policy, B54 dynamic budget,
+LiveAuctionBudgetGuard, rosa/prezzi autoritativi, league settings, eligibility
+season-aware, error model, Basic Auth, PostgreSQL/Flyway e test integration.
+PARTIAL prima di B59: stato asta solo nel request context, endpoint auction
+pubblici, dedupe presenti in altri domini ma non un'idempotenza purchase,
+informazioni nomination senza lifecycle persistente.
+MISSING prima di B59: sessione persistita, availability globale, purchase
+USER/OTHER, audit asta, idempotency key DB-safe, race protection, adapter da
+stato persistito e security specifica delle mutation.
+AVAILABLE dopo B59: tutti gli elementi minimi sopra, compresi lifecycle,
+nomination, state query, adapter, audit e certificazione concorrente.
+PARTIAL dopo B59: cancellazione ed exclude/restore sono rappresentabili dal
+modello ma non esposti come comandi V1; current matchday resta request-only.
+MISSING intenzionale in B59 V1: identità/rose/budget degli avversari, resolver
+matchday inventato, bid increment, rival behavior e probabilità.
+
+5. AUTHORITY / SOURCE-OF-TRUTH
+- Availability corrente: auction_player_states B59.
+- Evento purchase: auction_purchases B59; audit generale: auction_events.
+- Rosa USER, prezzi pagati, spesa e slot occupati: fantasy_squad_players
+  esistente, unica autorità. Nessun aggregato budget duplicato è persistito.
+- Settings sessione: snapshot in auction_sessions derivato dalla rosa/lega.
+- Budget residuo: totalBudget sessione meno somma prezzi rosa autoritativa.
+
+6. DB SCHEMA / MIGRATION
+Creata V52__create_auction_state_lifecycle.sql con:
+- auction_sessions;
+- auction_player_states;
+- auction_purchases;
+- auction_events.
+Presenti FK, check enum/range, timestamp, version, unique(session, player),
+unique(session, idempotency_key), indice unico della sessione ACTIVE e indici
+di query per stato/availability/storico. Flyway ha validato 52 migration su
+PostgreSQL 17.10 e portato/verificato lo schema a V52.
+
+7. SESSION LIFECYCLE
+Implementati create DRAFT, activate DRAFT->ACTIVE, complete
+ACTIVE->COMPLETED, get session e get state. Solo ACTIVE accetta nomination e
+purchase. Complete azzera la nomination ma preserva player state, purchase ed
+eventi. CANCELLED è ammesso dallo schema per evoluzione senza inventare oggi
+un comando non necessario.
+
+8. PLAYER AVAILABILITY MODEL
+Stati canonici: AVAILABLE, ACQUIRED_BY_USER, ACQUIRED_BY_OTHER, EXCLUDED.
+Il vincolo unique(session_id, player_id) garantisce un solo stato corrente.
+Ogni acquisto produce sia una transizione esplicita sia uno storico immutabile.
+
+9. INITIALIZATION MODEL
+L'activation materializza solo il pool eleggibile della season: player attivo,
+club attivo, registration ACTIVE e ruolo FANTACALCIO valido. ON CONFLICT evita
+doppi record. I player già nella rosa autoritativa vengono marcati
+ACQUIRED_BY_USER. Nessun player storico indiscriminato viene copiato.
+
+10. USER PURCHASE FLOW
+Sotto transazione: lock sessione, idempotency, lock player state, eligibility
+recheck, lock rosa, caricamento rosa/prezzi/slot, validazione B54+B58, insert
+fantasy_squad_players, insert purchase, transizione ACQUIRED_BY_USER, eventuale
+clear nomination e audit. paidPrice è obbligatorio e >=1.
+
+11. OTHER PURCHASE FLOW
+Sotto la stessa disciplina di lock, OTHER registra purchase/audit e porta il
+player ad ACQUIRED_BY_OTHER. paidPrice è nullable quando ignoto e non viene
+inventato. Nessuna lettura/scrittura funzionale decrementa budget o slot USER;
+la rosa autoritativa resta invariata.
+
+12. TRANSACTION BOUNDARY
+Ogni comando lifecycle e purchase è @Transactional. Per USER, roster insert,
+purchase insert, availability, nomination ed evento sono nella stessa
+transazione. Le eccezioni di validazione, integrità o concorrenza causano
+rollback completo; nessuna mutation parziale viene confermata.
+
+13. IDEMPOTENCY DESIGN
+idempotencyKey è obbligatoria, non blank e massimo 120 caratteri. Sotto lock
+della sessione, stessa sessione+chiave+payload restituisce la purchase già
+esistente; stessa chiave con payload diverso genera ConflictException/409.
+Il vincolo DB unique(session_id,idempotency_key) è il backstop atomico. Retry
+non reinserisce rosa, non rispende budget e non duplica audit logico.
+
+14. CONCURRENCY DESIGN
+La riga auction_sessions viene acquisita FOR UPDATE all'inizio di ogni
+purchase: tutti i command della sessione sono serializzati prima di risolvere
+idempotency e availability. La riga player state è anch'essa bloccata; per USER
+si blocca anche fantasy_squads. I due unique DB su player e chiave proteggono
+ulteriormente da doppio acquisto e doppio comando.
+
+15. RACE-CONDITION CERTIFICATION
+AuctionPurchaseConcurrencyIntegrationTest usa ExecutorService,
+CountDownLatch e due transazioni reali concorrenti su PostgreSQL. La race
+USER-vs-OTHER sullo stesso player produce esattamente un vincitore e un
+ConflictException, una sola purchase, al massimo una riga rosa e budget mai
+negativo/driftato. Test verde.
+
+16. BUDGET / SLOT SAFETY
+Spesa e conteggi derivano ogni volta dalla rosa autoritativa sotto lock.
+DynamicBudgetEngine riceve slot configurati della lega e rosa corrente;
+LiveAuctionBudgetGuard verifica paidPrice, remaining budget, cap ruolo e
+completion reserve. Nessun contatore slot o remaining budget viene persistito
+o decrementato separatamente, eliminando il rischio di double decrement.
+
+17. B54 / B58 REUSE
+La purchase USER riusa DynamicBudgetEngine B54 e LiveAuctionBudgetGuard B58
+con paidPrice come bid effettivo. Nessuna formula B54, threshold o decision
+policy B58 è stata modificata o duplicata.
+
+18. B58 CONTEXT ADAPTER
+AuctionContextAdapter costruisce il LiveAuctionDecisionRequest canonico da
+sessione, stato, rosa e settings; passa remaining esatto, bought player con
+paidPrice, unavailable OTHER+EXCLUDED, nomination e availabilityComplete.
+Delega poi al LiveAuctionDecisionService esistente. Il vecchio endpoint B58
+resta intatto e retrocompatibile.
+
+19. AVAILABILITYCOMPLETE POLICY
+È true solo se player_state_initialized=true e il numero di player state
+coincide con il pool eleggibile ricalcolato dalla fonte season-aware corrente.
+Una DRAFT/non inizializzata è false; cambi di eligibility che rendono il pool
+non coperto riportano false. Non viene impostata true per default.
+
+20. CURRENT NOMINATION / CURRENTPRICE POLICY
+La nomination è ammessa solo in ACTIVE e solo per player AVAILABLE della
+sessione. currentPlayerId e currentPrice (>=1) sono persistiti come coppia;
+l'acquisto dello stesso player li azzera. currentPrice resta informativo per
+B58. proposedBid non è mai persistito ed è input del solo decision request.
+
+21. CURRENT MATCHDAY DECISION
+Non esisteva una fonte abbastanza affidabile da rendere il matchday globale
+autoritativo. Non è stato inventato un resolver: currentMatchday resta optional
+nel request dell'adapter e viene passato a B58 senza persistenza.
+
+22. SECURITY
+POST create/activate/complete/nomination/purchases richiedono autenticazione
+Basic coerente con l'applicazione. Il nuovo POST decision read-only segue il
+permitAll B58 esistente. I matcher specifici precedono `/api/v1/auction/**`.
+Testati mutation anonima rifiutata, mutation autenticata accettata e decision
+pubblica invariata. Nessuna credenziale applicativa è hardcoded.
+
+23. ERROR SEMANTICS
+400: payload, prezzo o nomination non validi.
+404: sessione o player non presenti.
+409: stato lifecycle incompatibile, player non disponibile/non più eleggibile,
+idempotency payload conflict, budget/slot unsafe e race/unique loser.
+Si riusa l'error model e l'ApiExceptionHandler esistenti.
+
+24. PERFORMANCE / NO-N+1
+Le letture sono batch: una sessione, una lista purchases, una lista player
+states, una somma roster e un eligible count. L'adapter carica rosa e settings
+in query batch e delega B58, senza query per singola alternativa/player.
+
+25. AUDIT / HISTORY
+auction_events registra SESSION_CREATED, SESSION_ACTIVATED, NOMINATION_SET,
+PURCHASE_USER, PURCHASE_OTHER e SESSION_COMPLETED con timestamp, player,
+idempotency key e dettagli JSONB. auction_purchases conserva il ledger degli
+acquisti. Nessuna history viene cancellata dagli endpoint applicativi.
+
+26. REAL / SANDBOX CERTIFICATION
+Certificazione su database PostgreSQL TEST 17.10 con fixture deterministiche e
+rosa sandbox dedicata. Verificati create, initialization, USER, OTHER,
+idempotency, conflitti, rollback, adapter e race. I test transazionali fanno
+rollback; il concurrency test esegue cleanup mirato dei soli record sandbox.
+DEV non è stato modificato e non sono stati creati fake data persistenti.
+
+27. FILES CREATED / MODIFIED
+Creati:
+- backend/src/main/resources/db/migration/V52__create_auction_state_lifecycle.sql
+- backend/src/main/java/.../auctionstate/AuctionSessionStatus.java
+- backend/src/main/java/.../auctionstate/AuctionPlayerAvailability.java
+- backend/src/main/java/.../auctionstate/AuctionBuyerType.java
+- backend/src/main/java/.../auctionstate/AuctionStateDtos.java
+- backend/src/main/java/.../auctionstate/AuctionStateService.java
+- backend/src/main/java/.../auctionstate/AuctionPurchaseService.java
+- backend/src/main/java/.../auctionstate/AuctionContextAdapter.java
+- backend/src/main/java/.../auctionstate/AuctionStateController.java
+- 5 file test elencati nella sezione 28.
+Modificato:
+- backend/src/main/java/.../config/SecurityConfiguration.java
+- BLOCCO-59-REPORT.txt (questo report).
+Nessun file frontend modificato.
+
+28. TESTS ADDED
+- B59TestFixture.java
+- AuctionStateLifecycleIntegrationTest.java: 5 test.
+- AuctionContextAdapterIntegrationTest.java: 1 test.
+- AuctionPurchaseConcurrencyIntegrationTest.java: 1 race reale.
+- AuctionStateSecurityTest.java: 4 test.
+Totale B59: 11 test. I test aggregano più invarianti correlate e coprono
+l'elenco obbligatorio tramite assert DB, response, adapter e security.
+
+29. TARGETED TESTS
+Comando Maven mirato ai test `auctionstate.*Test`:
+11 test, 0 failure, 0 errori, 0 skipped, BUILD SUCCESS.
+Flyway V52 e PostgreSQL TEST reale inclusi.
+
+30. B58+B59 REGRESSION
+Comando Maven con `liveauction.*Test,auctionstate.*Test`:
+53 test, 0 failure, 0 errori, 0 skipped, BUILD SUCCESS.
+I 42 test B58 esistenti restano verdi insieme agli 11 B59.
+
+31. FULL REGRESSION
+Il wrapper `./mvnw.cmd clean test` non ha avviato Maven per il noto errore
+PowerShell Codex: `Invoke-Command: NullArray` / `Cannot start maven from
+wrapper`; il wrapper non è stato modificato.
+Il primo Maven locale sandboxed ha trovato target non eliminabile; verificati
+assenza di processi Surefire attivi e ACL regolari, è stato rilanciato lo stesso
+comando fuori sandbox:
+`mvn -Dmaven.repo.local=C:\Users\user\.m2\repository clean test`
+Risultato finale: 358 test, 0 failure, 0 errori, 1 skipped, BUILD SUCCESS.
+Incremento esatto rispetto alla baseline: +11 test B59.
+
+32. GIT DIFF --CHECK
+Eseguito prima delle modifiche, prima della regressione e dopo il self-review:
+nessun errore whitespace. Il solo warning LF->CRLF di Git per il file Security
+Configuration riflette la configurazione line-ending Windows, non un errore
+`diff --check`.
+
+33. GIT STATUS --SHORT
+Stato atteso non staged al momento della stesura del report:
+ M backend/src/main/java/.../config/SecurityConfiguration.java
+?? backend/src/main/java/.../auctionstate/
+?? backend/src/main/resources/db/migration/V52__create_auction_state_lifecycle.sql
+?? backend/src/test/java/.../auctionstate/
+?? BLOCCO-59-REPORT.txt
+Nessun file è staged, committato o pushato.
+
+34. RESIDUAL RISKS
+- L'unicità ACTIVE è globale all'istanza, scelta coerente con "quale sessione
+  è attiva"; un futuro multi-tenant dovrà ridefinirla per owner/league.
+- La completezza certifica copertura del pool e presume che ogni acquisto
+  osservato venga registrato: B59 non può conoscere eventi esterni mai inviati.
+- Lo snapshot conserva ruolo/stato iniziale; un cambio eligibility rende
+  availabilityComplete false e la purchase viene comunque riverificata.
+- Nessun endpoint V1 cancella una sessione o gestisce exclude/restore.
+- Warning Maven preesistenti: API deprecated e Mockito dynamic agent futuro;
+  non causano failure e non sono stati introdotti come modifica B59.
+
+35. COSA RESTA PER B60
+Possibili evoluzioni backend: comandi cancel ed exclude/restore idempotenti,
+ownership/autorizzazione per singola sessione, query audit paginata, eventuale
+supporto multi-sessione/multi-tenant e osservabilità/metriche operative.
+
+36. COSA RESTA PER B61
+Possibili evoluzioni di prodotto: orchestrazione live, sincronizzazione con
+fonti esterne affidabili, recovery/reconciliation di eventi mancanti e un
+resolver matchday solo se sostenuto da una fonte canonica verificabile.
+
+37. COSA RESTA PRIMA DEL FRONTEND
+Definire UX e contratti definitivi per selezione rosa/sessione, lifecycle,
+nomination, retry con idempotency key, gestione 409, conferma purchase, audit e
+stato incompleto. Stabilire autenticazione client e ownership. Solo dopo,
+collegare il frontend mantenendo il decision endpoint read-only separato dalle
+mutation.
+
+SELF-REVIEW FINALE
+Ricontrollati esplicitamente: check-then-act, boundary transazionali, unique,
+doppi decrementi, idempotency atomica e payload conflict, isolamento OTHER,
+aggiornamento context USER, esclusione alternative, availabilityComplete,
+security matcher/order, source of truth, rollback, N+1, lifecycle, history,
+clock/test flakiness, race reale e immutabilità logica B49-B58. Nessun difetto
+bloccante residuo trovato; full regression eseguita dopo il self-review.

@@ -1,0 +1,198 @@
+[
+  {
+    "player_id": 1032,
+    "player_name": "Molina N.",
+    "transfermarkt_id": "424042",
+    "season": "2024/2025",
+    "url": "https://www.transfermarkt.com/nahuel-molina/leistungsdaten/spieler/424042/saison/2024",
+    "status": "DOWNLOADED",
+    "bytes": 100242,
+    "sha256": "8af475937c355125fcbd31b7272289a6db7c243daa3b96edf37bd8217e3837a6",
+    "file": "C:\\Users\\user\\OneDrive\\Desktop\\Fantafoot\\fantacalcio-intelligence\\data\\statistics\\international\\b66-no-history-recovery\\1032-424042-2024.html"
+  },
+  {
+    "player_id": 1032,
+    "player_name": "Molina N.",
+    "transfermarkt_id": "424042",
+    "season": "2025/2026",
+    "url": "https://www.transfermarkt.com/nahuel-molina/leistungsdaten/spieler/424042/saison/2025",
+    "status": "DOWNLOADED",
+    "bytes": 100243,
+    "sha256": "bd4d97de17ee0c1224779ddd939cf7202aebd2d3a5494584427bf92d19b64e24",
+    "file": "C:\\Users\\user\\OneDrive\\Desktop\\Fantafoot\\fantacalcio-intelligence\\data\\statistics\\international\\b66-no-history-recovery\\1032-424042-2025.html"
+  },
+  {
+    "player_id": 1033,
+    "player_name": "Kevin Carlos",
+    "transfermarkt_id": "718201",
+    "season": "2024/2025",
+    "url": "https://www.transfermarkt.com/kevin-carlos/leistungsdaten/spieler/718201/saison/2024",
+    "status": "DOWNLOADED",
+    "bytes": 98321,
+    "sha256": "8075ee59d7dce9995c762715daa4d7b7490d55474076cc0b9c16eac258e69fe2",
+    "file": "C:\\Users\\user\\OneDrive\\Desktop\\Fantafoot\\fantacalcio-intelligence\\data\\statistics\\international\\b66-no-history-recovery\\1033-718201-2024.html"
+  },
+  {
+    "player_id": 1033,
+    "player_name": "Kevin Carlos",
+    "transfermarkt_id": "718201",
+    "season": "2025/2026",
+    "url": "https://www.transfermarkt.com/kevin-carlos/leistungsdaten/spieler/718201/saison/2025",
+    "status": "DOWNLOADED",
+    "bytes": 98209,
+    "sha256": "f035fecbbdf20f2e76e3015926ab0e8493835594e5a6a15ed21e7966816bf779",
+    "file": "C:\\Users\\user\\OneDrive\\Desktop\\Fantafoot\\fantacalcio-intelligence\\data\\statistics\\international\\b66-no-history-recovery\\1033-718201-2025.html"
+  },
+  {
+    "player_id": 1034,
+    "player_name": "Romero D.",
+    "transfermarkt_id": "668512",
+    "season": "2024/2025",
+    "url": "https://www.transfermarkt.com/david-romero/leistungsdaten/spieler/668512/saison/2024",
+    "status": "DOWNLOADED",
+    "bytes": 97272,
+    "sha256": "1647a1a8077b93f2ef9c96060eabaccb37916fb7b822deef69317b2abc9013c5",
+    "file": "C:\\Users\\user\\OneDrive\\Desktop\\Fantafoot\\fantacalcio-intelligence\\data\\statistics\\international\\b66-no-history-recovery\\1034-668512-2024.html"
+  },
+  {
+    "player_id": 1034,
+    "player_name": "Romero D.",
+    "transfermarkt_id": "668512",
+    "season": "2025/2026",
+    "url": "https://www.transfermarkt.com/david-romero/leistungsdaten/spieler/668512/saison/2025",
+    "status": "DOWNLOADED",
+    "bytes": 97141,
+    "sha256": "1c641ab15617ac0579bd4872668b7f400dfd7ebb9cfda241de2e42c37b11b8ba",
+    "file": "C:\\Users\\user\\OneDrive\\Desktop\\Fantafoot\\fantacalcio-intelligence\\data\\statistics\\international\\b66-no-history-recovery\\1034-668512-2025.html"
+  },
+  {
+    "player_id": 1035,
+    "player_name": "Schmid",
+    "transfermarkt_id": "346853",
+    "season": "2024/2025",
+    "url": "https://www.transfermarkt.com/romano-schmid/leistungsdaten/spieler/346853/saison/2024",
+    "status": "DOWNLOADED",
+    "bytes": 98834,
+    "sha256": "6b9eafa1c4153ae1dc30df471895309c4dbb08bdea759e234c1edf004320061a",
+    "file": "C:\\Users\\user\\OneDrive\\Desktop\\Fantafoot\\fantacalcio-intelligence\\data\\statistics\\international\\b66-no-history-recovery\\1035-346853-2024.html"
+  },
+  {
+    "player_id": 1035,
+    "player_name": "Schmid",
+    "transfermarkt_id": "346853",
+    "season": "2025/2026",
+    "url": "https://www.transfermarkt.com/romano-schmid/leistungsdaten/spieler/346853/saison/2025",
+    "status": "DOWNLOADED",
+    "bytes": 98848,
+    "sha256": "faf75ce7cb9819c61d20ead66db92b4ec4255369e6d4788a6cc18778b30c6f32",
+    "file": "C:\\Users\\user\\OneDrive\\Desktop\\Fantafoot\\fantacalcio-intelligence\\data\\statistics\\international\\b66-no-history-recovery\\1035-346853-2025.html"
+  },
+  {
+    "player_id": 1036,
+    "player_name": "Grillitsch",
+    "transfermarkt_id": "195736",
+    "season": "2024/2025",
+    "url": "https://www.transfermarkt.com/florian-grillitsch/leistungsdaten/spieler/195736/saison/2024",
+    "status": "DOWNLOADED",
+    "bytes": 99915,
+    "sha256": "7925a27a2f8681fb7d77c37b21f03d63b99158e9e49ed57b3a6443b84e337e04",
+    "file": "C:\\Users\\user\\OneDrive\\Desktop\\Fantafoot\\fantacalcio-intelligence\\data\\statistics\\international\\b66-no-history-recovery\\1036-195736-2024.html"
+  },
+  {
+    "player_id": 1036,
+    "player_name": "Grillitsch",
+    "transfermarkt_id": "195736",
+    "season": "2025/2026",
+    "url": "https://www.transfermarkt.com/florian-grillitsch/leistungsdaten/spieler/195736/saison/2025",
+    "status": "DOWNLOADED",
+    "bytes": 99770,
+    "sha256": "efdd2c925d8c984cbf18278a765d5376f3c231c5215483f71ce19f907cdb615f",
+    "file": "C:\\Users\\user\\OneDrive\\Desktop\\Fantafoot\\fantacalcio-intelligence\\data\\statistics\\international\\b66-no-history-recovery\\1036-195736-2025.html"
+  },
+  {
+    "player_id": 1037,
+    "player_name": "Terzic",
+    "transfermarkt_id": "404260",
+    "season": "2024/2025",
+    "url": "https://www.transfermarkt.com/aleksa-terzic/leistungsdaten/spieler/404260/saison/2024",
+    "status": "DOWNLOADED",
+    "bytes": 98142,
+    "sha256": "1510a01e2fef13b7f8ba6a41c1e3dd3971aa55748360aab653249d30716edd6c",
+    "file": "C:\\Users\\user\\OneDrive\\Desktop\\Fantafoot\\fantacalcio-intelligence\\data\\statistics\\international\\b66-no-history-recovery\\1037-404260-2024.html"
+  },
+  {
+    "player_id": 1037,
+    "player_name": "Terzic",
+    "transfermarkt_id": "404260",
+    "season": "2025/2026",
+    "url": "https://www.transfermarkt.com/aleksa-terzic/leistungsdaten/spieler/404260/saison/2025",
+    "status": "DOWNLOADED",
+    "bytes": 98000,
+    "sha256": "7d61162959645d7eeddcf1817bf62ff6bfa89d6805d755287e69bb7d0894683c",
+    "file": "C:\\Users\\user\\OneDrive\\Desktop\\Fantafoot\\fantacalcio-intelligence\\data\\statistics\\international\\b66-no-history-recovery\\1037-404260-2025.html"
+  },
+  {
+    "player_id": 1038,
+    "player_name": "Aurelio",
+    "transfermarkt_id": "457444",
+    "season": "2024/2025",
+    "url": "https://www.transfermarkt.com/giuseppe-aurelio/leistungsdaten/spieler/457444/saison/2024",
+    "status": "FAILED",
+    "error": "The read operation timed out"
+  },
+  {
+    "player_id": 1038,
+    "player_name": "Aurelio",
+    "transfermarkt_id": "457444",
+    "season": "2025/2026",
+    "url": "https://www.transfermarkt.com/giuseppe-aurelio/leistungsdaten/spieler/457444/saison/2025",
+    "status": "DOWNLOADED",
+    "bytes": 96293,
+    "sha256": "dd84a050dc4dd4c2ad278456c5ac2330b5435488c5a8955c99652fadc17ca472",
+    "file": "C:\\Users\\user\\OneDrive\\Desktop\\Fantafoot\\fantacalcio-intelligence\\data\\statistics\\international\\b66-no-history-recovery\\1038-457444-2025.html"
+  },
+  {
+    "player_id": 1039,
+    "player_name": "Penev",
+    "transfermarkt_id": "1084756",
+    "season": "2024/2025",
+    "url": "https://www.transfermarkt.com/plamen-penev/leistungsdaten/spieler/1084756/saison/2024",
+    "status": "DOWNLOADED",
+    "bytes": 94910,
+    "sha256": "042215b9e162223c662b08b0226131816229f93ce4698093530161e07e4bc959",
+    "file": "C:\\Users\\user\\OneDrive\\Desktop\\Fantafoot\\fantacalcio-intelligence\\data\\statistics\\international\\b66-no-history-recovery\\1039-1084756-2024.html"
+  },
+  {
+    "player_id": 1039,
+    "player_name": "Penev",
+    "transfermarkt_id": "1084756",
+    "season": "2025/2026",
+    "url": "https://www.transfermarkt.com/plamen-penev/leistungsdaten/spieler/1084756/saison/2025",
+    "status": "DOWNLOADED",
+    "bytes": 94910,
+    "sha256": "dd3fc9c3ef8310c346993bdb11b73c158ba8bced8ee40c83e5be28adc600fc81",
+    "file": "C:\\Users\\user\\OneDrive\\Desktop\\Fantafoot\\fantacalcio-intelligence\\data\\statistics\\international\\b66-no-history-recovery\\1039-1084756-2025.html"
+  },
+  {
+    "player_id": 1111,
+    "player_name": "Spence",
+    "transfermarkt_id": "483348",
+    "season": "2024/2025",
+    "url": "https://www.transfermarkt.com/djed-spence/leistungsdaten/spieler/483348/saison/2024",
+    "status": "DOWNLOADED",
+    "bytes": 97235,
+    "sha256": "57893a12f50261c99cb458489b40d0b9c93690cff39dcba33bba51894d480705",
+    "file": "C:\\Users\\user\\OneDrive\\Desktop\\Fantafoot\\fantacalcio-intelligence\\data\\statistics\\international\\b66-no-history-recovery\\1111-483348-2024.html"
+  },
+  {
+    "player_id": 1111,
+    "player_name": "Spence",
+    "transfermarkt_id": "483348",
+    "season": "2025/2026",
+    "url": "https://www.transfermarkt.com/djed-spence/leistungsdaten/spieler/483348/saison/2025",
+    "status": "DOWNLOADED",
+    "bytes": 97092,
+    "sha256": "508bebf7b4962866fb8f81779fb15dd9961c219b1a0e1d41187f7bbc98f12191",
+    "file": "C:\\Users\\user\\OneDrive\\Desktop\\Fantafoot\\fantacalcio-intelligence\\data\\statistics\\international\\b66-no-history-recovery\\1111-483348-2025.html"
+  }
+]

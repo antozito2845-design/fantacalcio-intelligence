@@ -1,0 +1,42 @@
+F03 PREIMPLEMENTATION AUDIT
+Captured: 2026-08-22 Europe/Rome
+
+AUDITED
+- package.json and package-lock.json
+- tsconfig.json, tsconfig.app.json, tsconfig.node.json
+- vite.config.ts
+- eslint.config.js
+- src tree, router, providers and bootstrap
+- F02 tokens and global stylesheet
+- Vitest/MSW setup and existing tests
+- git status and backend diff baseline
+
+TOOLCHAIN
+- Node: v22.21.0 (PASS; matches engines 22.x)
+- npm declared by F02: 10.9.4
+- npm global launcher status: BROKEN PROFILE SHIM (npm-cli.js missing)
+- mitigation: use the bundled workspace runtime, without global installation
+- package lock: npm lockfile v3
+
+F02 INTEGRITY
+- React + TypeScript strict + Vite architecture remains present.
+- Router has home and wildcard 404.
+- Central fetch client, TanStack Query provider, Zod and MSW remain present.
+- jsx-a11y is already installed and configured; no duplicate setup needed.
+- Lucide React is already installed.
+- No UI framework, chart library, Zustand, Storybook or Playwright present.
+
+INITIAL DESIGN FOUNDATION
+- Minimal light/dark media-query token set.
+- One centered foundation panel.
+- No app shell or reusable UI primitives yet.
+
+SAFETY
+- Backend server remains off and backend is protected.
+- Backend contains substantial pre-existing user changes.
+- Baseline captured with git status and git diff --stat -- backend.
+- Only frontend F03 files will be modified.
+
+F03_PREIMPLEMENTATION_AUDIT=PASS
+F02_INTEGRITY=PASS
+PROJECT_STATE=SAFE

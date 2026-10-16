@@ -1,0 +1,1204 @@
+
+==============================================================================
+M03.1 - HISTORICAL PLAYER CATALOG DATA DIAGNOSIS
+==============================================================================
+
+==============================================================================
+1. GIT STATUS
+==============================================================================
+
+>>> git status --short
+ M frontend/src/features/core/SquadManagementFlows.test.tsx
+ M frontend/src/layouts/GlobalSearch.tsx
+?? FANTAFOOT-FINAL-STATE.txt
+?? FANTAFOOT-FULL-AUDIT.txt
+?? FANTAFOOT-TARGETED-AUDIT.txt
+?? project-audit-current.txt
+?? project-file-list.txt
+EXIT=0
+
+==============================================================================
+2. DATABASE SAFETY
+==============================================================================
+DATABASE_URL=jdbc:postgresql://localhost:5432/fantacalcio_intelligence
+DATABASE_USERNAME=fantacalcio_app
+DATABASE_PASSWORD=<REDACTED>
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=fantacalcio_intelligence
+LOCAL_DEV_DB_CERTIFIED=YES
+
+==============================================================================
+3. DATABASE IDENTITY
+==============================================================================
+
+>>> psql.exe -h localhost -p 5432 -U fantacalcio_app -d fantacalcio_intelligence -v ON_ERROR_STOP=1 -P pager=off -c 
+SELECT
+    current_database() AS database,
+    current_user AS username,
+    current_schema() AS schema;
+
+         database         |    username     | schema 
+--------------------------+-----------------+--------
+ fantacalcio_intelligence | fantacalcio_app | public
+(1 riga)
+EXIT=0
+
+==============================================================================
+4. RELEVANT TABLE INVENTORY
+==============================================================================
+
+>>> psql.exe -h localhost -p 5432 -U fantacalcio_app -d fantacalcio_intelligence -v ON_ERROR_STOP=1 -P pager=off -c 
+SELECT table_name
+FROM information_schema.tables
+WHERE table_schema = 'public'
+  AND (
+       table_name ILIKE '%player%'
+       OR table_name ILIKE '%season%'
+       OR table_name ILIKE '%stat%'
+       OR table_name ILIKE '%club%'
+  )
+ORDER BY table_name;
+
+               table_name               
+----------------------------------------
+ auction_player_states
+ club_season_tactics
+ club_statistical_source_links
+ club_strength_ratings
+ clubs
+ fantasy_squad_players
+ foreign_player_scouting_reports
+ player_availabilities
+ player_availability_history
+ player_competition_season_statistics
+ player_development_assessments
+ player_evaluations
+ player_identity_aliases
+ player_identity_profiles
+ player_identity_provenance
+ player_import_rows
+ player_market_values
+ player_performance_algorithms
+ player_performance_feature_definitions
+ player_performance_feature_profiles
+ player_reconciliation_results
+ player_registration_events
+ player_registrations
+ player_roles
+ player_season_statistics
+ player_season_statistics_clubs
+ player_source_mappings
+ player_statistical_source_links
+ player_statistics_import_batches
+ player_statistics_import_rows
+ player_strategic_data_observations
+ player_tactical_profiles
+ player_transfer_claims
+ player_value_algorithms
+ player_value_profiles
+ players
+ season_clubs
+ seasons
+(38 righe)
+EXIT=0
+
+==============================================================================
+5. RELEVANT COLUMN INVENTORY
+==============================================================================
+
+>>> psql.exe -h localhost -p 5432 -U fantacalcio_app -d fantacalcio_intelligence -v ON_ERROR_STOP=1 -P pager=off -c 
+SELECT
+    table_name,
+    column_name,
+    data_type
+FROM information_schema.columns
+WHERE table_schema = 'public'
+  AND table_name IN (
+      'players',
+      'seasons',
+      'player_registrations',
+      'player_roles',
+      'season_clubs',
+      'player_reconciliation_results',
+      'player_statistics'
+  )
+ORDER BY table_name, ordinal_position;
+
+          table_name           |        column_name         |        data_type         
+-------------------------------+----------------------------+--------------------------
+ player_reconciliation_results | id                         | bigint
+ player_reconciliation_results | season_id                  | bigint
+ player_reconciliation_results | player_id                  | bigint
+ player_reconciliation_results | normalized_name            | character varying
+ player_reconciliation_results | normalized_club_name       | character varying
+ player_reconciliation_results | sources_count              | integer
+ player_reconciliation_results | matched_at                 | timestamp with time zone
+ player_reconciliation_results | identity_resolution_method | character varying
+ player_reconciliation_results | club_resolution_source     | character varying
+ player_reconciliation_results | club_verified_at           | timestamp with time zone
+ player_registrations          | id                         | bigint
+ player_registrations          | player_id                  | bigint
+ player_registrations          | club_id                    | bigint
+ player_registrations          | season_id                  | bigint
+ player_registrations          | shirt_number               | smallint
+ player_registrations          | joined_at                  | date
+ player_registrations          | left_at                    | date
+ player_registrations          | registration_status        | character varying
+ player_registrations          | created_at                 | timestamp with time zone
+ player_registrations          | updated_at                 | timestamp with time zone
+ player_roles                  | id                         | bigint
+ player_roles                  | player_id                  | bigint
+ player_roles                  | season_id                  | bigint
+ player_roles                  | source                     | character varying
+ player_roles                  | fantasy_role               | character varying
+ player_roles                  | tactical_role              | character varying
+ player_roles                  | primary_role               | boolean
+ player_roles                  | valid_from                 | date
+ player_roles                  | valid_to                   | date
+ player_roles                  | created_at                 | timestamp with time zone
+ players                       | id                         | bigint
+ players                       | first_name                 | character varying
+ players                       | last_name                  | character varying
+ players                       | display_name               | character varying
+ players                       | normalized_name            | character varying
+ players                       | birth_date                 | date
+ players                       | nationality_code           | character varying
+ players                       | preferred_foot             | character varying
+ players                       | height_cm                  | smallint
+ players                       | active                     | boolean
+ players                       | created_at                 | timestamp with time zone
+ players                       | updated_at                 | timestamp with time zone
+ season_clubs                  | season_id                  | bigint
+ season_clubs                  | club_id                    | bigint
+ season_clubs                  | created_at                 | timestamp with time zone
+ seasons                       | id                         | bigint
+ seasons                       | code                       | character varying
+ seasons                       | start_year                 | smallint
+ seasons                       | end_year                   | smallint
+ seasons                       | current_season             | boolean
+ seasons                       | created_at                 | timestamp with time zone
+(51 righe)
+EXIT=0
+
+==============================================================================
+6. SEASONS
+==============================================================================
+
+>>> psql.exe -h localhost -p 5432 -U fantacalcio_app -d fantacalcio_intelligence -v ON_ERROR_STOP=1 -P pager=off -c 
+SELECT *
+FROM seasons
+ORDER BY id;
+
+ id |   code    | start_year | end_year | current_season |          created_at           
+----+-----------+------------+----------+----------------+-------------------------------
+  1 | 2024/2025 |       2024 |     2025 | f              | 2026-08-01 16:13:16.611672+02
+  2 | 2025/2026 |       2025 |     2026 | f              | 2026-08-01 16:13:16.611672+02
+  3 | 2026/2027 |       2026 |     2027 | t              | 2026-08-01 16:13:16.611672+02
+(3 righe)
+EXIT=0
+
+==============================================================================
+7. GLOBAL PLAYER STATE
+==============================================================================
+
+>>> psql.exe -h localhost -p 5432 -U fantacalcio_app -d fantacalcio_intelligence -v ON_ERROR_STOP=1 -P pager=off -c 
+SELECT
+    COUNT(*) AS total_players,
+    COUNT(*) FILTER (WHERE active = TRUE) AS active_players,
+    COUNT(*) FILTER (WHERE active = FALSE) AS inactive_players
+FROM players;
+
+ total_players | active_players | inactive_players 
+---------------+----------------+------------------
+          1020 |            536 |              484
+(1 riga)
+EXIT=0
+
+==============================================================================
+8. REGISTRATIONS PER SEASON
+==============================================================================
+
+>>> psql.exe -h localhost -p 5432 -U fantacalcio_app -d fantacalcio_intelligence -v ON_ERROR_STOP=1 -P pager=off -c 
+SELECT
+    s.code AS season,
+    COUNT(*) AS registrations,
+    COUNT(DISTINCT pr.player_id) AS distinct_players,
+    COUNT(*) FILTER (
+        WHERE pr.registration_status = 'ACTIVE'
+    ) AS active_registrations
+FROM player_registrations pr
+JOIN seasons s ON s.id = pr.season_id
+GROUP BY s.code
+ORDER BY s.code;
+
+  season   | registrations | distinct_players | active_registrations 
+-----------+---------------+------------------+----------------------
+ 2026/2027 |           536 |              536 |                  521
+(1 riga)
+EXIT=0
+
+==============================================================================
+9. ROLES PER SEASON / SOURCE
+==============================================================================
+
+>>> psql.exe -h localhost -p 5432 -U fantacalcio_app -d fantacalcio_intelligence -v ON_ERROR_STOP=1 -P pager=off -c 
+SELECT
+    s.code AS season,
+    r.source,
+    COUNT(*) AS role_rows,
+    COUNT(DISTINCT r.player_id) AS distinct_players
+FROM player_roles r
+JOIN seasons s ON s.id = r.season_id
+GROUP BY s.code, r.source
+ORDER BY s.code, r.source;
+
+  season   |   source    | role_rows | distinct_players 
+-----------+-------------+-----------+------------------
+ 2024/2025 | FANTACALCIO |       679 |              679
+ 2025/2026 | FANTACALCIO |       663 |              663
+ 2026/2027 | FANTACALCIO |       513 |              513
+ 2026/2027 | FANTAMARKT  |       493 |              493
+ 2026/2027 | GAZZETTA    |       457 |              457
+ 2026/2027 | INTERNAL    |        23 |               23
+(6 righe)
+EXIT=0
+
+==============================================================================
+10. RECONCILIATION PER SEASON
+==============================================================================
+
+>>> psql.exe -h localhost -p 5432 -U fantacalcio_app -d fantacalcio_intelligence -v ON_ERROR_STOP=1 -P pager=off -c 
+SELECT
+    s.code AS season,
+    COUNT(*) AS reconciliation_rows,
+    COUNT(DISTINCT r.player_id) AS distinct_players
+FROM player_reconciliation_results r
+JOIN seasons s ON s.id = r.season_id
+GROUP BY s.code
+ORDER BY s.code;
+
+  season   | reconciliation_rows | distinct_players 
+-----------+---------------------+------------------
+ 2026/2027 |                 498 |              498
+(1 riga)
+EXIT=0
+
+==============================================================================
+11. CURRENT CATALOG ELIGIBILITY BY SEASON
+==============================================================================
+
+>>> psql.exe -h localhost -p 5432 -U fantacalcio_app -d fantacalcio_intelligence -v ON_ERROR_STOP=1 -P pager=off -c 
+SELECT
+    s.code AS season,
+    COUNT(DISTINCT p.id) AS currently_catalog_eligible
+FROM players p
+JOIN player_reconciliation_results rec
+    ON rec.player_id = p.id
+JOIN seasons s
+    ON s.id = rec.season_id
+JOIN player_registrations registration
+    ON registration.player_id = p.id
+   AND registration.season_id = s.id
+JOIN clubs c
+    ON c.id = registration.club_id
+JOIN season_clubs sc
+    ON sc.season_id = s.id
+   AND sc.club_id = c.id
+JOIN player_roles role_fantacalcio
+    ON role_fantacalcio.player_id = p.id
+   AND role_fantacalcio.season_id = s.id
+   AND role_fantacalcio.source = 'FANTACALCIO'
+WHERE p.active = TRUE
+  AND registration.registration_status = 'ACTIVE'
+  AND role_fantacalcio.fantasy_role IS NOT NULL
+GROUP BY s.code
+ORDER BY s.code;
+
+  season   | currently_catalog_eligible 
+-----------+----------------------------
+ 2026/2027 |                        498
+(1 riga)
+EXIT=0
+
+==============================================================================
+12. INACTIVE PLAYERS WITH HISTORICAL REGISTRATIONS
+==============================================================================
+
+>>> psql.exe -h localhost -p 5432 -U fantacalcio_app -d fantacalcio_intelligence -v ON_ERROR_STOP=1 -P pager=off -c 
+SELECT
+    COUNT(DISTINCT p.id) AS inactive_players_with_registration_history
+FROM players p
+JOIN player_registrations pr
+    ON pr.player_id = p.id
+WHERE p.active = FALSE;
+
+ inactive_players_with_registration_history 
+--------------------------------------------
+                                          0
+(1 riga)
+EXIT=0
+
+>>> psql.exe -h localhost -p 5432 -U fantacalcio_app -d fantacalcio_intelligence -v ON_ERROR_STOP=1 -P pager=off -c 
+SELECT
+    p.id,
+    p.display_name,
+    COUNT(DISTINCT pr.season_id) AS seasons_registered
+FROM players p
+JOIN player_registrations pr
+    ON pr.player_id = p.id
+WHERE p.active = FALSE
+GROUP BY p.id, p.display_name
+ORDER BY seasons_registered DESC, p.display_name
+LIMIT 30;
+
+ id | display_name | seasons_registered 
+----+--------------+--------------------
+(0 righe)
+EXIT=0
+
+==============================================================================
+13. HISTORICAL PLAYER VISIBILITY GAP
+==============================================================================
+
+>>> psql.exe -h localhost -p 5432 -U fantacalcio_app -d fantacalcio_intelligence -v ON_ERROR_STOP=1 -P pager=off -c 
+WITH historical AS (
+    SELECT DISTINCT
+        p.id,
+        p.display_name
+    FROM players p
+    JOIN player_registrations pr
+        ON pr.player_id = p.id
+),
+current_eligible AS (
+    SELECT DISTINCT p.id
+    FROM players p
+    JOIN player_reconciliation_results rec
+        ON rec.player_id = p.id
+    JOIN seasons s
+        ON s.id = rec.season_id
+    JOIN player_registrations registration
+        ON registration.player_id = p.id
+       AND registration.season_id = s.id
+    JOIN clubs c
+        ON c.id = registration.club_id
+    JOIN season_clubs sc
+        ON sc.season_id = s.id
+       AND sc.club_id = c.id
+    JOIN player_roles role_fantacalcio
+        ON role_fantacalcio.player_id = p.id
+       AND role_fantacalcio.season_id = s.id
+       AND role_fantacalcio.source = 'FANTACALCIO'
+    WHERE p.active = TRUE
+      AND registration.registration_status = 'ACTIVE'
+      AND role_fantacalcio.fantasy_role IS NOT NULL
+)
+SELECT
+    COUNT(*) AS historical_identities_not_currently_eligible
+FROM historical h
+LEFT JOIN current_eligible c
+    ON c.id = h.id
+WHERE c.id IS NULL;
+
+ historical_identities_not_currently_eligible 
+----------------------------------------------
+                                           38
+(1 riga)
+EXIT=0
+
+==============================================================================
+14. BACKEND HISTORICAL SURFACE SCAN
+==============================================================================
+
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\availability\PlayerAvailabilityController.java
+  30:             @RequestParam(defaultValue = "#{@currentSeasonResolver.resolve()}")
+  31:             String season,
+  40:                 season,
+  46:     @GetMapping("/players/{playerId}/history")
+  47:     public List<PlayerAvailabilityHistoryResponse> findHistory(
+  50:             Long playerId,
+  52:             @RequestParam(defaultValue = "#{@currentSeasonResolver.resolve()}")
+  53:             String season,
+  58:         return service.findHistory(
+  59:                 playerId,
+  60:                 season,
+  65:     @PutMapping("/players/{playerId}")
+  69:             Long playerId,
+  76:                 playerId,
+
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\availability\PlayerAvailabilityHistoryResponse.java
+   7: public record PlayerAvailabilityHistoryResponse(
+  10:         Long playerId,
+  12:         String season,
+
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\availability\PlayerAvailabilityResponse.java
+   8:         Long playerId,
+  11:         String season,
+
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\availability\PlayerAvailabilityService.java
+  30:             String season,
+  34:         validateSeason(season);
+  47:                     season.code AS season_code,
+  59:                 JOIN seasons season
+  60:                     ON season.id = availability.season_id
+  63:                     AND registration.season_id = season.id
+  66:                 WHERE season.code = :season
+  84:                 .param("season", season.trim())
+ 100:                                 rs.getString("season_code"),
+ 129:     public List<PlayerAvailabilityHistoryResponse> findHistory(
+ 130:             Long playerId,
+ 131:             String season,
+ 134:         validateSeason(season);
+ 140:         ensurePlayerExists(playerId);
+ 144:                     history.id,
+ 145:                     history.availability_id,
+ 146:                     history.player_id,
+ 148:                     season.code AS season_code,
+ 149:                     history.matchday,
+ 150:                     history.status,
+ 151:                     history.starting_probability,
+ 152:                     history.availability_probability,
+ 153:                     history.injury_description,
+ 154:                     history.expected_return_date,
+ 155:                     history.source,
+ 156:                     history.changed_at
+ 157:                 FROM player_availability_history history
+ 159:                     ON player.id = history.player_id
+ 160:                 JOIN seasons season
+ 161:                     ON season.id = history.season_id
+ 162:                 WHERE history.player_id = :playerId
+ 163:                   AND season.code = :season
+ 168:                     AND history.matchday = :matchday
+ 173:                 ORDER BY history.changed_at DESC, history.id DESC
+ 178:                 .param("playerId", playerId)
+ 179:                 .param("season", season.trim());
+ 187:                         new PlayerAvailabilityHistoryResponse(
+ 192:                                 rs.getString("season_code"),
+ 222:             Long playerId,
+ 225:         validateSeason(request.season());
+ 227:         ensurePlayerExists(playerId);
+ 236:         Long seasonId = jdbcClient.sql("""
+ 238:                 FROM seasons
+ 239:                 WHERE code = :season
+ 241:                 .param("season", request.season().trim())
+ 276:                     season_id,
+ 286:                     :playerId,
+ 287:                     :seasonId,
+ 298:                     season_id,
+ 315:                 .param("playerId", playerId)
+ 316:                 .param("seasonId", seasonId)
+ 340:                 INSERT INTO player_availability_history (
+ 343:                     season_id,
+ 354:                     :playerId,
+ 355:                     :seasonId,
+ 366:                 .param("playerId", playerId)
+ 367:                 .param("seasonId", seasonId)
+ 390:                 request.season(),
+ 396:                         item.playerId().equals(playerId)
+ 412:     private void ensurePlayerExists(Long playerId) {
+ 413:         if (playerId == null || playerId <= 0) {
+ 422:                 WHERE id = :playerId
+ 425:                 .param("playerId", playerId)
+ 526:     private void validateSeason(String season) {
+ 527:         if (season == null || season.isBlank()) {
+
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\availability\UpdatePlayerAvailabilityRequest.java
+  14:         String season,
+
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentController.java
+  27:             @RequestParam("season") String season
+  30:                 service.generate(season)
+  35:             "/api/v1/players/{playerId}/development"
+  39:             @PathVariable Long playerId,
+  40:             @RequestParam("season") String season
+  44:                         playerId,
+  45:                         season
+
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentResponse.java
+   6:         Long playerId,
+   8:         String targetSeason,
+   9:         String olderSeason,
+  10:         String latestSeason,
+
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java
+  35:             String targetSeasonCode
+  37:         SeasonReference targetSeason =
+  38:                 findSeason(targetSeasonCode);
+  41:                 findEligiblePlayers(targetSeason.id());
+  47:                             + targetSeasonCode
+  61:                             targetSeason
+  66:                     targetSeason,
+  81:                 targetSeason.id()
+  85:                 targetSeason.code(),
+  98:             Long playerId,
+  99:             String targetSeasonCode
+ 105:                     target.code AS target_season,
+ 106:                     older.code AS older_season,
+ 107:                     latest.code AS latest_season,
+ 126:                 JOIN seasons target
+ 127:                     ON target.id = assessment.target_season_id
+ 129:                 LEFT JOIN seasons older
+ 130:                     ON older.id = assessment.older_season_id
+ 132:                 LEFT JOIN seasons latest
+ 133:                     ON latest.id = assessment.latest_season_id
+ 135:                 WHERE assessment.player_id = :playerId
+ 136:                   AND target.code = :targetSeasonCode
+ 138:                 .param("playerId", playerId)
+ 140:                         "targetSeasonCode",
+ 141:                         targetSeasonCode
+ 147:                                 resultSet.getString("target_season"),
+ 148:                                 resultSet.getString("older_season"),
+ 149:                                 resultSet.getString("latest_season"),
+ 200:             SeasonReference targetSeason
+ 202:         List<SeasonStatistics> history =
+ 203:                 findPreviousSeasonStatistics(
+ 205:                         targetSeason.startYear()
+ 208:         if (history.size() < 2) {
+ 215:                     history,
+ 220:         SeasonStatistics latest = history.get(0);
+ 221:         SeasonStatistics older = history.get(1);
+ 384:                 older.seasonId(),
+ 385:                 older.seasonCode(),
+ 386:                 latest.seasonId(),
+ 387:                 latest.seasonCode(),
+ 404:     private List<SeasonStatistics> findPreviousSeasonStatistics(
+ 405:             Long playerId,
+ 410:                     season.id AS season_id,
+ 411:                     season.code AS season_code,
+ 413:                     AVG(statistics.appearances)
+ 416:                     AVG(statistics.starts)
+ 419:                     AVG(statistics.minutes_played)
+ 422:                     AVG(statistics.fantasy_average)
+ 424:                             WHERE statistics.fantasy_average
+ 429:                     AVG(statistics.goals)
+ 432:                     AVG(statistics.assists)
+ 435:                     AVG(statistics.expected_goals)
+ 437:                             WHERE statistics.expected_goals
+ 442:                     AVG(statistics.expected_assists)
+ 444:                             WHERE statistics.expected_assists
+ 449:                     COUNT(DISTINCT statistics.source)
+ 452:                 FROM player_season_statistics statistics
+ 454:                 JOIN seasons season
+ 455:                     ON season.id = statistics.season_id
+ 457:                 WHERE statistics.player_id = :playerId
+ 458:                   AND season.start_year < :targetStartYear
+ 461:                     season.id,
+ 462:                     season.code,
+ 463:                     season.start_year
+ 465:                 ORDER BY season.start_year DESC
+ 469:                 .param("playerId", playerId)
+ 475:                         new SeasonStatistics(
+ 476:                                 resultSet.getLong("season_id"),
+ 477:                                 resultSet.getString("season_code"),
+ 525:             SeasonStatistics latest
+ 550:             SeasonStatistics older,
+ 551:             SeasonStatistics latest
+ 750:             SeasonReference targetSeason,
+ 756:                     target_season_id,
+ 757:                     older_season_id,
+ 758:                     latest_season_id,
+ 774:                     :playerId,
+ 775:                     :targetSeasonId,
+ 776:                     :olderSeasonId,
+ 777:                     :latestSeasonId,
+
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentGenerationResponse.java
+   4:         String targetSeason,
+
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\evaluation\PlayerEvaluationGenerationController.java
+  23:                     defaultValue = "#{@currentSeasonResolver.resolve()}"
+  25:             String season
+  27:         return service.generate(season);
+
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\evaluation\PlayerEvaluationGenerationResponse.java
+   4:         String season,
+
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\evaluation\PlayerEvaluationGenerationService.java
+  23:             String seasonCode
+  25:         Long seasonId = findSeasonId(seasonCode);
+  28:                 countEligiblePlayers(seasonId);
+  34:                             + seasonCode
+  38:         deleteStaleEvaluations(seasonId);
+  41:                 generateEvaluations(seasonId);
+  44:                 seasonCode,
+  51:     private Long findSeasonId(String seasonCode) {
+  54:                 FROM seasons
+  55:                 WHERE code = :seasonCode
+  57:                 .param("seasonCode", seasonCode)
+  63:                                         + seasonCode
+  68:     private int countEligiblePlayers(Long seasonId) {
+  75:                     AND reconciliation.season_id = role.season_id
+  83:                     AND registration.season_id = role.season_id
+  86:                 JOIN season_clubs season_club
+  87:                     ON season_club.season_id = role.season_id
+  88:                     AND season_club.club_id = registration.club_id
+  90:                 WHERE role.season_id = :seasonId
+  94:                 .param("seasonId", seasonId)
+  99:     private void deleteStaleEvaluations(Long seasonId) {
+ 102:                 WHERE evaluation.season_id = :seasonId
+ 110:                           AND registration.season_id =
+ 111:                               reconciliation.season_id
+ 115:                       JOIN season_clubs season_club
+ 116:                           ON season_club.season_id = reconciliation.season_id
+ 117:                           AND season_club.club_id = registration.club_id
+ 121:                         AND reconciliation.season_id =
+ 122:                               evaluation.season_id
+ 125:                 .param("seasonId", seasonId)
+ 129:     private int generateEvaluations(Long seasonId) {
+ 155:                         AND role.season_id = :seasonId
+ 160:                         AND registration.season_id = :seasonId
+ 164:                     JOIN season_clubs season_club
+ 165:                         ON season_club.season_id = :seasonId
+ 166:                         AND season_club.club_id = registration.club_id
+ 170:                         AND market.season_id = :seasonId
+ 176:                         AND reconciliation.season_id = :seasonId
+ 272:                     season_id,
+ 287:                     :seasonId,
+ 391:                     season_id
+ 427:                 .param("seasonId", seasonId)
+
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\importer\PlayerImportController.java
+  29:             @RequestParam String season,
+  34:                 season,
+
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\importer\PlayerImportResponse.java
+   6:         String season,
+
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\importer\PlayerImportService.java
+  95:             String seasonCode,
+  98:         return importPayload(source,seasonCode,CsvImportPayload.from(file,"players.csv"));
+ 103:             String seasonCode,
+ 109:         String normalizedSeason =
+ 110:                 validateSeasonCode(seasonCode);
+ 114:         Long seasonId = findSeasonId(
+ 115:                 normalizedSeason
+ 122:                 seasonId,
+ 133:                                             normalizedSeason,
+ 163:             String seasonCode,
+ 252:                 seasonCode,
+ 590:     private Long findSeasonId(
+ 591:             String seasonCode
+ 595:                 FROM seasons
+ 596:                 WHERE code = :seasonCode
+ 599:                         "seasonCode",
+ 600:                         seasonCode
+ 607:                                         + seasonCode
+ 614:             Long seasonId,
+ 623:                                             season_id,
+ 630:                                             :seasonId,
+ 642:                                                 "seasonId",
+ 643:                                                 seasonId
+ 746:     private String validateSeasonCode(
+ 747:             String seasonCode
+ 750:                 seasonCode == null
+ 751:                 || seasonCode.isBlank()
+ 758:         return seasonCode.trim();
+
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceController.java
+  20:             "/api/v1/players/{playerId}/intelligence"
+  23:             @PathVariable Long playerId,
+  26:                     defaultValue = "#{@currentSeasonResolver.resolve()}"
+  28:             String season,
+  40:                 playerId,
+  41:                 season,
+
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceProfileCalculator.java
+  17:     public CalculatedProfile calculate(SeasonData current, SeasonData previous) {
+  32:     private ProfileScore starter(SeasonData d, String confidence) {
+  46:     private ProfileScore reliability(SeasonData d, String confidence) {
+  62:     private ProfileScore bonus(SeasonData d, String confidence) {
+  87:     private ProfileScore malus(SeasonData d, String confidence) {
+ 106:     private ProfileScore trend(SeasonData current, SeasonData previous, String confidence) {
+ 115:         return score(result, confidence, Map.of("seasonDelta", delta.setScale(2, RoundingMode.HALF_UP)),
+ 116:                 List.of("Confronto con la stagione " + previous.season()));
+ 119:     private BigDecimal trendMetric(SeasonData d) {
+ 126:     private BigDecimal completeness(SeasonData d) {
+ 180:     public record SeasonData(String season, String role, Integer appearances, Integer starts, Integer minutes,
+
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceProfileController.java
+  16:     @GetMapping("/api/v1/players/{playerId}/intelligence-profile")
+  17:     public PlayerIntelligenceProfileResponse find(@PathVariable Long playerId, @RequestParam String season) {
+  18:         return service.find(playerId, season);
+
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceProfileResponse.java
+   6:         Long playerId,
+   8:         String season,
+
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceProfileService.java
+  12: import it.fantacalciointelligence.backend.intelligence.PlayerIntelligenceProfileCalculator.SeasonData;
+  30:     public PlayerIntelligenceProfileResponse find(Long playerId, String season) {
+  31:         SeasonRef seasonRef = findSeason(season);
+  32:         catalogPolicy.assertReadable(season, seasonRef.current());
+  33:         Map<String, Object> player = findOperationalPlayer(playerId, seasonRef.id());
+  34:         List<SeasonData> history = loadHistory(playerId, seasonRef.startYear());
+  35:         SeasonData current = history.stream().filter(item -> season.equals(item.season())).findFirst()
+  38:         SeasonData previous = history.stream().filter(item -> !season.equals(item.season())).findFirst().orElse(null);
+  40:         return new PlayerIntelligenceProfileResponse(playerId, player.get("display_name").toString(), season,
+  46:     private SeasonRef findSeason(String code) {
+  48:         return jdbcClient.sql("SELECT id, start_year, current_season FROM seasons WHERE code = :code")
+  49:                 .param("code", code.trim()).query((rs, row) -> new SeasonRef(rs.getLong("id"),
+  50:                         rs.getInt("start_year"), rs.getBoolean("current_season"))).optional()
+  54:     private Map<String, Object> findOperationalPlayer(Long playerId, long seasonId) {
+  60:                     AND registration.season_id = result.season_id AND registration.registration_status = 'ACTIVE'
+  61:                 JOIN season_clubs season_club ON season_club.season_id = result.season_id
+  62:                     AND season_club.club_id = registration.club_id
+  63:                 JOIN player_roles role ON role.player_id = player.id AND role.season_id = result.season_id
+  65:                 WHERE result.player_id = :playerId AND result.season_id = :seasonId
+  67:                 """).param("playerId", playerId).param("seasonId", seasonId).query().listOfRows().stream().findFirst()
+  72:     List<SeasonData> loadHistory(Long playerId, int targetStartYear) {
+  74:                 SELECT season.code, role.fantasy_role,
+ 111:                 FROM player_season_statistics stats
+ 112:                 JOIN seasons season ON season.id = stats.season_id
+ 114:                     AND role.season_id = stats.season_id AND role.source = 'FANTACALCIO'
+ 115:                 WHERE stats.player_id = :playerId AND season.start_year <= :targetStartYear
+ 116:                 GROUP BY season.id, season.code, season.start_year, role.fantasy_role
+ 117:                 ORDER BY season.start_year DESC
+ 118:                 """).param("playerId", playerId).param("targetStartYear", targetStartYear)
+ 119:                 .query((rs, row) -> new SeasonData(rs.getString("code"), rs.getString("fantasy_role"),
+ 127:     private record SeasonRef(long id, int startYear, boolean current) {}
+
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceResponse.java
+   8:         Long playerId,
+  11:         String season,
+
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceService.java
+  33:             Long playerId,
+  34:             String season,
+  40:                 playerId,
+  41:                 season,
+  48:                         playerId,
+  49:                         season.trim(),
+  56:                 playerId,
+  57:                 season,
+  70:             Long playerId,
+  71:             String season,
+  77:         validateRequest(playerId, season, budget, teams);
+  79:         if (auction == null || !playerId.equals(auction.playerId())) {
+  87:                         playerId,
+  88:                         season.trim()
+ 118:                 stringValue(data, "season_code"),
+ 207:             Long playerId,
+ 208:             String season
+ 215:                     season.code AS season_code,
+ 279:                 JOIN seasons season
+ 280:                     ON season.id = registration.season_id
+ 285:                 JOIN season_clubs season_club
+ 286:                     ON season_club.season_id = season.id
+ 287:                     AND season_club.club_id = club.id
+ 291:                     AND role.season_id = season.id
+ 296:                     AND tactical.season_id = season.id
+ 300:                     AND evaluation.season_id = season.id
+ 305:                     AND development.target_season_id =
+ 306:                         season.id
+ 311:                     AND scouting.season_id = season.id
+ 332:                       AND player_availability.season_id =
+ 333:                         season.id
+ 342:                 WHERE player.id = :playerId
+ 344:                   AND season.code = :season
+ 346:                 .param("playerId", playerId)
+ 347:                 .param("season", season)
+ 650:             Long playerId,
+ 651:             String season,
+ 655:         if (playerId == null || playerId <= 0) {
+ 661:         if (season == null || season.isBlank()) {
+
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\liveauction\LiveAuctionPlayerContextService.java
+  19:     public PlayerContext load(Long playerId, String season) {
+  21:                 .param("id", playerId).query(Boolean.class).single();
+  26:                        season_club.club_id IS NOT NULL club_active, role.fantasy_role
+  28:                 LEFT JOIN seasons season ON season.code=:season
+  30:                        ON registration.player_id=player.id AND registration.season_id=season.id
+  32:                 LEFT JOIN season_clubs season_club ON season_club.season_id=season.id
+  33:                        AND season_club.club_id=registration.club_id
+  34:                 LEFT JOIN player_roles role ON role.player_id=player.id AND role.season_id=season.id
+  37:                 """).param("season", season).param("id", playerId)
+
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\pairing\PlayerPairingController.java
+  22:             @RequestParam(defaultValue = "#{@currentSeasonResolver.resolve()}")
+  23:             String season,
+  47:                 season,
+
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\pairing\PlayerPairingService.java
+  40:             String season,
+  73:                 JOIN seasons season
+  74:                     ON season.id = reconciliation.season_id
+  78:                     AND registration.season_id = season.id
+  83:                 JOIN season_clubs season_club
+  84:                     ON season_club.season_id = season.id
+  85:                     AND season_club.club_id = club.id
+  89:                     AND role.season_id = season.id
+  92:                 WHERE season.code = :season
+  99:                 .param("season", season)
+ 110:                                 season,
+ 117:                                 AuctionPriceResponse::playerId,
+ 125:             Long playerId =
+ 129:                     pricesByPlayer.get(playerId);
+ 141:                             season,
+ 158:                             playerId,
+ 406:                 candidate.playerId(),
+ 445:             Long playerId,
+
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\player\PlayerCatalogController.java
+  24:             @RequestParam(defaultValue = "#{@currentSeasonResolver.resolve()}")
+  25:             String season,
+  43:                 season,
+  52:     @GetMapping("/{playerId}")
+  54:             @PathVariable Long playerId,
+  55:             @RequestParam(defaultValue = "#{@currentSeasonResolver.resolve()}")
+  56:             String season
+  59:                 playerId,
+  60:                 season
+
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\player\PlayerCatalogService.java
+  26:             String season,
+  38:                 WHERE s.code = :season
+  45:         params.put("season", season);
+  83:                           AND filter_role.season_id = s.id
+ 101:                 INNER JOIN seasons s
+ 102:                     ON s.id = r.season_id
+ 106:                     AND registration.season_id = s.id
+ 111:                 INNER JOIN season_clubs season_club
+ 112:                     ON season_club.season_id = s.id
+ 113:                     AND season_club.club_id = c.id
+ 117:                     AND role_fantacalcio.season_id = s.id
+ 122:                     AND role_gazzetta.season_id = s.id
+ 127:                     AND role_fantamarkt.season_id = s.id
+
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\player\PlayerDetailResponse.java
+  15:         List<PlayerSeasonStatisticsResponse> statistics
+
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\player\PlayerDetailService.java
+  24:             Long playerId,
+  25:             String seasonCode
+  33:                     s.id AS season_id
+  37:                 JOIN seasons s
+  38:                     ON s.id = pr.season_id
+  41:                 WHERE p.id = :playerId
+  42:                   AND s.code = :seasonCode
+  44:                 .param("playerId", playerId)
+  45:                 .param("seasonCode", seasonCode)
+  56:         Long seasonId = ((Number) player.get("season_id"))
+  64:                 WHERE player_id = :playerId
+  65:                   AND season_id = :seasonId
+  68:                 .param("playerId", playerId)
+  69:                 .param("seasonId", seasonId)
+  96:                         WHERE player_id = :playerId
+  97:                           AND season_id = :seasonId
+  99:                         .param("playerId", playerId)
+ 100:                         .param("seasonId", seasonId)
+ 131:                         JOIN club_season_tactics tactics
+ 133:                             AND tactics.season_id = pr.season_id
+ 136:                         WHERE pr.player_id = :playerId
+ 137:                           AND pr.season_id = :seasonId
+ 139:                         .param("playerId", playerId)
+ 140:                         .param("seasonId", seasonId)
+ 168:                         WHERE player_id = :playerId
+ 169:                           AND season_id = :seasonId
+ 171:                         .param("playerId", playerId)
+ 172:                         .param("seasonId", seasonId)
+ 190:         List<PlayerSeasonStatisticsResponse> statistics =
+ 197:                             (SELECT STRING_AGG(history.club_name, '|' ORDER BY history.source_order)
+ 198:                              FROM player_season_statistics_clubs history
+ 199:                              WHERE history.statistics_id = stats.id) AS historical_clubs,
+ 229:                         FROM player_season_statistics stats
+ 230:                         JOIN seasons s
+ 231:                             ON s.id = stats.season_id
+ 234:                         WHERE stats.player_id = :playerId
+ 238:                         .param("playerId", playerId)
+ 240:                                 new PlayerSeasonStatisticsResponse(
+ 245:                                         splitHistoricalClubs(rs.getString("historical_clubs")),
+ 284:                 statistics
+ 288:     private List<String> splitHistoricalClubs(String value) {
+
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\player\PlayerSeasonStatisticsResponse.java
+   7: public record PlayerSeasonStatisticsResponse(
+   8:         String season,
+  12:         List<String> historicalClubs,
+
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\reconciliation\PlayerReconciliationController.java
+  19:             @RequestParam String season
+  21:         return service.reconcile(season);
+
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\reconciliation\PlayerReconciliationService.java
+  17: import it.fantacalciointelligence.backend.reconciliation.identity.PlayerIdentityResolutionService;
+  18: import it.fantacalciointelligence.backend.reconciliation.identity.ResolvedPlayerIdentity;
+  28:     private final PlayerIdentityResolutionService identityResolutionService;
+  32:             PlayerIdentityResolutionService identityResolutionService
+  40:             String seasonCode
+  43:         Long seasonId =
+  44:                 findSeasonId(seasonCode);
+  48:                         seasonId,
+  54:                         seasonId,
+  60:                         seasonId,
+  78:         List<ResolvedPlayerIdentity> identities =
+  95:         List<ResolvedPlayerIdentity> catalogIdentities =
+ 130:                 WHERE season_id = :seasonId
+ 132:                 .param("seasonId", seasonId)
+ 142:          * No player/history/source mapping is deleted.
+ 148:                 seasonId,
+ 152:         for (ResolvedPlayerIdentity identity
+ 165:                     seasonId,
+ 169:                 findMappedPlayerId(
+ 172:                 ).ifPresent(playerId ->
+ 174:                                 playerId,
+ 175:                                 seasonId
+ 189:             Optional<Long> existingPlayerId =
+ 190:                     findExistingPlayerId(
+ 194:             Long playerId;
+ 196:             if (existingPlayerId.isPresent()) {
+ 198:                 playerId =
+ 199:                         existingPlayerId.get();
+ 202:                         playerId,
+ 211:                 playerId =
+ 225:                     playerId,
+ 226:                     seasonId,
+ 234:                     playerId,
+ 235:                     seasonId,
+ 242:                     playerId,
+ 243:                     seasonId,
+ 251:                     playerId,
+ 252:                     seasonId,
+ 264:              * They remain historically stored with their mappings,
+ 279:                         playerId,
+ 280:                         seasonId
+ 288:                             playerId,
+ 289:                             seasonId,
+ 299:              * The player remains stored historically but is no
+ 305:                         playerId,
+ 306:                         seasonId
+ 313:                     playerId,
+ 315:                     seasonId
+ 319:                     seasonId,
+ 320:                     playerId,
+ 366:                 seasonCode,
+ 422:             Long seasonId,
+ 434:                         WHERE season_id = :seasonId
+ 440:                                 "seasonId",
+ 441:                                 seasonId
+ 454:             Long playerId,
+ 455:             Long seasonId
+ 463:                 WHERE player_id = :playerId
+ 464:                   AND season_id = :seasonId
+ 468:                         "playerId",
+ 469:                         playerId
+ 472:                         "seasonId",
+ 473:                         seasonId
+ 478:             Long seasonId,
+ 489:                 WHERE registration.season_id = :seasonId
+ 514:                         "seasonId",
+ 515:                         seasonId
+ 524:             Long playerId,
+ 525:             Long seasonId,
+ 526:             ResolvedPlayerIdentity identity,
+ 532:                         playerId,
+ 533:                         seasonId
+ 613:                     Long playerId,
+ 614:                     Long seasonId
+ 632:                 WHERE claim.player_id = :playerId
+ 633:                   AND claim.season_id = :seasonId
+ 651:                 .param("playerId", playerId)
+ 652:                 .param("seasonId", seasonId)
+ 682:     private Optional<Long> findExistingPlayerId(
+ 683:             ResolvedPlayerIdentity identity
+
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\scouting\ForeignPlayerScoutingController.java
+  27:             "/api/v1/admin/scouting/players/{playerId}"
+  30:             @PathVariable Long playerId,
+  36:                 playerId,
+  44:                     defaultValue = "#{@currentSeasonResolver.resolve()}"
+  46:             String season,
+  52:                 season,
+  58:             "/api/v1/scouting/players/{playerId}"
+  61:             @PathVariable Long playerId,
+  64:                     defaultValue = "#{@currentSeasonResolver.resolve()}"
+  66:             String season
+  69:                 playerId,
+  70:                 season
+
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\scouting\ForeignPlayerScoutingResponse.java
+   7:         Long playerId,
+  11:         String season,
+
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\scouting\ForeignPlayerScoutingService.java
+  29:             Long playerId,
+  32:         validatePlayerId(playerId);
+  34:         String seasonCode =
+  36:                         request.season(),
+  62:         PlayerSeasonReference reference =
+  64:                         playerId,
+  65:                         seasonCode
+  79:                     season_id,
+  92:                     :playerId,
+  93:                     :seasonId,
+ 107:                     season_id
+ 143:                 .param("playerId", playerId)
+ 144:                 .param("seasonId", reference.seasonId())
+ 176:                 playerId,
+ 177:                 seasonCode
+ 183:             String season,
+ 186:         String seasonCode =
+ 188:                         season,
+ 206:                     season.code AS season_code,
+ 224:                 JOIN seasons season
+ 225:                     ON season.id = report.season_id
+ 230:                     AND registration.season_id =
+ 231:                         report.season_id
+ 240:                     AND role.season_id = report.season_id
+ 243:                 WHERE season.code = :season
+ 264:                         .param("season", seasonCode);
+ 282:             Long playerId,
+ 283:             String season
+ 285:         validatePlayerId(playerId);
+ 287:         String seasonCode =
+ 289:                         season,
+ 299:                     season.code AS season_code,
+ 317:                 JOIN seasons season
+ 318:                     ON season.id = report.season_id
+ 323:                     AND registration.season_id =
+ 324:                         report.season_id
+ 333:                     AND role.season_id = report.season_id
+ 336:                 WHERE report.player_id = :playerId
+ 337:                   AND season.code = :season
+ 340:                 .param("playerId", playerId)
+ 341:                 .param("season", seasonCode)
+ 353:     private PlayerSeasonReference findRegisteredPlayer(
+ 354:             Long playerId,
+ 355:             String season
+ 359:                     season.id AS season_id,
+ 369:                 JOIN seasons season
+ 370:                     ON season.id = registration.season_id
+ 372:                 WHERE player.id = :playerId
+ 374:                   AND season.code = :season
+ 376:                 .param("playerId", playerId)
+ 377:                 .param("season", season)
+ 379:                         new PlayerSeasonReference(
+ 381:                                         "season_id"
+ 411:                 resultSet.getString("season_code"),
+ 574:     private void validatePlayerId(Long playerId) {
+ 575:         if (playerId == null || playerId <= 0) {
+ 582:     private record PlayerSeasonReference(
+ 583:             Long seasonId,
+
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\scouting\UpsertForeignPlayerScoutingRequest.java
+  12:         String season,
+
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\statistics\importer\PlayerStatisticsImportController.java
+   1: package it.fantacalciointelligence.backend.statistics.importer;
+  12: @RequestMapping("/api/v1/admin/imports/statistics")
+  13: public class PlayerStatisticsImportController {
+  15:     private final PlayerStatisticsImportService service;
+  17:     public PlayerStatisticsImportController(
+  18:             PlayerStatisticsImportService service
+  27:     public PlayerStatisticsImportResponse importCsv(
+  33:             String season,
+  40:                 season,
+
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\statistics\importer\PlayerStatisticsImportResponse.java
+   1: package it.fantacalciointelligence.backend.statistics.importer;
+   3: public record PlayerStatisticsImportResponse(
+   6:         String season,
+  11:         int importedStatistics,
+
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\statistics\importer\PlayerStatisticsImportService.java
+   1: package it.fantacalciointelligence.backend.statistics.importer;
+  40: public class PlayerStatisticsImportService {
+  63:     public PlayerStatisticsImportService(
+  88:     public PlayerStatisticsImportResponse importCsv(
+  90:             String seasonCode,
+  93:         return importPayload(source,seasonCode,CsvImportPayload.from(file,"player-statistics.csv"));
+  96:     public PlayerStatisticsImportResponse importPayload(String source,String seasonCode,CsvImportPayload file) {
+ 100:         String normalizedSeason =
+ 101:                 validateSeasonCode(seasonCode);
+ 105:         Long seasonId =
+ 106:                 findSeasonId(normalizedSeason);
+ 114:                         seasonId,
+ 125:                                             normalizedSeason,
+ 126:                                             seasonId,
+ 154:     private PlayerStatisticsImportResponse processImport(
+ 157:             String seasonCode,
+ 158:             Long seasonId,
+ 165:         int importedStatistics = 0;
+ 197:                 ImportedStatisticsRow row =
+ 212:                     upsertStatistics(
+ 214:                             seasonId,
+ 220:                     importedStatistics++;
+ 252:                 importedStatistics
+ 255:         return new PlayerStatisticsImportResponse(
+ 258:                 seasonCode,
+ 263:                 importedStatistics,
+ 269:     private ImportedStatisticsRow parseRow(
+ 294:         List<String> historicalClubs = parseHistoricalClubs(
+ 330:         if ("FBREF".equals(source) && historicalClubs.isEmpty()) {
+ 519:         Long playerId = null;
+ 527:                 playerId = resolveFbrefPlayerId(
+ 536:                 if (historicalClubs.size() == 1) {
+ 537:                     clubId = resolveClubIdOptional(historicalClubs.getFirst());
+ 541:                 playerId = resolvePlayerId(source, externalId, normalizedName, errors);
+ 554:         return new ImportedStatisticsRow(
+ 561:                 historicalClubs,
+ 564:                 playerId,
+ 596:     private Long resolvePlayerId(
+ 602:         Optional<Long> mappedPlayerId =
+ 616:         if (mappedPlayerId.isPresent()) {
+ 617:             return mappedPlayerId.get();
+ 653:     private Long resolveFbrefPlayerId(
+ 655:             String suppliedPlayerId,
+ 665:                     || "CROSS_SEASON_EXACT_ANCHOR".equals(matchMethod)
+ 682:             if (!isBlank(suppliedPlayerId)
+ 683:                     && !suppliedPlayerId.equals(linkedPlayer.get().toString())) {
+ 689:         if (isBlank(suppliedPlayerId)) {
+ 694:         Long playerId;
+ 696:             playerId = Long.valueOf(suppliedPlayerId);
+ 699:             errors.add("player_id FBref non valido: " + suppliedPlayerId);
+ 703:         boolean playerExists = jdbcClient.sql("SELECT EXISTS (SELECT 1 FROM players WHERE id = :playerId)")
+ 704:                 .param("playerId", playerId)
+ 708:             errors.add("player_id FBref inesistente: " + playerId);
+ 713:             String catalogName = jdbcClient.sql("SELECT normalized_name FROM players WHERE id = :playerId")
+ 714:                     .param("playerId", playerId)
+ 727:                 WHERE source = 'FBREF' AND player_id = :playerId
+ 730:                 .param("playerId", playerId)
+ 739:         return playerId;
+ 800:     private void upsertStatistics(
+ 801:             ImportedStatisticsRow row,
+ 802:             Long seasonId,
+ 810:         Long statisticsId = jdbcClient.sql("""
+ 811:                 INSERT INTO player_season_statistics (
+ 814:                     season_id,
+ 839:                     :playerId,
+ 841:                     :seasonId,
+ 867:                     season_id,
+ 898:                 .param("playerId", row.playerId())
+ 900:                 .param("seasonId", seasonId)
+ 979:             replaceHistoricalClubs(statisticsId, row.historicalClubs());
+ 983:     private void upsertStatisticalLink(ImportedStatisticsRow row) {
+ 989:                     :playerId, 'FBREF', :externalId, :externalName,
+ 996:                 .param("playerId", row.playerId())
+1004:     private void replaceHistoricalClubs(Long statisticsId, List<String> clubs) {
+1005:         jdbcClient.sql("DELETE FROM player_season_statistics_clubs WHERE statistics_id = :statisticsId")
+1006:                 .param("statisticsId", statisticsId)
+1011:                     INSERT INTO player_season_statistics_clubs (
+1012:                         statistics_id, club_name, normalized_club_name, source_order
+1013:                     ) VALUES (:statisticsId, :clubName, :normalizedClubName, :sourceOrder)
+1015:                     .param("statisticsId", statisticsId)
+
+==============================================================================
+15. FINAL GIT STATUS
+==============================================================================
+
+>>> git status --short
+ M frontend/src/features/core/SquadManagementFlows.test.tsx
+ M frontend/src/layouts/GlobalSearch.tsx
+?? FANTAFOOT-FINAL-STATE.txt
+?? FANTAFOOT-FULL-AUDIT.txt
+?? FANTAFOOT-TARGETED-AUDIT.txt
+?? project-audit-current.txt
+?? project-file-list.txt
+EXIT=0
+
+==============================================================================
+M03.1 FINAL SUMMARY
+==============================================================================
+MODE=READ_ONLY
+DATABASE_MUTATIONS=NONE
+FILES_MODIFIED_BY_AUDIT=NONE
+LOG_FILE=C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\logs\M03-historical-catalog-data-diagnosis.txt

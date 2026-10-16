@@ -1,0 +1,113 @@
+D02.31 — MATCHING OFFLINE PORTIERI FBREF
+Data: 2026-08-27
+Branch: arena/01a043d3-fantacalcio-intelligence
+
+STATO
+Implementato solo un parser/matcher offline per CSV ottenuti separatamente e autorizzati.
+Il modulo non effettua rete, non apre connessioni DB e non contiene SQL/import. Non sono
+stati scaricati file FBref, non sono stati modificati dati o migrazioni e non è stato fatto
+alcun accesso a produzione.
+
+DELIVERABLE
+- `scripts/fbref/goalkeeper_offline_dry_run.py`
+- `scripts/fbref/test_goalkeeper_offline_dry_run.py`
+- questo report.
+
+INPUT ATTESI
+Il catalogo interno deve essere un CSV con almeno `player_id`, nome e ruolo (`P`); sono
+supportati anche club, nazionalità e `fbref_external_id`. Il matcher filtra il catalogo
+ai soli P e non crea giocatori.
+
+Gli snapshot FBref devono essere CSV forniti manualmente o da un feed autorizzato. Sono
+supportate intestazioni canoniche e abbreviazioni FBref:
+- `MP` -> appearances
+- `Starts` -> starts
+- `Min` -> minutes_played
+- `GA` -> goals_conceded
+- `Saves` -> saves
+- `CS` -> clean_sheets
+- `PKsv` -> penalties_saved
+
+Ogni riga deve avere stagione, external ID o URL giocatore da cui estrarlo, origine/URL
+e timestamp `observed_at` (riga o argomento CLI). Un valore vuoto, trattino o null diventa
+`None`; il testo `0` diventa intero zero. Non viene derivata nessuna metrica.
+
+MATCHING
+Ordine applicato:
+1. mapping FBREF external ID già presente e univoco -> `MATCHED/HIGH`;
+2. nome completo esatto più club o nazionalità coerenti -> `MATCHED/MEDIUM`;
+3. nome completo senza conferma ulteriore -> `REVIEW`;
+4. cognome, omonimia, conflitto nome/club/nazionalità o mapping in conflitto -> `REVIEW`;
+5. nessun candidato -> `UNMATCHED`;
+6. riga con campi obbligatori mancanti, posizione non GK, metrica non numerica, valore
+   negativo, starts > appearances o assenza di colonne metriche -> `INVALID`.
+
+Un nome o un cognome da solo non produce mai un match automatico. Un mapping esistente
+non viene accettato se il nome/nazionalità/club presenti sono in conflitto: viene prodotto
+`REVIEW`.
+
+TRASFERIMENTI E ASSENZA DALLA TABELLA STAGIONALE
+- Più righe con stesso `(external_id, season)` e club diversi vengono aggregate una sola
+  volta come `MULTI_CLUB_AGGREGATED`; i conteggi sono sommati solo quando il valore è
+  noto in tutte le righe. Se una metrica è parziale, resta `None` e viene emesso un warning.
+- Duplicati stesso external ID/stagione/club diventano `INVALID`, senza doppio conteggio.
+- Una riga proveniente da `--history-file` è processata anche quando il portiere non ha
+  alcuna riga in `--season-file`; l’origine resta `INDIVIDUAL_HISTORY` e la coverage
+  catalogo/stagione è `MATCHED` se il matching è verificato.
+- L’output di coverage crea una riga per ogni portiere P e stagione richiesta: MATCHED,
+  REVIEW o UNMATCHED (`NO_SEASON_ROW_FOR_CATALOG_GOALKEEPER`).
+- External ID diversi che convergono sullo stesso player/stagione vengono promossi a
+  `REVIEW`, non deduplicati silenziosamente.
+
+OUTPUT
+Il comando produce JSON su stdout, oppure su un percorso esplicitamente indicato con
+`--output`; non scrive nel repository per default. Il report contiene:
+- record normalizzati con season, source=FBREF, source_external_id, source_url, observed_at;
+- MP/Starts/Min/GA/Saves/CS/PKsv con None distinto da zero;
+- candidate player, metodo, confidenza, motivo, warning e origine;
+- coverage catalogo per stagione;
+- contatori MATCHED, REVIEW, UNMATCHED e INVALID;
+- invalid catalog/mapping e duplicati.
+
+Esempio di invocazione futura, senza key e senza DB:
+`python3 scripts/fbref/goalkeeper_offline_dry_run.py --catalog /percorso/catalogo.csv --mapping /percorso/fbref-mapping.csv --season-file 2025/2026=/percorso/keepers-2025.csv --history-file 2025/2026=/percorso/carnesecchi-history-2025.csv --season 2025/2026 --observed-at 2026-08-27T12:00:00Z --output /tmp/fbref-goalkeeper-dry-run.json`
+
+Il percorso `/tmp` è solo esemplificativo: nessun file di esempio è stato aggiunto al
+repository. Il comando non contiene codice per scaricare FBref e non deve essere usato
+per eludere termini, rate limit o protezioni.
+
+SICUREZZA E LIMITI
+- Dipendenze solo Python standard library: nessun pandas, HTTP client o driver DB.
+- Nessuna importazione, persistenza, mapping DB o modifica dello stato applicativo.
+- `source_url` e `observed_at` sono obbligatori per considerare una riga valida; checksum
+  del file può essere aggiunto al manifest del feed autorizzato nel passo successivo.
+- Il matcher non certifica che i dati siano legalmente riutilizzabili: serve un file
+  ottenuto attraverso un canale autorizzato.
+- La chiave logica di output è compatibile con
+  `player + season + source + source_external_id`; la struttura raw DB attuale richiede
+  una decisione separata prima di un import reale.
+- L’assenza della riga nella stagione corrente non viene trasformata in zero: viene
+  evidenziata come UNMATCHED se non esiste un file storico che la copra.
+
+TEST ESEGUITI
+Comando:
+`python3 -m unittest scripts/fbref/test_goalkeeper_offline_dry_run.py -v`
+
+Risultato: PASS — 7 test.
+Copertura: mapping external ID esatto (anche embedded nel catalogo), nome ambiguo, trasferimento multi-club, portiere
+assente dalla tabella stagionale ma presente nello storico individuale, zero vs None e
+riga INVALID.
+
+`python3 scripts/fbref/goalkeeper_offline_dry_run.py --help`: PASS.
+`git diff --check`: PASS.
+
+TEST ESISTENTI NON ESEGUITI
+`scripts/fbref/test_fbref_pipeline.py` resta basato su pandas e non è stato eseguito in
+questa sandbox perché il modulo pandas non è installato. Il nuovo test è indipendente e
+non modifica artefatti dati.
+
+PROSSIMO PASSO BLOCCATO
+Prima di fornire input reale serve approvare fonte/licenza e percorso di acquisizione.
+Dopo l’approvazione, l’utente può fornire localmente un CSV autorizzato e il catalogo
+interno; il dry-run può allora essere eseguito senza key nel repository e senza DB. Solo
+un’autorizzazione successiva potrà aprire il blocco import.

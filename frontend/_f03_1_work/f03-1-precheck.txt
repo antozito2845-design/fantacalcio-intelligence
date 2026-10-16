@@ -1,0 +1,20 @@
+F03.1 PRECHECK
+Date: 2026-08-22
+
+PROJECT_ROOT=C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence
+FRONTEND_ROOT=C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\frontend
+BACKEND_SCOPE=READ_ONLY
+POWERSHELL=7.6.4
+NODE=v22.21.0
+PACKAGE_MANAGER=Bundled pnpm fallback (global npm launcher is missing npm-cli.js)
+
+BASELINE
+- React 19 + TypeScript strict + Vite 8.
+- Existing semantic dark/light tokens, responsive AppShell, dashboard preview,
+  reusable UI components and domain primitives verified.
+- / and /design-system both resolve to DesignSystemPage.
+- Existing F03 reports inspected.
+- Existing backend modifications were present before F03.1 and are user-owned.
+- No backend file is authorized for modification.
+
+PRECHECK_STATUS=PASS_WITH_TOOLCHAIN_WORKAROUND

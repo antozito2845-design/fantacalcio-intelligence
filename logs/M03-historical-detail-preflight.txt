@@ -1,0 +1,2672 @@
+
+================================================================================
+M03.6A - HISTORICAL DETAIL PREFLIGHT
+================================================================================
+
+================================================================================
+1. GIT STATUS
+================================================================================
+ M frontend/src/app/router/AppRouter.tsx
+ M frontend/src/features/core/SquadManagementFlows.test.tsx
+ M frontend/src/features/core/api.ts
+ M frontend/src/layouts/GlobalSearch.tsx
+ M frontend/src/pages/PlayersPage.tsx
+?? FANTAFOOT-FINAL-STATE.txt
+?? FANTAFOOT-FULL-AUDIT.txt
+?? FANTAFOOT-TARGETED-AUDIT.txt
+?? backend/src/main/java/it/fantacalciointelligence/backend/player/HistoricalPlayerCatalogController.java
+?? backend/src/main/java/it/fantacalciointelligence/backend/player/HistoricalPlayerCatalogResponse.java
+?? backend/src/main/java/it/fantacalciointelligence/backend/player/HistoricalPlayerCatalogService.java
+?? backend/src/test/java/it/fantacalciointelligence/backend/player/HistoricalPlayerCatalogServiceTest.java
+?? frontend/src/pages/HistoricalPlayersPage.test.tsx
+?? frontend/src/pages/HistoricalPlayersPage.tsx
+?? project-audit-current.txt
+?? project-file-list.txt
+GIT_EXIT=0
+
+================================================================================
+2. CURRENT BACKEND PLAYER DETAIL INVENTORY
+================================================================================
+
+================================================================================
+FILE: backend\src\main\java\it\fantacalciointelligence\backend\player\PlayerCatalogController.java
+================================================================================
+   1: package it.fantacalciointelligence.backend.player;
+   2: 
+   3: import org.springframework.web.bind.annotation.*;
+   4: 
+   5: import it.fantacalciointelligence.backend.common.PageResponse;
+   6: 
+   7: @RestController
+   8: @RequestMapping("/api/v1/players")
+   9: public class PlayerCatalogController {
+  10: 
+  11:     private final PlayerCatalogService playerCatalogService;
+  12:     private final PlayerDetailService playerDetailService;
+  13: 
+  14:     public PlayerCatalogController(
+  15:             PlayerCatalogService playerCatalogService,
+  16:             PlayerDetailService playerDetailService
+  17:     ) {
+  18:         this.playerCatalogService = playerCatalogService;
+  19:         this.playerDetailService = playerDetailService;
+  20:     }
+  21: 
+  22:     @GetMapping
+  23:     public PageResponse<PlayerCatalogResponse> findPlayers(
+  24:             @RequestParam(defaultValue = "#{@currentSeasonResolver.resolve()}")
+  25:             String season,
+  26: 
+  27:             @RequestParam(required = false)
+  28:             String search,
+  29: 
+  30:             @RequestParam(required = false)
+  31:             String club,
+  32: 
+  33:             @RequestParam(required = false)
+  34:             String role,
+  35: 
+  36:             @RequestParam(defaultValue = "0")
+  37:             int page,
+  38: 
+  39:             @RequestParam(defaultValue = "25")
+  40:             int size
+  41:     ) {
+  42:         return playerCatalogService.findPlayers(
+  43:                 season,
+  44:                 search,
+  45:                 club,
+  46:                 role,
+  47:                 page,
+  48:                 size
+  49:         );
+  50:     }
+  51: 
+  52:     @GetMapping("/{playerId}")
+  53:     public PlayerDetailResponse findById(
+  54:             @PathVariable Long playerId,
+  55:             @RequestParam(defaultValue = "#{@currentSeasonResolver.resolve()}")
+  56:             String season
+  57:     ) {
+  58:         return playerDetailService.findById(
+  59:                 playerId,
+  60:                 season
+  61:         );
+  62:     }
+  63: }
+
+================================================================================
+FILE: backend\src\main\java\it\fantacalciointelligence\backend\player\PlayerDetailService.java
+================================================================================
+   1: package it.fantacalciointelligence.backend.player;
+   2: 
+   3: import java.util.LinkedHashMap;
+   4: import java.util.List;
+   5: import java.util.Map;
+   6: 
+   7: import org.springframework.jdbc.core.simple.JdbcClient;
+   8: 
+   9: import it.fantacalciointelligence.backend.common.ResourceNotFoundException;
+  10: import org.springframework.stereotype.Service;
+  11: import org.springframework.transaction.annotation.Transactional;
+  12: 
+  13: @Service
+  14: public class PlayerDetailService {
+  15: 
+  16:     private final JdbcClient jdbcClient;
+  17: 
+  18:     public PlayerDetailService(JdbcClient jdbcClient) {
+  19:         this.jdbcClient = jdbcClient;
+  20:     }
+  21: 
+  22:     @Transactional(readOnly = true)
+  23:     public PlayerDetailResponse findById(
+  24:             Long playerId,
+  25:             String seasonCode
+  26:     ) {
+  27:         Map<String, Object> player = jdbcClient.sql("""
+  28:                 SELECT
+  29:                     p.id,
+  30:                     p.display_name,
+  31:                     c.name AS club_name,
+  32:                     c.slug AS club_slug,
+  33:                     s.id AS season_id
+  34:                 FROM players p
+  35:                 JOIN player_registrations pr
+  36:                     ON pr.player_id = p.id
+  37:                 JOIN seasons s
+  38:                     ON s.id = pr.season_id
+  39:                 JOIN clubs c
+  40:                     ON c.id = pr.club_id
+  41:                 WHERE p.id = :playerId
+  42:                   AND s.code = :seasonCode
+  43:                 """)
+  44:                 .param("playerId", playerId)
+  45:                 .param("seasonCode", seasonCode)
+  46:                 .query()
+  47:                 .listOfRows()
+  48:                 .stream()
+  49:                 .findFirst()
+  50:                 .orElseThrow(() ->
+  51:                         new ResourceNotFoundException(
+  52:                                 "Giocatore non trovato"
+  53:                         )
+  54:                 );
+  55: 
+  56:         Long seasonId = ((Number) player.get("season_id"))
+  57:                 .longValue();
+  58: 
+  59:         Map<String, String> roles = new LinkedHashMap<>();
+  60: 
+  61:         jdbcClient.sql("""
+  62:                 SELECT source, fantasy_role
+  63:                 FROM player_roles
+  64:                 WHERE player_id = :playerId
+  65:                   AND season_id = :seasonId
+  66:                 ORDER BY source
+  67:                 """)
+  68:                 .param("playerId", playerId)
+  69:                 .param("seasonId", seasonId)
+  70:                 .query()
+  71:                 .listOfRows()
+  72:                 .forEach(row ->
+  73:                         roles.put(
+  74:                                 row.get("source").toString(),
+  75:                                 row.get("fantasy_role").toString()
+  76:                         )
+  77:                 );
+  78: 
+  79:         PlayerTacticalProfileResponse tacticalProfile =
+  80:                 jdbcClient.sql("""
+  81:                         SELECT
+  82:                             real_position,
+  83:                             secondary_position,
+  84:                             tactical_role,
+  85:                             attacking_involvement,
+  86:                             defensive_involvement,
+  87:                             set_piece_taker,
+  88:                             penalty_taker,
+  89:                             corner_taker,
+  90:                             free_kick_taker,
+  91:                             projected_starter,
+  92:                             starter_probability,
+  93:                             competition_level,
+  94:                             tactical_notes
+  95:                         FROM player_tactical_profiles
+  96:                         WHERE player_id = :playerId
+  97:                           AND season_id = :seasonId
+  98:                         """)
+  99:                         .param("playerId", playerId)
+ 100:                         .param("seasonId", seasonId)
+ 101:                         .query((rs, rowNum) ->
+ 102:                                 new PlayerTacticalProfileResponse(
+ 103:                                         rs.getString("real_position"),
+ 104:                                         rs.getString("secondary_position"),
+ 105:                                         rs.getString("tactical_role"),
+ 106:                                         rs.getBigDecimal("attacking_involvement"),
+ 107:                                         rs.getBigDecimal("defensive_involvement"),
+ 108:                                         rs.getBoolean("set_piece_taker"),
+ 109:                                         rs.getBoolean("penalty_taker"),
+ 110:                                         rs.getBoolean("corner_taker"),
+ 111:                                         rs.getBoolean("free_kick_taker"),
+ 112:                                         rs.getBoolean("projected_starter"),
+ 113:                                         rs.getBigDecimal("starter_probability"),
+ 114:                                         rs.getString("competition_level"),
+ 115:                                         rs.getString("tactical_notes")
+ 116:                                 )
+ 117:                         )
+ 118:                         .optional()
+ 119:                         .orElse(null);
+ 120: 
+ 121:         ClubTacticalResponse clubTactics =
+ 122:                 jdbcClient.sql("""
+ 123:                         SELECT
+ 124:                             coach.full_name,
+ 125:                             tactics.primary_formation,
+ 126:                             tactics.secondary_formation,
+ 127:                             tactics.playing_style,
+ 128:                             tactics.defensive_line,
+ 129:                             tactics.pressing_level
+ 130:                         FROM player_registrations pr
+ 131:                         JOIN club_season_tactics tactics
+ 132:                             ON tactics.club_id = pr.club_id
+ 133:                             AND tactics.season_id = pr.season_id
+ 134:                         LEFT JOIN coaches coach
+ 135:                             ON coach.id = tactics.coach_id
+ 136:                         WHERE pr.player_id = :playerId
+ 137:                           AND pr.season_id = :seasonId
+ 138:                         """)
+ 139:                         .param("playerId", playerId)
+ 140:                         .param("seasonId", seasonId)
+ 141:                         .query((rs, rowNum) ->
+ 142:                                 new ClubTacticalResponse(
+ 143:                                         rs.getString("full_name"),
+ 144:                                         rs.getString("primary_formation"),
+ 145:                                         rs.getString("secondary_formation"),
+ 146:                                         rs.getString("playing_style"),
+ 147:                                         rs.getString("defensive_line"),
+ 148:                                         rs.getString("pressing_level")
+ 149:                                 )
+ 150:                         )
+ 151:                         .optional()
+ 152:                         .orElse(null);
+ 153: 
+ 154:         PlayerEvaluationResponse evaluation =
+ 155:                 jdbcClient.sql("""
+ 156:                         SELECT
+ 157:                             projected_fantasy_average,
+ 158:                             projected_appearances,
+ 159:                             projected_starts,
+ 160:                             projected_goals,
+ 161:                             projected_assists,
+ 162:                             reliability_score,
+ 163:                             potential_score,
+ 164:                             risk_score,
+ 165:                             value_score,
+ 166:                             evaluation_summary
+ 167:                         FROM player_evaluations
+ 168:                         WHERE player_id = :playerId
+ 169:                           AND season_id = :seasonId
+ 170:                         """)
+ 171:                         .param("playerId", playerId)
+ 172:                         .param("seasonId", seasonId)
+ 173:                         .query((rs, rowNum) ->
+ 174:                                 new PlayerEvaluationResponse(
+ 175:                                         rs.getBigDecimal("projected_fantasy_average"),
+ 176:                                         (Integer) rs.getObject("projected_appearances"),
+ 177:                                         (Integer) rs.getObject("projected_starts"),
+ 178:                                         (Integer) rs.getObject("projected_goals"),
+ 179:                                         (Integer) rs.getObject("projected_assists"),
+ 180:                                         rs.getBigDecimal("reliability_score"),
+ 181:                                         rs.getBigDecimal("potential_score"),
+ 182:                                         rs.getBigDecimal("risk_score"),
+ 183:                                         rs.getBigDecimal("value_score"),
+ 184:                                         rs.getString("evaluation_summary")
+ 185:                                 )
+ 186:                         )
+ 187:                         .optional()
+ 188:                         .orElse(null);
+ 189: 
+ 190:         List<PlayerSeasonStatisticsResponse> statistics =
+ 191:                 jdbcClient.sql("""
+ 192:                         SELECT
+ 193:                             s.code,
+ 194:                             stats.source,
+ 195:                             stats.source_external_id,
+ 196:                             club.name AS club_name,
+ 197:                             (SELECT STRING_AGG(history.club_name, '|' ORDER BY history.source_order)
+ 198:                              FROM player_season_statistics_clubs history
+ 199:                              WHERE history.statistics_id = stats.id) AS historical_clubs,
+ 200:                             stats.appearances,
+ 201:                             stats.starts,
+ 202:                             stats.minutes_played,
+ 203:                             stats.average_rating,
+ 204:                             stats.fantasy_average,
+ 205:                             stats.goals,
+ 206:                             stats.assists,
+ 207:                             stats.penalties_taken,
+ 208:                             stats.penalties_scored,
+ 209:                             stats.penalties_missed,
+ 210:                             stats.yellow_cards,
+ 211:                             stats.red_cards,
+ 212:                             stats.clean_sheets,
+ 213:                             stats.goals_conceded,
+ 214:                             stats.saves,
+ 215:                             stats.penalties_saved,
+ 216:                             stats.expected_goals,
+ 217:                             stats.expected_assists,
+ 218:                             CASE WHEN stats.minutes_played > 0 AND stats.goals IS NOT NULL
+ 219:                                 THEN ROUND(stats.goals * 90.0 / stats.minutes_played, 2) END AS goals_per_90,
+ 220:                             CASE WHEN stats.minutes_played > 0 AND stats.assists IS NOT NULL
+ 221:                                 THEN ROUND(stats.assists * 90.0 / stats.minutes_played, 2) END AS assists_per_90,
+ 222:                             CASE WHEN stats.appearances > 0 AND stats.minutes_played IS NOT NULL
+ 223:                                 THEN ROUND(stats.minutes_played * 1.0 / stats.appearances, 2) END AS minutes_per_appearance,
+ 224:                             CASE WHEN stats.appearances > 0 AND stats.starts IS NOT NULL
+ 225:                                 THEN ROUND(stats.starts * 100.0 / stats.appearances, 2) END AS start_percentage,
+ 226:                             stats.imported_at,
+ 227:                             stats.source_updated_at,
+ 228:                             stats.import_batch_id
+ 229:                         FROM player_season_statistics stats
+ 230:                         JOIN seasons s
+ 231:                             ON s.id = stats.season_id
+ 232:                         LEFT JOIN clubs club
+ 233:                             ON club.id = stats.club_id
+ 234:                         WHERE stats.player_id = :playerId
+ 235:                         ORDER BY s.start_year DESC, stats.source
+ 236:                         LIMIT 10
+ 237:                         """)
+ 238:                         .param("playerId", playerId)
+ 239:                         .query((rs, rowNum) ->
+ 240:                                 new PlayerSeasonStatisticsResponse(
+ 241:                                         rs.getString("code"),
+ 242:                                         rs.getString("source"),
+ 243:                                         rs.getString("source_external_id"),
+ 244:                                         rs.getString("club_name"),
+ 245:                                         splitHistoricalClubs(rs.getString("historical_clubs")),
+ 246:                                         rs.getObject("appearances", Integer.class),
+ 247:                                         rs.getObject("starts", Integer.class),
+ 248:                                         rs.getObject("minutes_played", Integer.class),
+ 249:                                         rs.getBigDecimal("average_rating"),
+ 250:                                         rs.getBigDecimal("fantasy_average"),
+ 251:                                         rs.getObject("goals", Integer.class),
+ 252:                                         rs.getObject("assists", Integer.class),
+ 253:                                         rs.getObject("penalties_taken", Integer.class),
+ 254:                                         rs.getObject("penalties_scored", Integer.class),
+ 255:                                         rs.getObject("penalties_missed", Integer.class),
+ 256:                                         rs.getObject("yellow_cards", Integer.class),
+ 257:                                         rs.getObject("red_cards", Integer.class),
+ 258:                                         rs.getObject("clean_sheets", Integer.class),
+ 259:                                         rs.getObject("goals_conceded", Integer.class),
+ 260:                                         rs.getObject("saves", Integer.class),
+ 261:                                         rs.getObject("penalties_saved", Integer.class),
+ 262:                                         rs.getBigDecimal("expected_goals"),
+ 263:                                         rs.getBigDecimal("expected_assists"),
+ 264:                                         rs.getBigDecimal("goals_per_90"),
+ 265:                                         rs.getBigDecimal("assists_per_90"),
+ 266:                                         rs.getBigDecimal("minutes_per_appearance"),
+ 267:                                         rs.getBigDecimal("start_percentage"),
+ 268:                                         rs.getObject("imported_at", java.time.OffsetDateTime.class),
+ 269:                                         rs.getObject("source_updated_at", java.time.OffsetDateTime.class),
+ 270:                                         rs.getObject("import_batch_id", Long.class)
+ 271:                                 )
+ 272:                         )
+ 273:                         .list();
+ 274: 
+ 275:         return new PlayerDetailResponse(
+ 276:                 ((Number) player.get("id")).longValue(),
+ 277:                 player.get("display_name").toString(),
+ 278:                 player.get("club_name").toString(),
+ 279:                 player.get("club_slug").toString(),
+ 280:                 roles,
+ 281:                 tacticalProfile,
+ 282:                 clubTactics,
+ 283:                 evaluation,
+ 284:                 statistics
+ 285:         );
+ 286:     }
+ 287: 
+ 288:     private List<String> splitHistoricalClubs(String value) {
+ 289:         return value == null || value.isBlank()
+ 290:                 ? List.of()
+ 291:                 : List.of(value.split("\\|"));
+ 292:     }
+ 293: }
+
+================================================================================
+FILE: backend\src\main\java\it\fantacalciointelligence\backend\player\PlayerDetailResponse.java
+================================================================================
+   1: package it.fantacalciointelligence.backend.player;
+   2: 
+   3: import java.util.List;
+   4: import java.util.Map;
+   5: 
+   6: public record PlayerDetailResponse(
+   7:         Long id,
+   8:         String name,
+   9:         String club,
+  10:         String clubSlug,
+  11:         Map<String, String> roles,
+  12:         PlayerTacticalProfileResponse tacticalProfile,
+  13:         ClubTacticalResponse clubTactics,
+  14:         PlayerEvaluationResponse evaluation,
+  15:         List<PlayerSeasonStatisticsResponse> statistics
+  16: ) {
+  17: }
+
+================================================================================
+3. HISTORICAL CATALOG BACKEND INVENTORY
+================================================================================
+
+================================================================================
+FILE: backend\src\main\java\it\fantacalciointelligence\backend\player\HistoricalPlayerCatalogController.java
+================================================================================
+   1: package it.fantacalciointelligence.backend.player;
+   2: 
+   3: import org.springframework.web.bind.annotation.GetMapping;
+   4: import org.springframework.web.bind.annotation.RequestMapping;
+   5: import org.springframework.web.bind.annotation.RequestParam;
+   6: import org.springframework.web.bind.annotation.RestController;
+   7: 
+   8: import it.fantacalciointelligence.backend.common.PageResponse;
+   9: 
+  10: @RestController
+  11: @RequestMapping("/api/v1/players/history")
+  12: public class HistoricalPlayerCatalogController {
+  13: 
+  14:     private final HistoricalPlayerCatalogService service;
+  15: 
+  16:     public HistoricalPlayerCatalogController(
+  17:             HistoricalPlayerCatalogService service
+  18:     ) {
+  19:         this.service = service;
+  20:     }
+  21: 
+  22:     @GetMapping
+  23:     public PageResponse<HistoricalPlayerCatalogResponse> findPlayers(
+  24:             @RequestParam String season,
+  25: 
+  26:             @RequestParam(required = false)
+  27:             String search,
+  28: 
+  29:             @RequestParam(required = false)
+  30:             String role,
+  31: 
+  32:             @RequestParam(defaultValue = "0")
+  33:             int page,
+  34: 
+  35:             @RequestParam(defaultValue = "25")
+  36:             int size
+  37:     ) {
+  38:         return service.findPlayers(
+  39:                 season,
+  40:                 search,
+  41:                 role,
+  42:                 page,
+  43:                 size
+  44:         );
+  45:     }
+  46: }
+
+================================================================================
+FILE: backend\src\main\java\it\fantacalciointelligence\backend\player\HistoricalPlayerCatalogResponse.java
+================================================================================
+   1: package it.fantacalciointelligence.backend.player;
+   2: 
+   3: import java.math.BigDecimal;
+   4: 
+   5: public record HistoricalPlayerCatalogResponse(
+   6:         Long id,
+   7:         String name,
+   8:         boolean active,
+   9:         String season,
+  10:         String club,
+  11:         String clubSlug,
+  12:         String fantacalcioRole,
+  13:         Integer appearances,
+  14:         BigDecimal fantasyAverage,
+  15:         Integer goals,
+  16:         Integer assists
+  17: ) {
+  18: }
+
+================================================================================
+FILE: backend\src\main\java\it\fantacalciointelligence\backend\player\HistoricalPlayerCatalogService.java
+================================================================================
+   1: package it.fantacalciointelligence.backend.player;
+   2: 
+   3: import java.util.HashMap;
+   4: import java.util.List;
+   5: import java.util.Map;
+   6: 
+   7: import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+   8: import org.springframework.stereotype.Service;
+   9: import org.springframework.transaction.annotation.Transactional;
+  10: 
+  11: import it.fantacalciointelligence.backend.common.PageResponse;
+  12: 
+  13: @Service
+  14: public class HistoricalPlayerCatalogService {
+  15: 
+  16:     private final NamedParameterJdbcTemplate jdbcTemplate;
+  17: 
+  18:     public HistoricalPlayerCatalogService(
+  19:             NamedParameterJdbcTemplate jdbcTemplate
+  20:     ) {
+  21:         this.jdbcTemplate = jdbcTemplate;
+  22:     }
+  23: 
+  24:     @Transactional(readOnly = true)
+  25:     public PageResponse<HistoricalPlayerCatalogResponse> findPlayers(
+  26:             String season,
+  27:             String search,
+  28:             String role,
+  29:             int page,
+  30:             int size
+  31:     ) {
+  32:         if (season == null || season.isBlank()) {
+  33:             throw new IllegalArgumentException(
+  34:                     "La stagione storica ? obbligatoria"
+  35:             );
+  36:         }
+  37: 
+  38:         int safePage = Math.max(page, 0);
+  39:         int safeSize = Math.min(Math.max(size, 1), 100);
+  40:         int offset = safePage * safeSize;
+  41: 
+  42:         Map<String, Object> params = new HashMap<>();
+  43:         params.put("season", season.trim());
+  44:         params.put("limit", safeSize);
+  45:         params.put("offset", offset);
+  46: 
+  47:         StringBuilder where = new StringBuilder("""
+  48:                 WHERE s.code = :season
+  49:                   AND s.current_season = FALSE
+  50:                   AND role_fantacalcio.fantasy_role IS NOT NULL
+  51:                 """);
+  52: 
+  53:         if (search != null && !search.isBlank()) {
+  54:             where.append("""
+  55:                     AND (
+  56:                         LOWER(p.display_name) LIKE :search
+  57:                         OR p.normalized_name LIKE :search
+  58:                     )
+  59:                     """);
+  60: 
+  61:             params.put(
+  62:                     "search",
+  63:                     "%" + search.trim().toLowerCase() + "%"
+  64:             );
+  65:         }
+  66: 
+  67:         if (role != null && !role.isBlank()) {
+  68:             where.append("""
+  69:                     AND role_fantacalcio.fantasy_role = :role
+  70:                     """);
+  71: 
+  72:             params.put(
+  73:                     "role",
+  74:                     role.trim().toUpperCase()
+  75:             );
+  76:         }
+  77: 
+  78:         String joins = """
+  79:                 FROM players p
+  80: 
+  81:                 INNER JOIN player_roles role_fantacalcio
+  82:                     ON role_fantacalcio.player_id = p.id
+  83:                     AND role_fantacalcio.source = 'FANTACALCIO'
+  84: 
+  85:                 INNER JOIN seasons s
+  86:                     ON s.id = role_fantacalcio.season_id
+  87: 
+  88:                 INNER JOIN player_season_statistics stats
+  89:                     ON stats.player_id = p.id
+  90:                     AND stats.season_id = s.id
+  91:                     AND stats.source = 'FANTACALCIO'
+  92: 
+  93:                 LEFT JOIN clubs club
+  94:                     ON club.id = stats.club_id
+  95:                 """;
+  96: 
+  97:         String dataSql = """
+  98:                 SELECT
+  99:                     p.id,
+ 100:                     p.display_name,
+ 101:                     p.active,
+ 102:                     s.code AS season_code,
+ 103:                     club.name AS club_name,
+ 104:                     club.slug AS club_slug,
+ 105:                     role_fantacalcio.fantasy_role
+ 106:                         AS fantacalcio_role,
+ 107:                     stats.appearances,
+ 108:                     stats.fantasy_average,
+ 109:                     stats.goals,
+ 110:                     stats.assists
+ 111:                 """
+ 112:                 + joins
+ 113:                 + where
+ 114:                 + """
+ 115:                 ORDER BY p.display_name ASC, p.id ASC
+ 116:                 LIMIT :limit
+ 117:                 OFFSET :offset
+ 118:                 """;
+ 119: 
+ 120:         List<HistoricalPlayerCatalogResponse> players =
+ 121:                 jdbcTemplate.query(
+ 122:                         dataSql,
+ 123:                         params,
+ 124:                         (resultSet, rowNumber) ->
+ 125:                                 new HistoricalPlayerCatalogResponse(
+ 126:                                         resultSet.getLong("id"),
+ 127:                                         resultSet.getString(
+ 128:                                                 "display_name"
+ 129:                                         ),
+ 130:                                         resultSet.getBoolean("active"),
+ 131:                                         resultSet.getString(
+ 132:                                                 "season_code"
+ 133:                                         ),
+ 134:                                         resultSet.getString(
+ 135:                                                 "club_name"
+ 136:                                         ),
+ 137:                                         resultSet.getString(
+ 138:                                                 "club_slug"
+ 139:                                         ),
+ 140:                                         resultSet.getString(
+ 141:                                                 "fantacalcio_role"
+ 142:                                         ),
+ 143:                                         resultSet.getObject(
+ 144:                                                 "appearances",
+ 145:                                                 Integer.class
+ 146:                                         ),
+ 147:                                         resultSet.getBigDecimal(
+ 148:                                                 "fantasy_average"
+ 149:                                         ),
+ 150:                                         resultSet.getObject(
+ 151:                                                 "goals",
+ 152:                                                 Integer.class
+ 153:                                         ),
+ 154:                                         resultSet.getObject(
+ 155:                                                 "assists",
+ 156:                                                 Integer.class
+ 157:                                         )
+ 158:                                 )
+ 159:                 );
+ 160: 
+ 161:         String countSql = """
+ 162:                 SELECT COUNT(DISTINCT p.id)
+ 163:                 """
+ 164:                 + joins
+ 165:                 + where;
+ 166: 
+ 167:         Long total = jdbcTemplate.queryForObject(
+ 168:                 countSql,
+ 169:                 params,
+ 170:                 Long.class
+ 171:         );
+ 172: 
+ 173:         long totalElements = total == null ? 0 : total;
+ 174: 
+ 175:         int totalPages = (int) Math.ceil(
+ 176:                 (double) totalElements / safeSize
+ 177:         );
+ 178: 
+ 179:         return new PageResponse<>(
+ 180:                 players,
+ 181:                 safePage,
+ 182:                 safeSize,
+ 183:                 totalElements,
+ 184:                 totalPages
+ 185:         );
+ 186:     }
+ 187: }
+
+================================================================================
+4. BACKEND SOURCE REFERENCES
+================================================================================
+
+PATTERN=player_season_statistics
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:452: FROM player_season_statistics statistics
+backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceProfileService.java:111: FROM player_season_statistics stats
+backend\src\main\java\it\fantacalciointelligence\backend\player\HistoricalPlayerCatalogService.java:88: INNER JOIN player_season_statistics stats
+backend\src\main\java\it\fantacalciointelligence\backend\player\PlayerDetailService.java:198: FROM player_season_statistics_clubs history
+backend\src\main\java\it\fantacalciointelligence\backend\player\PlayerDetailService.java:229: FROM player_season_statistics stats
+backend\src\main\java\it\fantacalciointelligence\backend\statistics\importer\PlayerStatisticsImportService.java:811: INSERT INTO player_season_statistics (
+backend\src\main\java\it\fantacalciointelligence\backend\statistics\importer\PlayerStatisticsImportService.java:1005: jdbcClient.sql("DELETE FROM player_season_statistics_clubs WHERE statistics_id = :statisticsId")
+backend\src\main\java\it\fantacalciointelligence\backend\statistics\importer\PlayerStatisticsImportService.java:1011: INSERT INTO player_season_statistics_clubs (
+MATCH_COUNT=8
+
+PATTERN=player_roles
+backend\src\main\java\it\fantacalciointelligence\backend\auction\AuctionPriceModelService.java:612: JOIN player_roles role
+backend\src\main\java\it\fantacalciointelligence\backend\auction\AuctionPriceService.java:72: JOIN player_roles role
+backend\src\main\java\it\fantacalciointelligence\backend\auction\AuctionRankingService.java:63: JOIN player_roles player_role
+backend\src\main\java\it\fantacalciointelligence\backend\auction\B67AuctionPriceModelService.java:572: JOIN player_roles role
+backend\src\main\java\it\fantacalciointelligence\backend\auctionranking\IntelligentAuctionRankingService.java:277: JOIN player_roles role
+backend\src\main\java\it\fantacalciointelligence\backend\auctionstate\AuctionPurchaseService.java:60: JOIN player_roles role ON role.player_id=player.id AND role.season_id=auction.season_id
+backend\src\main\java\it\fantacalciointelligence\backend\auctionstate\AuctionStateService.java:102: JOIN player_roles role ON role.player_id=player.id
+backend\src\main\java\it\fantacalciointelligence\backend\auctionstate\AuctionStateService.java:219: JOIN player_roles role ON role.player_id=player.id AND role.season_id=auction.season_id
+backend\src\main\java\it\fantacalciointelligence\backend\calendarintelligence\CalendarCandidateService.java:25: JOIN player_roles role ON role.player_id=player.id AND role.season_id=season.id
+backend\src\main\java\it\fantacalciointelligence\backend\evaluation\PlayerEvaluationGenerationService.java:71: FROM player_roles role
+backend\src\main\java\it\fantacalciointelligence\backend\evaluation\PlayerEvaluationGenerationService.java:153: JOIN player_roles role
+backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceProfileService.java:63: JOIN player_roles role ON role.player_id = player.id AND role.season_id = result.season_id
+backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceProfileService.java:113: LEFT JOIN player_roles role ON role.player_id = stats.player_id
+backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceService.java:289: JOIN player_roles role
+backend\src\main\java\it\fantacalciointelligence\backend\liveauction\LiveAuctionPlayerContextService.java:34: LEFT JOIN player_roles role ON role.player_id=player.id AND role.season_id=season.id
+backend\src\main\java\it\fantacalciointelligence\backend\pairing\PlayerPairingService.java:87: JOIN player_roles role
+backend\src\main\java\it\fantacalciointelligence\backend\player\HistoricalPlayerCatalogService.java:81: INNER JOIN player_roles role_fantacalcio
+backend\src\main\java\it\fantacalciointelligence\backend\player\PlayerCatalogService.java:81: FROM player_roles filter_role
+backend\src\main\java\it\fantacalciointelligence\backend\player\PlayerCatalogService.java:115: LEFT JOIN player_roles role_fantacalcio
+backend\src\main\java\it\fantacalciointelligence\backend\player\PlayerCatalogService.java:120: LEFT JOIN player_roles role_gazzetta
+backend\src\main\java\it\fantacalciointelligence\backend\player\PlayerCatalogService.java:125: LEFT JOIN player_roles role_fantamarkt
+backend\src\main\java\it\fantacalciointelligence\backend\player\PlayerDetailService.java:63: FROM player_roles
+backend\src\main\java\it\fantacalciointelligence\backend\reconciliation\PlayerReconciliationService.java:1306: INSERT INTO player_roles (
+backend\src\main\java\it\fantacalciointelligence\backend\scouting\B70ArrivalScoutingService.java:103: JOIN player_roles fantasy_role
+backend\src\main\java\it\fantacalciointelligence\backend\scouting\B70NewListoneArrivalService.java:156: JOIN player_roles fantasy_role
+backend\src\main\java\it\fantacalciointelligence\backend\scouting\B70PendingScoutingArrivalService.java:81: JOIN player_roles fantasy_role
+backend\src\main\java\it\fantacalciointelligence\backend\scouting\ForeignPlayerScoutingService.java:238: LEFT JOIN player_roles role
+backend\src\main\java\it\fantacalciointelligence\backend\scouting\ForeignPlayerScoutingService.java:331: LEFT JOIN player_roles role
+backend\src\main\java\it\fantacalciointelligence\backend\squad\SquadService.java:598: JOIN player_roles role
+backend\src\main\java\it\fantacalciointelligence\backend\squadconstruction\SquadConstructionService.java:206: JOIN player_roles r ON r.player_id=p.id AND r.season_id=s.id
+backend\src\main\java\it\fantacalciointelligence\backend\fixture\strength\ClubStrengthGenerationService.java:90: JOIN player_roles role
+backend\src\main\java\it\fantacalciointelligence\backend\fixture\strength\ClubStrengthGenerationService.java:129: JOIN player_roles role
+backend\src\main\java\it\fantacalciointelligence\backend\fixture\strength\ClubStrengthGenerationService.java:207: JOIN player_roles role
+backend\src\main\java\it\fantacalciointelligence\backend\catalog\readiness\CatalogReadinessService.java:379: LEFT JOIN player_roles role
+backend\src\main\java\it\fantacalciointelligence\backend\catalog\readiness\CatalogReadinessService.java:447: LEFT JOIN player_roles role
+backend\src\main\java\it\fantacalciointelligence\backend\catalog\readiness\CatalogReadinessService.java:480: LEFT JOIN player_roles role
+MATCH_COUNT=36
+
+PATTERN=fantasy_average
+backend\src\main\java\it\fantacalciointelligence\backend\auction\AuctionPriceService.java:39: evaluation.projected_fantasy_average,
+backend\src\main\java\it\fantacalciointelligence\backend\auction\AuctionPriceService.java:126: "projected_fantasy_average",
+backend\src\main\java\it\fantacalciointelligence\backend\auction\B67AuctionPriceModelService.java:530: ->> 'fantasy_average_role_percentile'
+backend\src\main\java\it\fantacalciointelligence\backend\auction\B67AuctionPriceModelService.java:532: AS fantasy_average_role_percentile,
+backend\src\main\java\it\fantacalciointelligence\backend\auction\B67AuctionPriceModelService.java:632: "fantasy_average_role_percentile"
+backend\src\main\java\it\fantacalciointelligence\backend\auction\B67AuctionPricePersistenceService.java:72: "fantasy_average_role_percentile",
+backend\src\main\java\it\fantacalciointelligence\backend\auction\B67AuctionPricePersistenceService.java:78: "fantasy_average_role_percentile",
+backend\src\main\java\it\fantacalciointelligence\backend\auction\B67AuctionPricePersistenceService.java:418: fantasy_average_role_percentile,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:115: assessment.fantasy_average_change,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:170: "fantasy_average_change"
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:422: AVG(statistics.fantasy_average)
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:424: WHERE statistics.fantasy_average
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:427: AS fantasy_average,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:495: "fantasy_average"
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:766: fantasy_average_change,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:824: fantasy_average_change =
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:825: EXCLUDED.fantasy_average_change,
+backend\src\main\java\it\fantacalciointelligence\backend\evaluation\PlayerEvaluationGenerationService.java:273: projected_fantasy_average,
+backend\src\main\java\it\fantacalciointelligence\backend\evaluation\PlayerEvaluationGenerationService.java:394: projected_fantasy_average =
+backend\src\main\java\it\fantacalciointelligence\backend\evaluation\PlayerEvaluationGenerationService.java:395: EXCLUDED.projected_fantasy_average,
+backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceProfileService.java:109: COALESCE(MAX(stats.fantasy_average) FILTER (WHERE stats.source = 'FANTACALCIO'),
+backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceProfileService.java:110: MAX(stats.fantasy_average) FILTER (WHERE stats.source = 'GAZZETTA')) AS fantasy_average
+backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceProfileService.java:124: rs.getBigDecimal("average_rating"), rs.getBigDecimal("fantasy_average"))).list();
+backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceService.java:125: "projected_fantasy_average"
+backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceService.java:225: evaluation.projected_fantasy_average,
+backend\src\main\java\it\fantacalciointelligence\backend\lineup\RecommendedLineupService.java:577: ->> 'fantasy_average_role_percentile'
+backend\src\main\java\it\fantacalciointelligence\backend\lineup\RecommendedLineupService.java:579: AS fantasy_average_role_percentile,
+backend\src\main\java\it\fantacalciointelligence\backend\lineup\RecommendedLineupService.java:781: "fantasy_average_role_percentile"
+backend\src\main\java\it\fantacalciointelligence\backend\player\HistoricalPlayerCatalogService.java:108: stats.fantasy_average,
+backend\src\main\java\it\fantacalciointelligence\backend\player\HistoricalPlayerCatalogService.java:148: "fantasy_average"
+backend\src\main\java\it\fantacalciointelligence\backend\player\PlayerDetailService.java:157: projected_fantasy_average,
+backend\src\main\java\it\fantacalciointelligence\backend\player\PlayerDetailService.java:175: rs.getBigDecimal("projected_fantasy_average"),
+backend\src\main\java\it\fantacalciointelligence\backend\player\PlayerDetailService.java:204: stats.fantasy_average,
+backend\src\main\java\it\fantacalciointelligence\backend\player\PlayerDetailService.java:250: rs.getBigDecimal("fantasy_average"),
+backend\src\main\java\it\fantacalciointelligence\backend\statistics\importer\PlayerStatisticsImportService.java:365: value(record, "fantasy_average"),
+backend\src\main\java\it\fantacalciointelligence\backend\statistics\importer\PlayerStatisticsImportService.java:821: fantasy_average,
+backend\src\main\java\it\fantacalciointelligence\backend\statistics\importer\PlayerStatisticsImportService.java:877: fantasy_average = EXCLUDED.fantasy_average,
+MATCH_COUNT=37
+
+PATTERN=appearances
+backend\src\main\java\it\fantacalciointelligence\backend\auction\AuctionPriceService.java:40: evaluation.projected_appearances,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentResponse.java:15: BigDecimal appearancesChange,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:112: assessment.appearances_change,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:161: "appearances_change"
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:223: BigDecimal appearancesChange =
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:225: latest.appearances(),
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:226: older.appearances()
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:275: appearancesChange.multiply(
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:372: appearancesChange,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:392: appearancesChange,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:413: AVG(statistics.appearances)
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:414: AS appearances,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:480: "appearances"
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:573: BigDecimal appearancesComponent =
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:574: older.appearances()
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:575: .add(latest.appearances())
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:587: appearancesComponent
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:620: BigDecimal appearancesChange,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:763: appearances_change,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:782: :appearancesChange,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:815: appearances_change =
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:816: EXCLUDED.appearances_change,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:875: "appearancesChange",
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:876: calculation.appearancesChange()
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:1075: BigDecimal appearances,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:1096: BigDecimal appearancesChange,
+backend\src\main\java\it\fantacalciointelligence\backend\evaluation\PlayerEvaluationGenerationService.java:246: )::INTEGER AS projected_appearances,
+backend\src\main\java\it\fantacalciointelligence\backend\evaluation\PlayerEvaluationGenerationService.java:274: projected_appearances,
+backend\src\main\java\it\fantacalciointelligence\backend\evaluation\PlayerEvaluationGenerationService.java:309: projected_appearances,
+backend\src\main\java\it\fantacalciointelligence\backend\evaluation\PlayerEvaluationGenerationService.java:397: projected_appearances =
+backend\src\main\java\it\fantacalciointelligence\backend\evaluation\PlayerEvaluationGenerationService.java:398: EXCLUDED.projected_appearances,
+backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceProfileCalculator.java:33: if (d.appearances() == null || d.appearances() == 0
+backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceProfileCalculator.java:37: BigDecimal starts = ratio(d.starts(), d.appearances(), 100);
+backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceProfileCalculator.java:38: BigDecimal minutesShare = clamp(ratio(d.minutes(), d.appearances() * 90, 100));
+backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceProfileCalculator.java:42: List.of(d.starts() + " partenze su " + d.appearances() + " presenze",
+backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceProfileCalculator.java:47: if (d.appearances() == null && d.minutes() == null) {
+backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceProfileCalculator.java:50: BigDecimal appearances = d.appearances() == null ? null
+backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceProfileCalculator.java:51: : clamp(ratio(d.appearances(), 38, 100));
+backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceProfileCalculator.java:54: BigDecimal score = averageWeighted(appearances, 60, minutes, 40);
+backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceProfileCalculator.java:56: if (appearances != null) components.put("appearanceCoverage", appearances);
+MATCH_COUNT=89
+
+PATTERN=goals
+backend\src\main\java\it\fantacalciointelligence\backend\auction\AuctionPriceService.java:42: evaluation.projected_goals,
+backend\src\main\java\it\fantacalciointelligence\backend\auction\AuctionPriceService.java:142: double projectedGoals = number(
+backend\src\main\java\it\fantacalciointelligence\backend\auction\AuctionPriceService.java:144: "projected_goals",
+backend\src\main\java\it\fantacalciointelligence\backend\auction\AuctionPriceService.java:173: score += projectedGoals * goalWeight(role);
+backend\src\main\java\it\fantacalciointelligence\backend\auction\AuctionPriceService.java:327: projectedGoals,
+backend\src\main\java\it\fantacalciointelligence\backend\auction\AuctionPriceService.java:533: double goals,
+backend\src\main\java\it\fantacalciointelligence\backend\auction\AuctionPriceService.java:559: goals,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentResponse.java:19: BigDecimal goalsChange,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentResponse.java:21: BigDecimal expectedGoalsChange,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:116: assessment.goals_change,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:118: assessment.expected_goals_change,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:173: "goals_change"
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:179: "expected_goals_change"
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:247: BigDecimal goalsChange =
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:249: latest.goals(),
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:250: older.goals()
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:259: BigDecimal expectedGoalsChange =
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:261: latest.expectedGoals(),
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:262: older.expectedGoals()
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:302: goalsChange.multiply(
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:317: expectedGoalsChange.multiply(
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:376: goalsChange,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:378: expectedGoalsChange,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:396: goalsChange,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:398: expectedGoalsChange,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:429: AVG(statistics.goals)
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:430: AS goals,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:435: AVG(statistics.expected_goals)
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:437: WHERE statistics.expected_goals
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:440: AS expected_goals,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:500: "goals"
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:510: "expected_goals"
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:528: latest.goals()
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:532: latest.expectedGoals()
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:624: BigDecimal goalsChange,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:626: BigDecimal expectedGoalsChange,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:678: if (expectedGoalsChange
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:687: else if (expectedGoalsChange
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:697: if (goalsChange
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:706: else if (goalsChange
+MATCH_COUNT=209
+
+PATTERN=assists
+backend\src\main\java\it\fantacalciointelligence\backend\auction\AuctionPriceService.java:43: evaluation.projected_assists,
+backend\src\main\java\it\fantacalciointelligence\backend\auction\AuctionPriceService.java:148: double projectedAssists = number(
+backend\src\main\java\it\fantacalciointelligence\backend\auction\AuctionPriceService.java:150: "projected_assists",
+backend\src\main\java\it\fantacalciointelligence\backend\auction\AuctionPriceService.java:174: score += projectedAssists * assistWeight(role);
+backend\src\main\java\it\fantacalciointelligence\backend\auction\AuctionPriceService.java:328: projectedAssists,
+backend\src\main\java\it\fantacalciointelligence\backend\auction\AuctionPriceService.java:534: double assists,
+backend\src\main\java\it\fantacalciointelligence\backend\auction\AuctionPriceService.java:560: assists,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentResponse.java:20: BigDecimal assistsChange,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentResponse.java:22: BigDecimal expectedAssistsChange,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:117: assessment.assists_change,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:119: assessment.expected_assists_change,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:176: "assists_change"
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:182: "expected_assists_change"
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:253: BigDecimal assistsChange =
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:255: latest.assists(),
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:256: older.assists()
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:265: BigDecimal expectedAssistsChange =
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:267: latest.expectedAssists(),
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:268: older.expectedAssists()
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:307: assistsChange.multiply(
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:322: expectedAssistsChange.multiply(
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:377: assistsChange,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:379: expectedAssistsChange,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:397: assistsChange,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:399: expectedAssistsChange,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:432: AVG(statistics.assists)
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:433: AS assists,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:442: AVG(statistics.expected_assists)
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:444: WHERE statistics.expected_assists
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:447: AS expected_assists,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:505: "assists"
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:515: "expected_assists"
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:529: .add(latest.assists());
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:533: .add(latest.expectedAssists());
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:625: BigDecimal assistsChange,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:627: BigDecimal expectedAssistsChange,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:679: .add(expectedAssistsChange)
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:688: .add(expectedAssistsChange)
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:698: .add(assistsChange)
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:707: .add(assistsChange)
+MATCH_COUNT=131
+
+PATTERN=minutes
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentResponse.java:17: BigDecimal minutesChange,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:114: assessment.minutes_change,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:167: "minutes_change"
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:235: BigDecimal minutesChange =
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:237: latest.minutesPlayed(),
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:238: older.minutesPlayed()
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:285: minutesChange.divide(
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:374: minutesChange,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:394: minutesChange,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:419: AVG(statistics.minutes_played)
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:420: AS minutes_played,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:490: "minutes_played"
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:622: BigDecimal minutesChange,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:633: if (minutesChange.compareTo(
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:640: else if (minutesChange.compareTo(
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:765: minutes_change,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:784: :minutesChange,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:821: minutes_change =
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:822: EXCLUDED.minutes_change,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:883: "minutesChange",
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:884: calculation.minutesChange()
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:1077: BigDecimal minutesPlayed,
+backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentService.java:1098: BigDecimal minutesChange,
+backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceProfileCalculator.java:34: || d.starts() == null || d.minutes() == null) {
+backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceProfileCalculator.java:38: BigDecimal minutesShare = clamp(ratio(d.minutes(), d.appearances() * 90, 100));
+backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceProfileCalculator.java:39: BigDecimal score = weighted(starts, 70, minutesShare, 30);
+backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceProfileCalculator.java:41: Map.of("startPercentage", starts, "minutesShare", minutesShare),
+backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceProfileCalculator.java:43: d.minutes() + " minuti giocati"));
+backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceProfileCalculator.java:47: if (d.appearances() == null && d.minutes() == null) {
+backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceProfileCalculator.java:52: BigDecimal minutes = d.minutes() == null ? null
+backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceProfileCalculator.java:53: : clamp(ratio(d.minutes(), 3420, 100));
+backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceProfileCalculator.java:54: BigDecimal score = averageWeighted(appearances, 60, minutes, 40);
+backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceProfileCalculator.java:57: if (minutes != null) components.put("minutesCoverage", minutes);
+backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceProfileCalculator.java:63: if (d.minutes() == null || d.minutes() == 0
+backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceProfileCalculator.java:73: BigDecimal goalsPer90 = d.goals() == null ? null : per90(d.goals(), d.minutes());
+backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceProfileCalculator.java:74: BigDecimal assistsPer90 = d.assists() == null ? null : per90(d.assists(), d.minutes());
+backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceProfileCalculator.java:121: if (d.minutes() == null || d.minutes() == 0) return null;
+backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceProfileCalculator.java:123: return per90(bonus, d.minutes());
+backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceProfileCalculator.java:127: Object[] fields = {d.appearances(), d.starts(), d.minutes(), d.goals(), d.assists(),
+backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceProfileCalculator.java:149: private BigDecimal per90(int value, int minutes) { return ratio(value * 90, minutes, 1); }
+MATCH_COUNT=109
+
+PATTERN=yellow_cards
+backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceProfileService.java:95: COALESCE(MAX(stats.yellow_cards) FILTER (WHERE stats.source = 'FBREF'),
+backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceProfileService.java:96: MAX(stats.yellow_cards) FILTER (WHERE stats.source = 'FANTACALCIO'),
+backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceProfileService.java:97: MAX(stats.yellow_cards) FILTER (WHERE stats.source = 'GAZZETTA'),
+backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceProfileService.java:98: MAX(stats.yellow_cards) FILTER (WHERE stats.source = 'FANTAMARKT')) AS yellow_cards,
+backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceProfileService.java:122: rs.getObject("assists", Integer.class), rs.getObject("yellow_cards", Integer.class),
+backend\src\main\java\it\fantacalciointelligence\backend\player\PlayerDetailService.java:210: stats.yellow_cards,
+backend\src\main\java\it\fantacalciointelligence\backend\player\PlayerDetailService.java:256: rs.getObject("yellow_cards", Integer.class),
+backend\src\main\java\it\fantacalciointelligence\backend\statistics\importer\PlayerStatisticsImportService.java:413: value(record, "yellow_cards"),
+backend\src\main\java\it\fantacalciointelligence\backend\statistics\importer\PlayerStatisticsImportService.java:827: yellow_cards,
+backend\src\main\java\it\fantacalciointelligence\backend\statistics\importer\PlayerStatisticsImportService.java:885: yellow_cards = EXCLUDED.yellow_cards,
+MATCH_COUNT=10
+
+PATTERN=red_cards
+backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceProfileService.java:99: COALESCE(MAX(stats.red_cards) FILTER (WHERE stats.source = 'FBREF'),
+backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceProfileService.java:100: MAX(stats.red_cards) FILTER (WHERE stats.source = 'FANTACALCIO'),
+backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceProfileService.java:101: MAX(stats.red_cards) FILTER (WHERE stats.source = 'GAZZETTA'),
+backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceProfileService.java:102: MAX(stats.red_cards) FILTER (WHERE stats.source = 'FANTAMARKT')) AS red_cards,
+backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceProfileService.java:123: rs.getObject("red_cards", Integer.class), rs.getObject("penalties_missed", Integer.class),
+backend\src\main\java\it\fantacalciointelligence\backend\player\PlayerDetailService.java:211: stats.red_cards,
+backend\src\main\java\it\fantacalciointelligence\backend\player\PlayerDetailService.java:257: rs.getObject("red_cards", Integer.class),
+backend\src\main\java\it\fantacalciointelligence\backend\statistics\importer\PlayerStatisticsImportService.java:420: value(record, "red_cards"),
+backend\src\main\java\it\fantacalciointelligence\backend\statistics\importer\PlayerStatisticsImportService.java:828: red_cards,
+backend\src\main\java\it\fantacalciointelligence\backend\statistics\importer\PlayerStatisticsImportService.java:886: red_cards = EXCLUDED.red_cards,
+MATCH_COUNT=10
+
+PATTERN=goals_conceded
+backend\src\main\java\it\fantacalciointelligence\backend\player\PlayerDetailService.java:213: stats.goals_conceded,
+backend\src\main\java\it\fantacalciointelligence\backend\player\PlayerDetailService.java:259: rs.getObject("goals_conceded", Integer.class),
+backend\src\main\java\it\fantacalciointelligence\backend\statistics\importer\PlayerStatisticsImportService.java:434: value(record, "goals_conceded"),
+backend\src\main\java\it\fantacalciointelligence\backend\statistics\importer\PlayerStatisticsImportService.java:830: goals_conceded,
+backend\src\main\java\it\fantacalciointelligence\backend\statistics\importer\PlayerStatisticsImportService.java:888: goals_conceded = EXCLUDED.goals_conceded,
+MATCH_COUNT=5
+
+PATTERN=saves
+backend\src\main\java\it\fantacalciointelligence\backend\player\PlayerDetailService.java:214: stats.saves,
+backend\src\main\java\it\fantacalciointelligence\backend\player\PlayerDetailService.java:260: rs.getObject("saves", Integer.class),
+backend\src\main\java\it\fantacalciointelligence\backend\player\PlayerSeasonStatisticsResponse.java:27: Integer saves,
+backend\src\main\java\it\fantacalciointelligence\backend\reconciliation\PlayerReconciliationService.java:224: saveSourceIfPresent(
+backend\src\main\java\it\fantacalciointelligence\backend\reconciliation\PlayerReconciliationService.java:241: saveSourceIfPresent(
+backend\src\main\java\it\fantacalciointelligence\backend\reconciliation\PlayerReconciliationService.java:250: saveSourceIfPresent(
+backend\src\main\java\it\fantacalciointelligence\backend\reconciliation\PlayerReconciliationService.java:1097: private void saveSourceIfPresent(
+backend\src\main\java\it\fantacalciointelligence\backend\reconciliation\PlayerReconciliationService.java:1110: saveSourceMapping(
+backend\src\main\java\it\fantacalciointelligence\backend\reconciliation\PlayerReconciliationService.java:1128: private void saveSourceMapping(
+backend\src\main\java\it\fantacalciointelligence\backend\statistics\importer\PlayerStatisticsImportService.java:453: ParsedInteger saves =
+backend\src\main\java\it\fantacalciointelligence\backend\statistics\importer\PlayerStatisticsImportService.java:455: value(record, "saves"),
+backend\src\main\java\it\fantacalciointelligence\backend\statistics\importer\PlayerStatisticsImportService.java:492: addError(errors, saves.error());
+backend\src\main\java\it\fantacalciointelligence\backend\statistics\importer\PlayerStatisticsImportService.java:581: saves.value(),
+backend\src\main\java\it\fantacalciointelligence\backend\statistics\importer\PlayerStatisticsImportService.java:832: saves,
+backend\src\main\java\it\fantacalciointelligence\backend\statistics\importer\PlayerStatisticsImportService.java:859: :saves,
+backend\src\main\java\it\fantacalciointelligence\backend\statistics\importer\PlayerStatisticsImportService.java:890: saves = EXCLUDED.saves,
+backend\src\main\java\it\fantacalciointelligence\backend\statistics\importer\PlayerStatisticsImportService.java:956: "saves",
+backend\src\main\java\it\fantacalciointelligence\backend\statistics\importer\PlayerStatisticsImportService.java:957: row.saves(),
+backend\src\main\java\it\fantacalciointelligence\backend\statistics\importer\PlayerStatisticsImportService.java:1540: Integer saves,
+MATCH_COUNT=19
+
+PATTERN=penalties_saved
+backend\src\main\java\it\fantacalciointelligence\backend\player\PlayerDetailService.java:215: stats.penalties_saved,
+backend\src\main\java\it\fantacalciointelligence\backend\player\PlayerDetailService.java:261: rs.getObject("penalties_saved", Integer.class),
+backend\src\main\java\it\fantacalciointelligence\backend\statistics\importer\PlayerStatisticsImportService.java:448: value(record, "penalties_saved"),
+backend\src\main\java\it\fantacalciointelligence\backend\statistics\importer\PlayerStatisticsImportService.java:833: penalties_saved,
+backend\src\main\java\it\fantacalciointelligence\backend\statistics\importer\PlayerStatisticsImportService.java:891: penalties_saved = EXCLUDED.penalties_saved,
+MATCH_COUNT=5
+
+PATTERN=clean_sheets
+backend\src\main\java\it\fantacalciointelligence\backend\player\PlayerDetailService.java:212: stats.clean_sheets,
+backend\src\main\java\it\fantacalciointelligence\backend\player\PlayerDetailService.java:258: rs.getObject("clean_sheets", Integer.class),
+backend\src\main\java\it\fantacalciointelligence\backend\statistics\importer\PlayerStatisticsImportService.java:441: value(record, "clean_sheets"),
+backend\src\main\java\it\fantacalciointelligence\backend\statistics\importer\PlayerStatisticsImportService.java:831: clean_sheets,
+backend\src\main\java\it\fantacalciointelligence\backend\statistics\importer\PlayerStatisticsImportService.java:889: clean_sheets = EXCLUDED.clean_sheets,
+MATCH_COUNT=5
+
+================================================================================
+5. CURRENT DETAIL RUNTIME
+================================================================================
+
+URL=http://127.0.0.1:8080/api/v1/players/653
+HTTP_STATUS=404
+BODY={"timestamp": "2026-08-29T14:23:38.067584300Z", "status": 404, "error": "Not Found", "message": "Giocatore non trovato", "path": "/api/v1/players/653"}
+
+URL=http://127.0.0.1:8080/api/v1/players/653?season=2024%2F2025
+HTTP_STATUS=404
+BODY={"timestamp": "2026-08-29T14:23:38.082730100Z", "status": 404, "error": "Not Found", "message": "Giocatore non trovato", "path": "/api/v1/players/653"}
+
+URL=http://127.0.0.1:8080/api/v1/players/653?season=2025%2F2026
+HTTP_STATUS=404
+BODY={"timestamp": "2026-08-29T14:23:38.098086600Z", "status": 404, "error": "Not Found", "message": "Giocatore non trovato", "path": "/api/v1/players/653"}
+
+================================================================================
+6. HISTORICAL BELLOTTI SOURCE SAMPLE
+================================================================================
+URL=http://127.0.0.1:8080/api/v1/players/history?season=2024%2F2025&search=Belotti&page=0&size=25
+HTTP_STATUS=200
+BODY={"content": [{"id": 653, "name": "Andrea Belotti", "active": false, "season": "2024/2025", "club": "Como", "clubSlug": "como", "fantacalcioRole": "A", "appearances": 13, "fantasyAverage": 6.31, "goals": 2, "assists": 0}], "page": 0, "size": 25, "totalElements": 1, "totalPages": 1}
+
+================================================================================
+7. FRONTEND DETAIL INVENTORY
+================================================================================
+
+================================================================================
+FILE: frontend\src\features\core\api.ts
+================================================================================
+   1: import { z } from 'zod';
+   2: import { httpRequest } from '@/api/client/httpClient';
+   3: 
+   4: const numeric = z.number();
+   5: const nullableNumber = numeric.nullable();
+   6: const playerSchema = z.object({
+   7:   id: numeric,
+   8:   name: z.string(),
+   9:   club: z.string(),
+  10:   clubSlug: z.string(),
+  11:   fantacalcioRole: z.string(),
+  12:   gazzettaRole: z.string().nullable(),
+  13:   fantamarktRole: z.string().nullable(),
+  14:   sourcesCount: numeric,
+  15: });
+  16: export const playerPageSchema = z.object({
+  17:   content: z.array(playerSchema),
+  18:   page: numeric,
+  19:   size: numeric,
+  20:   totalElements: numeric,
+  21:   totalPages: numeric,
+  22: });
+  23: 
+  24: const historicalPlayerSchema = z.object({
+  25:   id: numeric,
+  26:   name: z.string(),
+  27:   active: z.boolean(),
+  28:   season: z.string(),
+  29:   club: z.string().nullable(),
+  30:   clubSlug: z.string().nullable(),
+  31:   fantacalcioRole: z.string(),
+  32:   appearances: nullableNumber,
+  33:   fantasyAverage: nullableNumber,
+  34:   goals: nullableNumber,
+  35:   assists: nullableNumber,
+  36: });
+  37: 
+  38: export const historicalPlayerPageSchema = z.object({
+  39:   content: z.array(historicalPlayerSchema),
+  40:   page: numeric,
+  41:   size: numeric,
+  42:   totalElements: numeric,
+  43:   totalPages: numeric,
+  44: });
+  45: const evaluationSchema = z
+  46:   .object({
+  47:     projectedFantasyAverage: nullableNumber,
+  48:     projectedAppearances: nullableNumber,
+  49:     projectedStarts: nullableNumber,
+  50:     projectedGoals: nullableNumber,
+  51:     projectedAssists: nullableNumber,
+  52:     reliabilityScore: nullableNumber,
+  53:     potentialScore: nullableNumber,
+  54:     riskScore: nullableNumber,
+  55:     valueScore: nullableNumber,
+  56:     summary: z.string().nullable(),
+  57:   })
+  58:   .nullable();
+  59: const playerSeasonStatisticsSchema = z
+  60:   .object({
+  61:     season: z.string(),
+  62:     source: z.string(),
+  63:     sourceExternalId: z.string().nullish(),
+  64:     club: z.string().nullish(),
+  65:     historicalClubs: z.array(z.string()).optional().default([]),
+  66:     appearances: nullableNumber.optional(),
+  67:     starts: nullableNumber.optional(),
+  68:     minutesPlayed: nullableNumber.optional(),
+  69:     averageRating: nullableNumber.optional(),
+  70:     fantasyAverage: nullableNumber.optional(),
+  71:     goals: nullableNumber.optional(),
+  72:     assists: nullableNumber.optional(),
+  73:     penaltiesTaken: nullableNumber.optional(),
+  74:     penaltiesScored: nullableNumber.optional(),
+  75:     penaltiesMissed: nullableNumber.optional(),
+  76:     yellowCards: nullableNumber.optional(),
+  77:     redCards: nullableNumber.optional(),
+  78:     cleanSheets: nullableNumber.optional(),
+  79:     goalsConceded: nullableNumber.optional(),
+  80:     saves: nullableNumber.optional(),
+  81:     penaltiesSaved: nullableNumber.optional(),
+  82:     expectedGoals: nullableNumber.optional(),
+  83:     expectedAssists: nullableNumber.optional(),
+  84:     goalsPer90: nullableNumber.optional(),
+  85:     assistsPer90: nullableNumber.optional(),
+  86:     minutesPerAppearance: nullableNumber.optional(),
+  87:     startPercentage: nullableNumber.optional(),
+  88:     importedAt: z.string().nullish(),
+  89:     sourceUpdatedAt: z.string().nullish(),
+  90:     importBatchId: nullableNumber.optional(),
+  91:   })
+  92:   .passthrough();
+  93: 
+  94: export const playerDetailSchema = z.object({
+  95:   id: numeric,
+  96:   name: z.string(),
+  97:   club: z.string(),
+  98:   clubSlug: z.string(),
+  99:   roles: z.record(z.string(), z.string()),
+ 100:   tacticalProfile: z
+ 101:     .object({
+ 102:       realPosition: z.string().nullable(),
+ 103:       secondaryPosition: z.string().nullable(),
+ 104:       tacticalRole: z.string().nullable(),
+ 105:       attackingInvolvement: nullableNumber,
+ 106:       defensiveInvolvement: nullableNumber,
+ 107:       setPieceTaker: z.boolean(),
+ 108:       penaltyTaker: z.boolean(),
+ 109:       cornerTaker: z.boolean(),
+ 110:       freeKickTaker: z.boolean(),
+ 111:       projectedStarter: z.boolean(),
+ 112:       starterProbability: nullableNumber,
+ 113:       competitionLevel: z.string().nullable(),
+ 114:       tacticalNotes: z.string().nullable(),
+ 115:     })
+ 116:     .nullable(),
+ 117:   clubTactics: z.unknown().nullable(),
+ 118:   evaluation: evaluationSchema,
+ 119:   statistics: playerSeasonStatisticsSchema.array(),
+ 120: });
+ 121: const auctionPlayerSchema = z.object({
+ 122:   position: numeric,
+ 123:   playerId: numeric,
+ 124:   playerName: z.string(),
+ 125:   club: z.string(),
+ 126:   fantasyRole: z.string(),
+ 127:   intelligenceScore: numeric,
+ 128:   minimumPrice: numeric,
+ 129:   recommendedPrice: numeric,
+ 130:   maximumPrice: numeric,
+ 131:   budgetPercentage: numeric,
+ 132:   reliabilityScore: nullableNumber,
+ 133:   potentialScore: nullableNumber,
+ 134:   riskScore: nullableNumber,
+ 135:   starterProbability: nullableNumber,
+ 136:   availabilityStatus: z.string().nullable(),
+ 137:   availabilityMatchday: nullableNumber,
+ 138:   strengths: z.array(z.string()),
+ 139:   risks: z.array(z.string()),
+ 140:   finalRecommendation: z.string(),
+ 141: });
+ 142: export const rankingSchema = z.object({
+ 143:   season: z.string(),
+ 144:   budget: numeric,
+ 145:   teams: numeric,
+ 146:   defenseModifier: z.boolean(),
+ 147:   role: z.string().nullable(),
+ 148:   club: z.string().nullable(),
+ 149:   maximumPrice: nullableNumber,
+ 150:   recommendation: z.string().nullable(),
+ 151:   excludeUnavailable: z.boolean(),
+ 152:   totalPlayers: numeric,
+ 153:   players: z.array(auctionPlayerSchema),
+ 154: });
+ 155: export const strategySchema = z.object({
+ 156:   season: z.string(),
+ 157:   totalBudget: numeric,
+ 158:   teams: numeric,
+ 159:   defenseModifier: z.boolean(),
+ 160:   totalRequiredPlayers: numeric,
+ 161:   totalPlannedSpending: numeric,
+ 162:   expectedRemainingBudget: numeric,
+ 163:   withinBudget: z.boolean(),
+ 164:   strategySummary: z.string(),
+ 165:   roles: z.array(
+ 166:     z
+ 167:       .object({
+ 168:         role: z.string(),
+ 169:         requiredSlots: numeric,
+ 170:         budgetPercentage: numeric,
+ 171:         allocatedBudget: numeric,
+ 172:         plannedSpending: numeric,
+ 173:         remainingRoleBudget: numeric,
+ 174:         warnings: z.array(z.string()),
+ 175:       })
+ 176:       .passthrough(),
+ 177:   ),
+ 178:   globalWarnings: z.array(z.string()),
+ 179: });
+ 180: const squadPlayerSchema = z.object({
+ 181:   id: numeric,
+ 182:   playerId: numeric,
+ 183:   playerName: z.string(),
+ 184:   club: z.string(),
+ 185:   role: z.string(),
+ 186:   purchasePrice: numeric,
+ 187: });
+ 188: export const squadSchema = z.object({
+ 189:   id: numeric,
+ 190:   name: z.string(),
+ 191:   season: z.string(),
+ 192:   initialBudget: numeric,
+ 193:   spentBudget: numeric,
+ 194:   remainingBudget: numeric,
+ 195:   totalPlayers: numeric,
+ 196:   maximumPlayers: numeric,
+ 197:   roles: z.record(z.string(), z.object({ current: numeric, maximum: numeric, remaining: numeric })),
+ 198:   players: z.array(squadPlayerSchema),
+ 199: });
+ 200: const leagueConfigurationSchema = z.object({
+ 201:   id: numeric,
+ 202:   name: z.string(),
+ 203:   season: z.string(),
+ 204:   teamsCount: numeric,
+ 205:   totalBudget: numeric,
+ 206:   goalkeepersCount: numeric,
+ 207:   defendersCount: numeric,
+ 208:   midfieldersCount: numeric,
+ 209:   forwardsCount: numeric,
+ 210:   maxSubstitutions: numeric,
+ 211:   defenseModifier: z.boolean(),
+ 212:   captainBonus: z.boolean(),
+ 213:   voteSource: z.string(),
+ 214:   active: z.boolean(),
+ 215: });
+ 216: export const analysisSchema = z
+ 217:   .object({
+ 218:     squadId: numeric,
+ 219:     squadName: z.string(),
+ 220:     season: z.string(),
+ 221:     totalPlayers: numeric,
+ 222:     maximumPlayers: numeric,
+ 223:     remainingSlots: numeric,
+ 224:     constraintsValid: z.boolean(),
+ 225:     squadComplete: z.boolean(),
+ 226:     summary: z.string(),
+ 227:     roles: z.array(
+ 228:       z.object({
+ 229:         role: z.string(),
+ 230:         currentPlayers: numeric,
+ 231:         maximumPlayers: numeric,
+ 232:         remainingSlots: numeric,
+ 233:         complete: z.boolean(),
+ 234:         coverageStatus: z.string(),
+ 235:         warnings: z.array(z.string()),
+ 236:       }),
+ 237:     ),
+ 238:     globalWarnings: z.array(z.string()),
+ 239:   })
+ 240:   .passthrough();
+ 241: export const sessionSchema = z.object({
+ 242:   id: numeric,
+ 243:   squadId: numeric,
+ 244:   season: z.string(),
+ 245:   leagueTeams: numeric,
+ 246:   totalBudget: numeric,
+ 247:   defenseModifier: z.boolean(),
+ 248:   status: z.string(),
+ 249:   playerStateInitialized: z.boolean(),
+ 250:   currentPlayerId: nullableNumber,
+ 251:   currentPrice: nullableNumber,
+ 252:   version: numeric,
+ 253:   createdAt: z.string(),
+ 254:   updatedAt: z.string(),
+ 255: });
+ 256: export const stateSchema = z.object({
+ 257:   session: sessionSchema,
+ 258:   spentBudget: numeric,
+ 259:   remainingBudget: numeric,
+ 260:   purchases: z.array(z.unknown()),
+ 261:   players: z.array(
+ 262:     z.object({
+ 263:       playerId: numeric,
+ 264:       playerName: z.string(),
+ 265:       role: z.string(),
+ 266:       availability: z.string(),
+ 267:     }),
+ 268:   ),
+ 269:   availabilityComplete: z.boolean(),
+ 270: });
+ 271: 
+ 272: function params(values: Record<string, string | number | boolean | undefined>) {
+ 273:   const p = new URLSearchParams();
+ 274:   Object.entries(values).forEach(([key, value]) => {
+ 275:     if (value !== undefined && value !== '') p.set(key, String(value));
+ 276:   });
+ 277:   return p.toString();
+ 278: }
+ 279: async function parsed<T>(
+ 280:   path: string,
+ 281:   schema: z.ZodType<T>,
+ 282:   signal?: AbortSignal,
+ 283:   getAuthorization?: () => string | undefined,
+ 284:   init?: RequestInit,
+ 285: ) {
+ 286:   return schema.parse(await httpRequest<unknown>(path, { ...init, signal, getAuthorization }));
+ 287: }
+ 288: 
+ 289: export const featureApi = {
+ 290:   players: (
+ 291:     filters: { search?: string; club?: string; role?: string; page: number; size: number },
+ 292:     signal?: AbortSignal,
+ 293:   ) => parsed(`/players?${params(filters)}`, playerPageSchema, signal),
+ 294:   historicalPlayers: (
+ 295:     filters: {
+ 296:       season: string;
+ 297:       search?: string;
+ 298:       role?: string;
+ 299:       page: number;
+ 300:       size: number;
+ 301:     },
+ 302:     signal?: AbortSignal,
+ 303:   ) => parsed(`/players/history?${params(filters)}`, historicalPlayerPageSchema, signal),
+ 304:   player: (id: string, signal?: AbortSignal) =>
+ 305:     parsed(`/players/${id}`, playerDetailSchema, signal),
+ 306:   ranking: (role: string, signal?: AbortSignal) =>
+ 307:     parsed(
+ 308:       `/auction/intelligence-rankings?${params({ role: role || undefined, limit: 100 })}`,
+ 309:       rankingSchema,
+ 310:       signal,
+ 311:     ),
+ 312:   strategy: (signal?: AbortSignal) => parsed('/auction/strategy', strategySchema, signal),
+ 313:   squad: (auth: () => string | undefined, signal?: AbortSignal) =>
+ 314:     parsed('/squad', squadSchema, signal, auth),
+ 315:   leagueConfiguration: (signal?: AbortSignal) =>
+ 316:     parsed('/league/configuration', leagueConfigurationSchema, signal),
+ 317:   createSquad: (auth: () => string | undefined, leagueConfigurationId: number, name: string) =>
+ 318:     parsed('/squads', squadSchema, undefined, auth, {
+ 319:       method: 'POST',
+ 320:       headers: { 'Content-Type': 'application/json' },
+ 321:       body: JSON.stringify({ leagueConfigurationId, name, active: true }),
+ 322:     }),
+ 323:   analysis: (auth: () => string | undefined, signal?: AbortSignal) =>
+ 324:     parsed('/squad-analysis', analysisSchema, signal, auth),
+ 325:   addPlayer: (auth: () => string | undefined, playerId: number, purchasePrice: number) =>
+ 326:     parsed('/squad/players', squadSchema, undefined, auth, {
+ 327:       method: 'POST',
+ 328:       headers: { 'Content-Type': 'application/json' },
+ 329:       body: JSON.stringify({ playerId, purchasePrice }),
+ 330:     }),
+ 331:   removePlayer: (auth: () => string | undefined, playerId: number) =>
+ 332:     parsed(`/squad/players/${playerId}`, squadSchema, undefined, auth, { method: 'DELETE' }),
+ 333:   updatePlayerPrice: (auth: () => string | undefined, playerId: number, purchasePrice: number) =>
+ 334:     parsed(`/squad/players/${playerId}`, squadSchema, undefined, auth, {
+ 335:       method: 'PATCH',
+ 336:       headers: { 'Content-Type': 'application/json' },
+ 337:       body: JSON.stringify({ purchasePrice }),
+ 338:     }),
+ 339:   createSession: (auth: () => string | undefined, squadId: number) =>
+ 340:     parsed('/auction/sessions', sessionSchema, undefined, auth, {
+ 341:       method: 'POST',
+ 342:       headers: { 'Content-Type': 'application/json' },
+ 343:       body: JSON.stringify({ squadId }),
+ 344:     }),
+ 345:   sessionState: (auth: () => string | undefined, id: string, signal?: AbortSignal) =>
+ 346:     parsed(`/auction/sessions/${id}/state`, stateSchema, signal, auth),
+ 347: };
+ 348: export type PlayerPage = z.infer<typeof playerPageSchema>;
+ 349: export type HistoricalPlayerPage = z.infer<typeof historicalPlayerPageSchema>;
+ 350: export type PlayerSeasonStatistics = z.infer<typeof playerSeasonStatisticsSchema>;
+ 351: export type Squad = z.infer<typeof squadSchema>;
+
+================================================================================
+FILE: frontend\src\pages\PlayerDetailPage.tsx
+================================================================================
+   1: import { useQuery } from '@tanstack/react-query';
+   2: import { Link, useParams } from 'react-router-dom';
+   3: import { AppShell } from '@/layouts/AppShell';
+   4: import { BackButton } from '@/components/navigation/BackButton';
+   5: import { featureApi, type PlayerSeasonStatistics } from '@/features/core/api';
+   6: import styles from '@/features/core/FeaturePage.module.css';
+   7: 
+   8: const value = (v: number | null | undefined, suffix = '') =>
+   9:   v == null ? 'Dato non disponibile' : `${v}${suffix}`;
+  10: 
+  11: type StatisticColumn = {
+  12:   label: string;
+  13:   value: (statistic: PlayerSeasonStatistics) => string;
+  14: };
+  15: 
+  16: function isFantasyGoalkeeper(roles: Record<string, string>): boolean {
+  17:   const fantasyRole = Object.entries(roles).find(
+  18:     ([source]) => source.toUpperCase() === 'FANTACALCIO',
+  19:   )?.[1];
+  20:   return fantasyRole?.toUpperCase() === 'P';
+  21: }
+  22: 
+  23: function statisticColumns(goalkeeper: boolean): StatisticColumn[] {
+  24:   if (goalkeeper) {
+  25:     return [
+  26:       { label: 'Presenze', value: (statistic) => value(statistic.appearances) },
+  27:       { label: 'Minuti giocati', value: (statistic) => value(statistic.minutesPlayed) },
+  28:       { label: 'Gol subiti', value: (statistic) => value(statistic.goalsConceded) },
+  29:       { label: 'Parate effettuate', value: (statistic) => value(statistic.saves) },
+  30:       { label: 'Rigori parati', value: (statistic) => value(statistic.penaltiesSaved) },
+  31:       {
+  32:         label: 'Porte inviolate / Clean sheet',
+  33:         value: (statistic) => value(statistic.cleanSheets),
+  34:       },
+  35:     ];
+  36:   }
+  37:   return [
+  38:     { label: 'Presenze', value: (statistic) => value(statistic.appearances) },
+  39:     { label: 'Gol', value: (statistic) => value(statistic.goals) },
+  40:     { label: 'Assist', value: (statistic) => value(statistic.assists) },
+  41:     { label: 'Fantamedia', value: (statistic) => value(statistic.fantasyAverage) },
+  42:   ];
+  43: }
+  44: 
+  45: function sourceLabel(statistic: PlayerSeasonStatistics): string {
+  46:   return statistic.sourceExternalId
+  47:     ? `${statistic.source} · ${statistic.sourceExternalId}`
+  48:     : statistic.source;
+  49: }
+  50: export function PlayerDetailPage() {
+  51:   const { id = '' } = useParams();
+  52:   const q = useQuery({
+  53:     queryKey: ['player', id],
+  54:     queryFn: ({ signal }) => featureApi.player(id, signal),
+  55:     retry: false,
+  56:   });
+  57:   const goalkeeper = q.data ? isFantasyGoalkeeper(q.data.roles) : false;
+  58:   const columns = statisticColumns(goalkeeper);
+  59:   return (
+  60:     <AppShell>
+  61:       <div className={styles.page}>
+  62:         <BackButton fallbackTo="/players" />
+  63:         {q.isPending ? (
+  64:           <section className={styles.panel}>Caricamento profilo…</section>
+  65:         ) : q.isError ? (
+  66:           <section className={`${styles.panel} ${styles.error}`}>
+  67:             <h1>Giocatore non trovato</h1>
+  68:             <Link to="/players">Torna al catalogo</Link>
+  69:           </section>
+  70:         ) : (
+  71:           <>
+  72:             <header className={styles.hero}>
+  73:               <div>
+  74:                 <span className={styles.eyebrow}>{Object.values(q.data.roles).join(' · ')}</span>
+  75:                 <h1>{q.data.name}</h1>
+  76:                 <p className={styles.muted}>{q.data.club}</p>
+  77:               </div>
+  78:               <Link className={styles.button} to={`/auction?player=${q.data.id}`}>
+  79:                 Intelligence asta
+  80:               </Link>
+  81:             </header>
+  82:             {q.data.evaluation && (
+  83:               <section className={styles.panel}>
+  84:                 <h2>Valutazione</h2>
+  85:                 <div className={styles.grid}>
+  86:                   {[
+  87:                     ['Media prevista', value(q.data.evaluation.projectedFantasyAverage)],
+  88:                     ['Affidabilità', value(q.data.evaluation.reliabilityScore)],
+  89:                     ['Potenziale', value(q.data.evaluation.potentialScore)],
+  90:                     ['Rischio', value(q.data.evaluation.riskScore)],
+  91:                   ].map(([a, b]) => (
+  92:                     <div className={styles.metric} key={a}>
+  93:                       <span>{a}</span>
+  94:                       <strong>{b}</strong>
+  95:                     </div>
+  96:                   ))}
+  97:                 </div>
+  98:                 {q.data.evaluation.summary && <p>{q.data.evaluation.summary}</p>}
+  99:               </section>
+ 100:             )}
+ 101:             {q.data.tacticalProfile && (
+ 102:               <section className={styles.panel}>
+ 103:                 <h2>Profilo tattico</h2>
+ 104:                 <div className={styles.grid}>
+ 105:                   <div className={styles.metric}>
+ 106:                     <span>Posizione reale</span>
+ 107:                     <strong>{q.data.tacticalProfile.realPosition ?? 'Non disponibile'}</strong>
+ 108:                   </div>
+ 109:                   <div className={styles.metric}>
+ 110:                     <span>Probabilità titolare</span>
+ 111:                     <strong>{value(q.data.tacticalProfile.starterProbability, '%')}</strong>
+ 112:                   </div>
+ 113:                 </div>
+ 114:                 {q.data.tacticalProfile.tacticalNotes && (
+ 115:                   <p>{q.data.tacticalProfile.tacticalNotes}</p>
+ 116:                 )}
+ 117:               </section>
+ 118:             )}
+ 119:             <section className={styles.panel}>
+ 120:               <h2>Storico disponibile</h2>
+ 121:               {q.data.statistics.length === 0 ? (
+ 122:                 <p className={styles.muted}>Nessuna statistica disponibile.</p>
+ 123:               ) : (
+ 124:                 <div className={styles.tableWrap}>
+ 125:                   <table className={styles.table}>
+ 126:                     <thead>
+ 127:                       <tr>
+ 128:                         <th>Stagione</th>
+ 129:                         <th>Fonte</th>
+ 130:                         {columns.map((column) => (
+ 131:                           <th key={column.label}>{column.label}</th>
+ 132:                         ))}
+ 133:                       </tr>
+ 134:                     </thead>
+ 135:                     <tbody>
+ 136:                       {q.data.statistics.map((statistic, index) => (
+ 137:                         <tr key={`${statistic.season}-${statistic.source}-${index}`}>
+ 138:                           <td>{statistic.season}</td>
+ 139:                           <td>{sourceLabel(statistic)}</td>
+ 140:                           {columns.map((column) => (
+ 141:                             <td key={column.label}>{column.value(statistic)}</td>
+ 142:                           ))}
+ 143:                         </tr>
+ 144:                       ))}
+ 145:                     </tbody>
+ 146:                   </table>
+ 147:                 </div>
+ 148:               )}
+ 149:             </section>
+ 150:           </>
+ 151:         )}
+ 152:       </div>
+ 153:     </AppShell>
+ 154:   );
+ 155: }
+
+================================================================================
+FILE: frontend\src\pages\HistoricalPlayersPage.tsx
+================================================================================
+   1: import { useEffect, useMemo, useState } from 'react';
+   2: import { keepPreviousData, useQuery } from '@tanstack/react-query';
+   3: import { useSearchParams } from 'react-router-dom';
+   4: import { dashboardApi } from '@/api/dashboardApi';
+   5: import { featureApi } from '@/features/core/api';
+   6: import { AppShell } from '@/layouts/AppShell';
+   7: import styles from '@/features/core/FeaturePage.module.css';
+   8: 
+   9: export function HistoricalPlayersPage() {
+  10:   const [url, setUrl] = useSearchParams();
+  11:   const [search, setSearch] = useState(url.get('search') ?? '');
+  12: 
+  13:   const role = url.get('role') ?? '';
+  14:   const page = Number(url.get('page') ?? 0);
+  15: 
+  16:   const seasons = useQuery({
+  17:     queryKey: ['historical-player-seasons'],
+  18:     queryFn: dashboardApi.seasons,
+  19:   });
+  20: 
+  21:   const historicalSeasons = useMemo(
+  22:     () =>
+  23:       [...(seasons.data ?? [])]
+  24:         .filter((season) => !season.current)
+  25:         .sort((a, b) => b.code.localeCompare(a.code)),
+  26:     [seasons.data],
+  27:   );
+  28: 
+  29:   const selectedSeason = url.get('season') ?? historicalSeasons[0]?.code ?? '';
+  30: 
+  31:   useEffect(() => {
+  32:     const timer = window.setTimeout(() => {
+  33:       setUrl(
+  34:         (current) => {
+  35:           const next = new URLSearchParams(current);
+  36:           const currentSearch = current.get('search') ?? '';
+  37: 
+  38:           if (search === currentSearch) return current;
+  39: 
+  40:           if (search) next.set('search', search);
+  41:           else next.delete('search');
+  42: 
+  43:           next.set('page', '0');
+  44:           return next;
+  45:         },
+  46:         { replace: true },
+  47:       );
+  48:     }, 350);
+  49: 
+  50:     return () => window.clearTimeout(timer);
+  51:   }, [search, setUrl]);
+  52: 
+  53:   const query = useQuery({
+  54:     queryKey: [
+  55:       'historical-players',
+  56:       {
+  57:         season: selectedSeason,
+  58:         search: url.get('search') ?? '',
+  59:         role,
+  60:         page,
+  61:       },
+  62:     ],
+  63:     queryFn: ({ signal }) =>
+  64:       featureApi.historicalPlayers(
+  65:         {
+  66:           season: selectedSeason,
+  67:           search: url.get('search') ?? undefined,
+  68:           role: role || undefined,
+  69:           page,
+  70:           size: 25,
+  71:         },
+  72:         signal,
+  73:       ),
+  74:     enabled: Boolean(selectedSeason),
+  75:     placeholderData: keepPreviousData,
+  76:   });
+  77: 
+  78:   const update = (key: string, value: string) => {
+  79:     const next = new URLSearchParams(url);
+  80: 
+  81:     if (value) next.set(key, value);
+  82:     else next.delete(key);
+  83: 
+  84:     if (key !== 'page') next.set('page', '0');
+  85: 
+  86:     setUrl(next);
+  87:   };
+  88: 
+  89:   return (
+  90:     <AppShell>
+  91:       <div className={styles.page}>
+  92:         <header className={styles.hero}>
+  93:           <div>
+  94:             <span className={styles.eyebrow}>Archivio stagionale</span>
+  95:             <h1>Catalogo storico</h1>
+  96: 
+  97:             <p className={styles.muted}>
+  98:               {query.data && selectedSeason
+  99:                 ? `${query.data.totalElements} giocatori ? ${selectedSeason}`
+ 100:                 : 'Giocatori e statistiche delle stagioni precedenti'}
+ 101:             </p>
+ 102:           </div>
+ 103:         </header>
+ 104: 
+ 105:         <section
+ 106:           className={`${styles.panel} ${styles.filters}`}
+ 107:           aria-label="Filtri catalogo storico"
+ 108:         >
+ 109:           <label>
+ 110:             Stagione
+ 111:             <select
+ 112:               aria-label="Stagione"
+ 113:               value={selectedSeason}
+ 114:               disabled={seasons.isPending || historicalSeasons.length === 0}
+ 115:               onChange={(event) => update('season', event.target.value)}
+ 116:             >
+ 117:               {historicalSeasons.map((season) => (
+ 118:                 <option key={season.code} value={season.code}>
+ 119:                   {season.code}
+ 120:                 </option>
+ 121:               ))}
+ 122:             </select>
+ 123:           </label>
+ 124: 
+ 125:           <label>
+ 126:             Cerca
+ 127:             <input
+ 128:               value={search}
+ 129:               onChange={(event) => setSearch(event.target.value)}
+ 130:               placeholder="Nome giocatore"
+ 131:             />
+ 132:           </label>
+ 133: 
+ 134:           <label>
+ 135:             Ruolo
+ 136:             <select
+ 137:               aria-label="Ruolo"
+ 138:               value={role}
+ 139:               onChange={(event) => update('role', event.target.value)}
+ 140:             >
+ 141:               <option value="">Tutti</option>
+ 142: 
+ 143:               {['P', 'D', 'C', 'A'].map((value) => (
+ 144:                 <option key={value} value={value}>
+ 145:                   {value}
+ 146:                 </option>
+ 147:               ))}
+ 148:             </select>
+ 149:           </label>
+ 150: 
+ 151:           <button
+ 152:             className={`${styles.button} ${styles.secondary}`}
+ 153:             onClick={() => {
+ 154:               setSearch('');
+ 155:               setUrl({});
+ 156:             }}
+ 157:           >
+ 158:             Azzera
+ 159:           </button>
+ 160:         </section>
+ 161: 
+ 162:         <section className={styles.panel} aria-live="polite">
+ 163:           {seasons.isPending ? (
+ 164:             <div className={styles.status}>Caricamento stagioni?</div>
+ 165:           ) : seasons.isError ? (
+ 166:             <div className={`${styles.status} ${styles.error}`}>Stagioni non disponibili.</div>
+ 167:           ) : historicalSeasons.length === 0 ? (
+ 168:             <div className={styles.status}>Nessuna stagione storica disponibile.</div>
+ 169:           ) : query.isPending ? (
+ 170:             <div className={styles.status}>Caricamento catalogo storico?</div>
+ 171:           ) : query.isError ? (
+ 172:             <div className={`${styles.status} ${styles.error}`}>
+ 173:               Catalogo storico non disponibile.{' '}
+ 174:               <button className={styles.button} onClick={() => void query.refetch()}>
+ 175:                 Riprova
+ 176:               </button>
+ 177:             </div>
+ 178:           ) : query.data.content.length === 0 ? (
+ 179:             <div className={styles.status}>Nessun giocatore corrisponde ai filtri.</div>
+ 180:           ) : (
+ 181:             <>
+ 182:               <div className={`${styles.tableWrap} ${styles.desktopTable}`}>
+ 183:                 <table className={styles.table}>
+ 184:                   <thead>
+ 185:                     <tr>
+ 186:                       <th>Giocatore</th>
+ 187:                       <th>Stato</th>
+ 188:                       <th>Ruolo</th>
+ 189:                       <th>Club</th>
+ 190:                       <th>Presenze</th>
+ 191:                       <th>Fantamedia</th>
+ 192:                       <th>Gol</th>
+ 193:                       <th>Assist</th>
+ 194:                     </tr>
+ 195:                   </thead>
+ 196: 
+ 197:                   <tbody>
+ 198:                     {query.data.content.map((player) => (
+ 199:                       <tr key={player.id}>
+ 200:                         <td>
+ 201:                           <strong>{player.name}</strong>
+ 202:                         </td>
+ 203: 
+ 204:                         <td>{player.active ? 'Attivo' : 'Storico'}</td>
+ 205: 
+ 206:                         <td>
+ 207:                           <span className={styles.role}>{player.fantacalcioRole}</span>
+ 208:                         </td>
+ 209: 
+ 210:                         <td>{player.club ?? 'Dato non disponibile'}</td>
+ 211: 
+ 212:                         <td>{player.appearances ?? 'Dato non disponibile'}</td>
+ 213: 
+ 214:                         <td>{player.fantasyAverage ?? 'Dato non disponibile'}</td>
+ 215: 
+ 216:                         <td>{player.goals ?? 'Dato non disponibile'}</td>
+ 217: 
+ 218:                         <td>{player.assists ?? 'Dato non disponibile'}</td>
+ 219:                       </tr>
+ 220:                     ))}
+ 221:                   </tbody>
+ 222:                 </table>
+ 223:               </div>
+ 224: 
+ 225:               <div className={styles.cards}>
+ 226:                 {query.data.content.map((player) => (
+ 227:                   <article className={styles.card} key={player.id}>
+ 228:                     <strong>{player.name}</strong>
+ 229: 
+ 230:                     <span>
+ 231:                       <span className={styles.role}>{player.fantacalcioRole}</span> ?{' '}
+ 232:                       {player.club ?? 'Club non disponibile'}
+ 233:                     </span>
+ 234: 
+ 235:                     <span>
+ 236:                       {player.active ? 'Attivo' : 'Storico'} ? {player.appearances ?? '?'} presenze
+ 237:                       ? FM {player.fantasyAverage ?? '?'}
+ 238:                     </span>
+ 239: 
+ 240:                     <span>
+ 241:                       Gol {player.goals ?? '?'} ? Assist {player.assists ?? '?'}
+ 242:                     </span>
+ 243:                   </article>
+ 244:                 ))}
+ 245:               </div>
+ 246: 
+ 247:               <div className={styles.pager}>
+ 248:                 <button
+ 249:                   className={`${styles.button} ${styles.secondary}`}
+ 250:                   disabled={page === 0}
+ 251:                   onClick={() => update('page', String(page - 1))}
+ 252:                 >
+ 253:                   Precedente
+ 254:                 </button>
+ 255: 
+ 256:                 <span>
+ 257:                   {page + 1} / {Math.max(query.data.totalPages, 1)}
+ 258:                 </span>
+ 259: 
+ 260:                 <button
+ 261:                   className={`${styles.button} ${styles.secondary}`}
+ 262:                   disabled={page + 1 >= query.data.totalPages}
+ 263:                   onClick={() => update('page', String(page + 1))}
+ 264:                 >
+ 265:                   Successiva
+ 266:                 </button>
+ 267:               </div>
+ 268:             </>
+ 269:           )}
+ 270:         </section>
+ 271:       </div>
+ 272:     </AppShell>
+ 273:   );
+ 274: }
+
+================================================================================
+FILE: frontend\src\app\router\AppRouter.tsx
+================================================================================
+   1: import { lazy, Suspense, useState } from 'react';
+   2: import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+   3: import { RealDashboardPage } from '@/pages/RealDashboardPage';
+   4: import { LoginPage } from '@/pages/LoginPage';
+   5: import { NotFoundPage } from '@/pages/NotFoundPage';
+   6: import { AdminRoute, ProtectedRoute, PublicOnlyRoute } from '@/auth/RouteGuards';
+   7: import { LoadingState } from '@/components/ui';
+   8: 
+   9: const DesignSystemPage = lazy(async () => ({
+  10:   default: (await import('@/pages/DesignSystemPage')).DesignSystemPage,
+  11: }));
+  12: const AdminPage = lazy(async () => ({ default: (await import('@/pages/AdminPage')).AdminPage }));
+  13: const StatusPage = lazy(async () => ({
+  14:   default: (await import('@/pages/StatusPage')).StatusPage,
+  15: }));
+  16: const PlayersPage = lazy(async () => ({
+  17:   default: (await import('@/pages/PlayersPage')).PlayersPage,
+  18: }));
+  19: 
+  20: const HistoricalPlayersPage = lazy(async () => ({
+  21:   default: (await import('@/pages/HistoricalPlayersPage')).HistoricalPlayersPage,
+  22: }));
+  23: 
+  24: const PlayerDetailPage = lazy(async () => ({
+  25:   default: (await import('@/pages/PlayerDetailPage')).PlayerDetailPage,
+  26: }));
+  27: const AuctionPage = lazy(async () => ({
+  28:   default: (await import('@/pages/AuctionPage')).AuctionPage,
+  29: }));
+  30: const LiveAuctionPage = lazy(async () => ({
+  31:   default: (await import('@/pages/LiveAuctionPage')).LiveAuctionPage,
+  32: }));
+  33: const SquadPage = lazy(async () => ({ default: (await import('@/pages/SquadPage')).SquadPage }));
+  34: const LineupPage = lazy(async () => ({
+  35:   default: (await import('@/pages/LineupPage')).LineupPage,
+  36: }));
+  37: const CalendarPage = lazy(async () => ({
+  38:   default: (await import('@/pages/CalendarPage')).CalendarPage,
+  39: }));
+  40: const ScoutingPage = lazy(async () => ({
+  41:   default: (await import('@/pages/ScoutingPage')).ScoutingPage,
+  42: }));
+  43: const ComingSoonPage = lazy(async () => ({
+  44:   default: (await import('@/pages/ComingSoonPage')).ComingSoonPage,
+  45: }));
+  46: function createAppRouter() {
+  47:   return createBrowserRouter([
+  48:     { path: '/', element: <RealDashboardPage /> },
+  49:     { path: '/players', element: <PlayersPage /> },
+  50:     { path: '/players/history', element: <HistoricalPlayersPage /> },
+  51:     { path: '/players/:id', element: <PlayerDetailPage /> },
+  52:     { path: '/auction', element: <AuctionPage /> },
+  53:     { path: '/lineup', element: <LineupPage /> },
+  54:     { path: '/calendar', element: <CalendarPage /> },
+  55:     { path: '/scouting', element: <ScoutingPage /> },
+  56:     { path: '/analysis', element: <ComingSoonPage title="Analisi" /> },
+  57:     { path: '/statistics', element: <ComingSoonPage title="Statistiche" /> },
+  58:     { path: '/comparator', element: <ComingSoonPage title="Comparatore" /> },
+  59:     { path: '/market', element: <ComingSoonPage title="Market" /> },
+  60:     { path: '/settings', element: <ComingSoonPage title="Impostazioni" /> },
+  61:     { path: '/design-system', element: <DesignSystemPage /> },
+  62:     { element: <PublicOnlyRoute />, children: [{ path: '/login', element: <LoginPage /> }] },
+  63:     {
+  64:       element: <ProtectedRoute />,
+  65:       children: [
+  66:         { path: '/profile', element: <StatusPage title="Profilo autenticato" /> },
+  67:         { path: '/auction/live', element: <LiveAuctionPage /> },
+  68:         { path: '/auction/live/:sessionId', element: <LiveAuctionPage /> },
+  69:         { path: '/squad', element: <SquadPage /> },
+  70:       ],
+  71:     },
+  72:     {
+  73:       element: <AdminRoute />,
+  74:       children: [
+  75:         { path: '/admin', element: <AdminPage /> },
+  76:         { path: '/admin/status', element: <StatusPage title="Stato amministrativo" /> },
+  77:       ],
+  78:     },
+  79:     { path: '/access-denied', element: <StatusPage title="Accesso negato" /> },
+  80:     { path: '*', element: <NotFoundPage /> },
+  81:   ]);
+  82: }
+  83: export function AppRouter() {
+  84:   const [router] = useState(createAppRouter);
+  85:   return (
+  86:     <Suspense fallback={<LoadingState />}>
+  87:       <RouterProvider router={router} />
+  88:     </Suspense>
+  89:   );
+  90: }
+
+================================================================================
+8. PLAYER DETAIL TEST INVENTORY
+================================================================================
+
+================================================================================
+FILE: frontend\src\features\core\PlayerFlows.test.tsx
+================================================================================
+   1: import { cleanup, render, screen, waitFor, within } from '@testing-library/react';
+   2: import userEvent from '@testing-library/user-event';
+   3: import { afterEach, describe, expect, it } from 'vitest';
+   4: import { http, HttpResponse } from 'msw';
+   5: import { App } from '@/app/bootstrap/App';
+   6: import { server } from '@/test/server';
+   7: 
+   8: const catalogPlayer = (id: number, name: string) => ({
+   9:   id,
+  10:   name,
+  11:   club: 'Club reale',
+  12:   clubSlug: 'club-reale',
+  13:   fantacalcioRole: 'A',
+  14:   gazzettaRole: null,
+  15:   fantamarktRole: null,
+  16:   sourcesCount: 1,
+  17: });
+  18: 
+  19: const detailPlayer = (id: number, name: string, role: string, statistics: object[]) => ({
+  20:   id,
+  21:   name,
+  22:   club: 'Club reale',
+  23:   clubSlug: 'club-reale',
+  24:   roles: { FANTACALCIO: role },
+  25:   tacticalProfile: null,
+  26:   clubTactics: null,
+  27:   evaluation: null,
+  28:   statistics,
+  29: });
+  30: 
+  31: afterEach(() => {
+  32:   cleanup();
+  33:   window.history.replaceState({}, '', '/');
+  34: });
+  35: 
+  36: describe('catalogo giocatori', () => {
+  37:   it('naviga dalla prima alla seconda pagina e torna alla prima', async () => {
+  38:     const requestedPages: string[] = [];
+  39:     server.use(
+  40:       http.get('/api/v1/players', ({ request }) => {
+  41:         const page = new URL(request.url).searchParams.get('page') ?? '0';
+  42:         requestedPages.push(page);
+  43:         return HttpResponse.json({
+  44:           content: [catalogPlayer(Number(page) + 1, page === '0' ? 'Prima pagina' : 'Seconda pagina')],
+  45:           page: Number(page),
+  46:           size: 25,
+  47:           totalElements: 50,
+  48:           totalPages: 2,
+  49:         });
+  50:       }),
+  51:     );
+  52:     window.history.replaceState({}, '', '/players');
+  53:     render(<App />);
+  54: 
+  55:     expect((await screen.findAllByText('Prima pagina')).length).toBeGreaterThan(0);
+  56:     await userEvent.click(screen.getByRole('button', { name: 'Successiva' }));
+  57:     expect((await screen.findAllByText('Seconda pagina')).length).toBeGreaterThan(0);
+  58:     expect(screen.getByText('2 / 2')).toBeVisible();
+  59:     await waitFor(() => expect(window.location.search).toContain('page=1'));
+  60: 
+  61:     await userEvent.click(screen.getByRole('button', { name: 'Precedente' }));
+  62:     expect((await screen.findAllByText('Prima pagina')).length).toBeGreaterThan(0);
+  63:     expect(requestedPages).toEqual(expect.arrayContaining(['0', '1']));
+  64:   });
+  65: });
+  66: 
+  67: describe('storico giocatore', () => {
+  68:   it('renderizza tutte le stagioni storiche restituite dal contratto backend', async () => {
+  69:     server.use(
+  70:       http.get('/api/v1/players/47', () =>
+  71:         HttpResponse.json({
+  72:           id: 47,
+  73:           name: 'Giocatore storico reale',
+  74:           club: 'Club reale',
+  75:           clubSlug: 'club-reale',
+  76:           roles: { FANTACALCIO: 'A' },
+  77:           tacticalProfile: null,
+  78:           clubTactics: null,
+  79:           evaluation: null,
+  80:           statistics: [
+  81:             { season: '2025/2026', source: 'FBREF', appearances: 30, starts: 24, minutesPlayed: 2200, averageRating: 6.4, fantasyAverage: null, goals: 8, assists: 4 },
+  82:             { season: '2024/2025', source: 'FBREF', appearances: 28, starts: 20, minutesPlayed: 1900, averageRating: 6.2, fantasyAverage: null, goals: 6, assists: 3 },
+  83:           ],
+  84:         }),
+  85:       ),
+  86:     );
+  87:     window.history.replaceState({}, '', '/players/47');
+  88:     render(<App />);
+  89: 
+  90:     expect(await screen.findByText('Giocatore storico reale')).toBeVisible();
+  91:     expect(screen.getByRole('button', { name: 'Indietro' })).toBeVisible();
+  92:     expect(screen.getByRole('columnheader', { name: /^Gol$/ })).toBeVisible();
+  93:     expect(screen.getByRole('columnheader', { name: /^Assist$/ })).toBeVisible();
+  94:     expect(screen.queryByRole('columnheader', { name: /^Gol subiti$/ })).not.toBeInTheDocument();
+  95:     expect(screen.getByText('2025/2026')).toBeVisible();
+  96:     expect(screen.getByText('2024/2025')).toBeVisible();
+  97:   });
+  98: });
+  99: 
+ 100: describe('statistiche ruolo portiere', () => {
+ 101:   it('mostra le metriche goalkeeper reali e la fonte per ogni stagione', async () => {
+ 102:     server.use(
+ 103:       http.get('/api/v1/players/88', () =>
+ 104:         HttpResponse.json(
+ 105:           detailPlayer(88, 'Portiere reale', 'P', [
+ 106:             {
+ 107:               season: '2025/2026',
+ 108:               source: 'FANTACALCIO',
+ 109:               sourceExternalId: 'FANTACALCIO-88',
+ 110:               appearances: 31,
+ 111:               starts: 31,
+ 112:               minutesPlayed: 2790,
+ 113:               goalsConceded: 28,
+ 114:               saves: 92,
+ 115:               penaltiesSaved: 3,
+ 116:               cleanSheets: 12,
+ 117:               goals: 0,
+ 118:               assists: 0,
+ 119:             },
+ 120:           ]),
+ 121:         ),
+ 122:       ),
+ 123:     );
+ 124:     window.history.replaceState({}, '', '/players/88');
+ 125:     render(<App />);
+ 126: 
+ 127:     expect(await screen.findByText('Portiere reale')).toBeVisible();
+ 128:     expect(screen.getByRole('columnheader', { name: /^Gol subiti$/ })).toBeVisible();
+ 129:     expect(screen.getByRole('columnheader', { name: /^Parate effettuate$/ })).toBeVisible();
+ 130:     expect(screen.getByRole('columnheader', { name: /^Rigori parati$/ })).toBeVisible();
+ 131:     expect(
+ 132:       screen.getByRole('columnheader', { name: /^Porte inviolate \/ Clean sheet$/ }),
+ 133:     ).toBeVisible();
+ 134:     expect(screen.queryByRole('columnheader', { name: /^Gol$/ })).not.toBeInTheDocument();
+ 135:     expect(screen.queryByRole('columnheader', { name: /^Assist$/ })).not.toBeInTheDocument();
+ 136: 
+ 137:     const row = screen.getByRole('row', { name: /2025\/2026/ });
+ 138:     expect(row).toHaveTextContent('FANTACALCIO · FANTACALCIO-88');
+ 139:     expect(row).toHaveTextContent('31');
+ 140:     expect(row).toHaveTextContent('2790');
+ 141:     expect(row).toHaveTextContent('28');
+ 142:     expect(row).toHaveTextContent('92');
+ 143:     expect(row).toHaveTextContent('3');
+ 144:     expect(row).toHaveTextContent('12');
+ 145:   });
+ 146: 
+ 147:   it('segnala ogni metrica goalkeeper nulla senza trasformarla in zero', async () => {
+ 148:     server.use(
+ 149:       http.get('/api/v1/players/89', () =>
+ 150:         HttpResponse.json(
+ 151:           detailPlayer(89, 'Portiere senza dati', 'P', [
+ 152:             {
+ 153:               season: '2025/2026',
+ 154:               source: 'FANTACALCIO',
+ 155:               sourceExternalId: null,
+ 156:               appearances: null,
+ 157:               minutesPlayed: null,
+ 158:               goalsConceded: null,
+ 159:               saves: null,
+ 160:               penaltiesSaved: null,
+ 161:               cleanSheets: null,
+ 162:             },
+ 163:           ]),
+ 164:         ),
+ 165:       ),
+ 166:     );
+ 167:     window.history.replaceState({}, '', '/players/89');
+ 168:     render(<App />);
+ 169: 
+ 170:     expect(await screen.findByText('Portiere senza dati')).toBeVisible();
+ 171:     const row = screen.getByRole('row', { name: /2025\/2026/ });
+ 172:     expect(within(row).getAllByText('Dato non disponibile')).toHaveLength(6);
+ 173:     expect(row).not.toHaveTextContent(/\b0\b/);
+ 174:   });
+ 175: });
+
+================================================================================
+FILE: frontend\src\pages\HistoricalPlayersPage.test.tsx
+================================================================================
+   1: import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+   2: import { cleanup, render, screen, waitFor } from '@testing-library/react';
+   3: import userEvent from '@testing-library/user-event';
+   4: import { MemoryRouter } from 'react-router-dom';
+   5: import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+   6: import { dashboardApi } from '@/api/dashboardApi';
+   7: import { featureApi } from '@/features/core/api';
+   8: import { HistoricalPlayersPage } from '@/pages/HistoricalPlayersPage';
+   9: 
+  10: vi.mock('@/layouts/AppShell', () => ({
+  11:   AppShell: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  12: }));
+  13: 
+  14: function renderPage(path = '/players/history') {
+  15:   const queryClient = new QueryClient({
+  16:     defaultOptions: {
+  17:       queries: {
+  18:         retry: false,
+  19:       },
+  20:     },
+  21:   });
+  22: 
+  23:   return render(
+  24:     <QueryClientProvider client={queryClient}>
+  25:       <MemoryRouter initialEntries={[path]}>
+  26:         <HistoricalPlayersPage />
+  27:       </MemoryRouter>
+  28:     </QueryClientProvider>,
+  29:   );
+  30: }
+  31: 
+  32: describe('catalogo storico giocatori', () => {
+  33:   beforeEach(() => {
+  34:     vi.restoreAllMocks();
+  35:   });
+  36: 
+  37:   afterEach(() => {
+  38:     cleanup();
+  39:   });
+  40: 
+  41:   it('mostra giocatori storici reali senza trasformarli nel catalogo operativo', async () => {
+  42:     vi.spyOn(dashboardApi, 'seasons').mockResolvedValue([
+  43:       {
+  44:         code: '2025/2026',
+  45:         current: false,
+  46:       },
+  47:       {
+  48:         code: '2024/2025',
+  49:         current: false,
+  50:       },
+  51:       {
+  52:         code: '2026/2027',
+  53:         current: true,
+  54:       },
+  55:     ] as Awaited<ReturnType<typeof dashboardApi.seasons>>);
+  56: 
+  57:     const historicalSpy = vi.spyOn(featureApi, 'historicalPlayers').mockResolvedValue({
+  58:       content: [
+  59:         {
+  60:           id: 653,
+  61:           name: 'Andrea Belotti',
+  62:           active: false,
+  63:           season: '2025/2026',
+  64:           club: 'Cagliari',
+  65:           clubSlug: 'cagliari',
+  66:           fantacalcioRole: 'A',
+  67:           appearances: 28,
+  68:           fantasyAverage: 6.4,
+  69:           goals: 7,
+  70:           assists: 2,
+  71:         },
+  72:       ],
+  73:       page: 0,
+  74:       size: 25,
+  75:       totalElements: 663,
+  76:       totalPages: 27,
+  77:     });
+  78: 
+  79:     renderPage();
+  80: 
+  81:     expect(
+  82:       await screen.findByRole('heading', {
+  83:         name: 'Catalogo storico',
+  84:       }),
+  85:     ).toBeVisible();
+  86: 
+  87:     expect((await screen.findAllByText('Andrea Belotti')).length).toBeGreaterThan(0);
+  88: 
+  89:     expect(screen.getAllByText('Storico').length).toBeGreaterThan(0);
+  90: 
+  91:     expect(screen.getAllByText('Cagliari').length).toBeGreaterThan(0);
+  92: 
+  93:     expect(screen.getByText('663 giocatori ? 2025/2026')).toBeVisible();
+  94: 
+  95:     expect(historicalSpy).toHaveBeenCalledWith(
+  96:       expect.objectContaining({
+  97:         season: '2025/2026',
+  98:         page: 0,
+  99:         size: 25,
+ 100:       }),
+ 101:       expect.anything(),
+ 102:     );
+ 103: 
+ 104:     expect(
+ 105:       screen.queryByRole('option', {
+ 106:         name: '2026/2027',
+ 107:       }),
+ 108:     ).not.toBeInTheDocument();
+ 109:   });
+ 110: 
+ 111:   it('propaga filtro ruolo e paginazione al contratto API', async () => {
+ 112:     vi.spyOn(dashboardApi, 'seasons').mockResolvedValue([
+ 113:       {
+ 114:         code: '2025/2026',
+ 115:         current: false,
+ 116:       },
+ 117:       {
+ 118:         code: '2024/2025',
+ 119:         current: false,
+ 120:       },
+ 121:     ] as Awaited<ReturnType<typeof dashboardApi.seasons>>);
+ 122: 
+ 123:     const historicalSpy = vi.spyOn(featureApi, 'historicalPlayers').mockImplementation((filters) =>
+ 124:       Promise.resolve({
+ 125:         content: [
+ 126:           {
+ 127:             id: filters.page === 0 ? 1 : 2,
+ 128:             name: filters.page === 0 ? 'Prima pagina' : 'Seconda pagina',
+ 129:             active: false,
+ 130:             season: filters.season,
+ 131:             club: null,
+ 132:             clubSlug: null,
+ 133:             fantacalcioRole: filters.role ?? 'D',
+ 134:             appearances: 10,
+ 135:             fantasyAverage: 6,
+ 136:             goals: 0,
+ 137:             assists: 0,
+ 138:           },
+ 139:         ],
+ 140:         page: filters.page,
+ 141:         size: 25,
+ 142:         totalElements: 30,
+ 143:         totalPages: 2,
+ 144:       }),
+ 145:     );
+ 146: 
+ 147:     renderPage();
+ 148: 
+ 149:     expect((await screen.findAllByText('Prima pagina')).length).toBeGreaterThan(0);
+ 150: 
+ 151:     await userEvent.selectOptions(screen.getByLabelText('Ruolo'), 'A');
+ 152: 
+ 153:     await waitFor(() => {
+ 154:       expect(historicalSpy).toHaveBeenCalledWith(
+ 155:         expect.objectContaining({
+ 156:           season: '2025/2026',
+ 157:           role: 'A',
+ 158:           page: 0,
+ 159:           size: 25,
+ 160:         }),
+ 161:         expect.anything(),
+ 162:       );
+ 163:     });
+ 164: 
+ 165:     await userEvent.click(
+ 166:       screen.getByRole('button', {
+ 167:         name: 'Successiva',
+ 168:       }),
+ 169:     );
+ 170: 
+ 171:     await waitFor(() => {
+ 172:       expect(historicalSpy).toHaveBeenCalledWith(
+ 173:         expect.objectContaining({
+ 174:           season: '2025/2026',
+ 175:           role: 'A',
+ 176:           page: 1,
+ 177:           size: 25,
+ 178:         }),
+ 179:         expect.anything(),
+ 180:       );
+ 181:     });
+ 182: 
+ 183:     expect((await screen.findAllByText('Seconda pagina')).length).toBeGreaterThan(0);
+ 184: 
+ 185:     expect(screen.getByText('2 / 2')).toBeVisible();
+ 186:   });
+ 187: });
+
+================================================================================
+9. BACKEND PLAYER TEST INVENTORY
+================================================================================
+
+================================================================================
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\player\HistoricalPlayerCatalogServiceTest.java
+================================================================================
+   1: package it.fantacalciointelligence.backend.player;
+   2: 
+   3: import static org.assertj.core.api.Assertions.assertThat;
+   4: import static org.mockito.ArgumentMatchers.any;
+   5: import static org.mockito.ArgumentMatchers.anyMap;
+   6: import static org.mockito.ArgumentMatchers.anyString;
+   7: import static org.mockito.ArgumentMatchers.eq;
+   8: import static org.mockito.Mockito.mock;
+   9: import static org.mockito.Mockito.when;
+  10: 
+  11: import java.math.BigDecimal;
+  12: import java.util.List;
+  13: 
+  14: import org.junit.jupiter.api.Test;
+  15: import org.springframework.jdbc.core.RowMapper;
+  16: import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+  17: 
+  18: import it.fantacalciointelligence.backend.common.PageResponse;
+  19: 
+  20: class HistoricalPlayerCatalogServiceTest {
+  21: 
+  22:     @SuppressWarnings({
+  23:             "unchecked",
+  24:             "rawtypes"
+  25:     })
+  26:     @Test
+  27:     void shouldBuildHistoricalIdentityFirstPageWithoutRegistrations() {
+  28:         NamedParameterJdbcTemplate jdbcTemplate =
+  29:                 mock(NamedParameterJdbcTemplate.class);
+  30: 
+  31:         HistoricalPlayerCatalogResponse expected =
+  32:                 new HistoricalPlayerCatalogResponse(
+  33:                         653L,
+  34:                         "Andrea Belotti",
+  35:                         false,
+  36:                         "2024/2025",
+  37:                         null,
+  38:                         null,
+  39:                         "A",
+  40:                         24,
+  41:                         new BigDecimal("6.10"),
+  42:                         5,
+  43:                         2
+  44:                 );
+  45: 
+  46:         when(
+  47:                 jdbcTemplate.query(
+  48:                         anyString(),
+  49:                         anyMap(),
+  50:                         any(RowMapper.class)
+  51:                 )
+  52:         ).thenReturn(List.of(expected));
+  53: 
+  54:         when(
+  55:                 jdbcTemplate.queryForObject(
+  56:                         anyString(),
+  57:                         anyMap(),
+  58:                         eq(Long.class)
+  59:                 )
+  60:         ).thenReturn(679L);
+  61: 
+  62:         HistoricalPlayerCatalogService service =
+  63:                 new HistoricalPlayerCatalogService(
+  64:                         jdbcTemplate
+  65:                 );
+  66: 
+  67:         PageResponse<HistoricalPlayerCatalogResponse> result =
+  68:                 service.findPlayers(
+  69:                         "2024/2025",
+  70:                         "Belotti",
+  71:                         "A",
+  72:                         0,
+  73:                         25
+  74:                 );
+  75: 
+  76:         assertThat(result.page()).isZero();
+  77:         assertThat(result.size()).isEqualTo(25);
+  78:         assertThat(result.totalElements()).isEqualTo(679);
+  79:         assertThat(result.totalPages()).isEqualTo(28);
+  80:         assertThat(result.content())
+  81:                 .containsExactly(expected);
+  82:     }
+  83: 
+  84:     @Test
+  85:     void shouldClampPaginationBoundaries() {
+  86:         NamedParameterJdbcTemplate jdbcTemplate =
+  87:                 mock(NamedParameterJdbcTemplate.class);
+  88: 
+  89:         when(
+  90:                 jdbcTemplate.query(
+  91:                         anyString(),
+  92:                         anyMap(),
+  93:                         any(RowMapper.class)
+  94:                 )
+  95:         ).thenReturn(List.of());
+  96: 
+  97:         when(
+  98:                 jdbcTemplate.queryForObject(
+  99:                         anyString(),
+ 100:                         anyMap(),
+ 101:                         eq(Long.class)
+ 102:                 )
+ 103:         ).thenReturn(0L);
+ 104: 
+ 105:         HistoricalPlayerCatalogService service =
+ 106:                 new HistoricalPlayerCatalogService(
+ 107:                         jdbcTemplate
+ 108:                 );
+ 109: 
+ 110:         PageResponse<HistoricalPlayerCatalogResponse> result =
+ 111:                 service.findPlayers(
+ 112:                         "2025/2026",
+ 113:                         null,
+ 114:                         null,
+ 115:                         -5,
+ 116:                         1000
+ 117:                 );
+ 118: 
+ 119:         assertThat(result.page()).isZero();
+ 120:         assertThat(result.size()).isEqualTo(100);
+ 121:         assertThat(result.totalElements()).isZero();
+ 122:         assertThat(result.totalPages()).isZero();
+ 123:     }
+ 124: 
+ 125:     @Test
+ 126:     void shouldRejectMissingHistoricalSeason() {
+ 127:         NamedParameterJdbcTemplate jdbcTemplate =
+ 128:                 mock(NamedParameterJdbcTemplate.class);
+ 129: 
+ 130:         HistoricalPlayerCatalogService service =
+ 131:                 new HistoricalPlayerCatalogService(
+ 132:                         jdbcTemplate
+ 133:                 );
+ 134: 
+ 135:         org.assertj.core.api.Assertions
+ 136:                 .assertThatThrownBy(
+ 137:                         () -> service.findPlayers(
+ 138:                                 " ",
+ 139:                                 null,
+ 140:                                 null,
+ 141:                                 0,
+ 142:                                 25
+ 143:                         )
+ 144:                 )
+ 145:                 .isInstanceOf(IllegalArgumentException.class)
+ 146:                 .hasMessageContaining("stagione");
+ 147:     }
+ 148: }
+
+================================================================================
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\player\PlayerCatalogControllerTest.java
+================================================================================
+   1: package it.fantacalciointelligence.backend.player;
+   2: 
+   3: import java.util.Map;
+   4: 
+   5: import org.junit.jupiter.api.Test;
+   6: import org.springframework.beans.factory.annotation.Autowired;
+   7: import org.springframework.boot.test.context.SpringBootTest;
+   8: import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+   9: import org.springframework.test.web.servlet.MockMvc;
+  10: import org.springframework.jdbc.core.simple.JdbcClient;
+  11: import org.springframework.transaction.annotation.Transactional;
+  12: 
+  13: import static org.hamcrest.Matchers.greaterThan;
+  14: import static org.hamcrest.Matchers.isA;
+  15: import static org.hamcrest.Matchers.not;
+  16: import static org.hamcrest.Matchers.blankOrNullString;
+  17: import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+  18: import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+  19: import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+  20: 
+  21: @SpringBootTest
+  22: @AutoConfigureMockMvc
+  23: class PlayerCatalogControllerTest {
+  24: 
+  25:     @Autowired
+  26:     private MockMvc mockMvc;
+  27: 
+  28:     @Autowired
+  29:     private JdbcClient jdbcClient;
+  30: 
+  31:     @Test
+  32:     void shouldReturnPublicPlayerCatalogWithoutAuthentication()
+  33:             throws Exception {
+  34: 
+  35:         mockMvc.perform(
+  36:                         get("/api/v1/players")
+  37:                                 .param("season", "2026/2027")
+  38:                 )
+  39:                 .andExpect(status().isOk())
+  40:                 .andExpect(jsonPath("$.content").isArray())
+  41:                 .andExpect(jsonPath("$.page").value(0))
+  42:                 .andExpect(jsonPath("$.size").value(25))
+  43:                 .andExpect(
+  44:                         jsonPath("$.totalElements")
+  45:                                 .value(isA(Number.class))
+  46:                 )
+  47:                 .andExpect(
+  48:                         jsonPath("$.totalPages")
+  49:                                 .value(isA(Number.class))
+  50:                 );
+  51:     }
+  52: 
+  53:     @Test
+  54:     void shouldReturnPlayerDetailWithoutAuthentication()
+  55:             throws Exception {
+  56: 
+  57:         mockMvc.perform(
+  58:                         get("/api/v1/players/{playerId}", 1)
+  59:                                 .param("season", "2026/2027")
+  60:                 )
+  61:                 .andExpect(status().isOk())
+  62:                 .andExpect(jsonPath("$.id").value(1))
+  63:                 .andExpect(
+  64:                         jsonPath("$.name")
+  65:                                 .value(not(blankOrNullString()))
+  66:                 )
+  67:                 .andExpect(
+  68:                         jsonPath("$.club")
+  69:                                 .value(not(blankOrNullString()))
+  70:                 )
+  71:                 .andExpect(
+  72:                         jsonPath("$.clubSlug")
+  73:                                 .value(not(blankOrNullString()))
+  74:                 )
+  75:                 .andExpect(jsonPath("$.roles").isMap())
+  76:                 .andExpect(jsonPath("$.statistics").isArray());
+  77:     }
+  78: 
+  79:     @Test
+  80:     void shouldUseDefaultSeasonForPlayerDetail()
+  81:             throws Exception {
+  82: 
+  83:         mockMvc.perform(
+  84:                         get("/api/v1/players/{playerId}", 1)
+  85:                 )
+  86:                 .andExpect(status().isOk())
+  87:                 .andExpect(jsonPath("$.id").value(1))
+  88:                 .andExpect(
+  89:                         jsonPath("$.name")
+  90:                                 .value(not(blankOrNullString()))
+  91:                 );
+  92:     }
+  93: 
+  94:     @Test
+  95:     @Transactional
+  96:     void shouldReturnHistoricalStatisticsFromPreviousSeasons()
+  97:             throws Exception {
+  98: 
+  99:         Map<String, Object> currentPlayer = jdbcClient.sql("""
+ 100:                 SELECT pr.player_id, pr.club_id, current_season.code
+ 101:                 FROM player_registrations pr
+ 102:                 JOIN seasons current_season ON current_season.id = pr.season_id
+ 103:                 WHERE current_season.current_season = TRUE
+ 104:                 ORDER BY pr.player_id
+ 105:                 LIMIT 1
+ 106:                 """).query().singleRow();
+ 107: 
+ 108:         Map<String, Object> previousSeason = jdbcClient.sql("""
+ 109:                 SELECT id, code
+ 110:                 FROM seasons
+ 111:                 WHERE current_season = FALSE
+ 112:                 ORDER BY start_year DESC
+ 113:                 LIMIT 1
+ 114:                 """).query().singleRow();
+ 115: 
+ 116:         long playerId = ((Number) currentPlayer.get("player_id")).longValue();
+ 117:         long clubId = ((Number) currentPlayer.get("club_id")).longValue();
+ 118:         long previousSeasonId = ((Number) previousSeason.get("id")).longValue();
+ 119:         String currentSeasonCode = currentPlayer.get("code").toString();
+ 120:         String previousSeasonCode = previousSeason.get("code").toString();
+ 121: 
+ 122:         jdbcClient.sql("""
+ 123:                 INSERT INTO player_season_statistics (
+ 124:                     player_id, club_id, season_id, source, appearances, starts,
+ 125:                     minutes_played, goals, assists
+ 126:                 ) VALUES (
+ 127:                     :playerId, :clubId, :seasonId, 'INTERNAL', 7, 5, 450, 2, 1
+ 128:                 )
+ 129:                 ON CONFLICT (player_id, season_id, source) DO UPDATE SET
+ 130:                     appearances = EXCLUDED.appearances,
+ 131:                     starts = EXCLUDED.starts,
+ 132:                     minutes_played = EXCLUDED.minutes_played,
+ 133:                     goals = EXCLUDED.goals,
+ 134:                     assists = EXCLUDED.assists
+ 135:                 """)
+ 136:                 .param("playerId", playerId)
+ 137:                 .param("clubId", clubId)
+ 138:                 .param("seasonId", previousSeasonId)
+ 139:                 .update();
+ 140: 
+ 141:         mockMvc.perform(
+ 142:                         get("/api/v1/players/{playerId}", playerId)
+ 143:                                 .param("season", currentSeasonCode)
+ 144:                 )
+ 145:                 .andExpect(status().isOk())
+ 146:                 .andExpect(jsonPath("$.statistics[?(@.season == '%s')]", previousSeasonCode).isNotEmpty());
+ 147:     }
+ 148: 
+ 149:     @Test
+ 150:     void shouldReturnNotFoundForUnknownPlayer()
+ 151:             throws Exception {
+ 152: 
+ 153:         mockMvc.perform(
+ 154:                         get(
+ 155:                                 "/api/v1/players/{playerId}",
+ 156:                                 999999
+ 157:                         )
+ 158:                                 .param("season", "2026/2027")
+ 159:                 )
+ 160:                 .andExpect(status().isNotFound())
+ 161:                 .andExpect(jsonPath("$.status").value(404))
+ 162:                 .andExpect(jsonPath("$.error").value("Not Found"))
+ 163:                 .andExpect(
+ 164:                         jsonPath("$.message")
+ 165:                                 .value("Giocatore non trovato")
+ 166:                 )
+ 167:                 .andExpect(jsonPath("$.timestamp").exists());
+ 168:     }
+ 169: }
+
+================================================================================
+10. ROUTE COLLISION CHECK
+================================================================================
+CURRENT_DYNAMIC_PLAYER_ROUTE=YES
+HISTORY_STATIC_ROUTE=YES
+RECOMMENDED_DETAIL_ROUTE=/api/v1/players/history/{playerId}?season=...
+
+================================================================================
+11. FINAL GIT STATUS
+================================================================================
+ M frontend/src/app/router/AppRouter.tsx
+ M frontend/src/features/core/SquadManagementFlows.test.tsx
+ M frontend/src/features/core/api.ts
+ M frontend/src/layouts/GlobalSearch.tsx
+ M frontend/src/pages/PlayersPage.tsx
+?? FANTAFOOT-FINAL-STATE.txt
+?? FANTAFOOT-FULL-AUDIT.txt
+?? FANTAFOOT-TARGETED-AUDIT.txt
+?? backend/src/main/java/it/fantacalciointelligence/backend/player/HistoricalPlayerCatalogController.java
+?? backend/src/main/java/it/fantacalciointelligence/backend/player/HistoricalPlayerCatalogResponse.java
+?? backend/src/main/java/it/fantacalciointelligence/backend/player/HistoricalPlayerCatalogService.java
+?? backend/src/test/java/it/fantacalciointelligence/backend/player/HistoricalPlayerCatalogServiceTest.java
+?? frontend/src/pages/HistoricalPlayersPage.test.tsx
+?? frontend/src/pages/HistoricalPlayersPage.tsx
+?? project-audit-current.txt
+?? project-file-list.txt
+GIT_STATUS_UNCHANGED=YES
+
+================================================================================
+M03.6A SUMMARY
+================================================================================
+MODE=READ_ONLY
+DATABASE_MUTATIONS=NONE
+FILES_MODIFIED_BY_PREFLIGHT=NONE
+GIT_STATUS_UNCHANGED=YES
+LOG_FILE=C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\logs\M03-historical-detail-preflight.txt

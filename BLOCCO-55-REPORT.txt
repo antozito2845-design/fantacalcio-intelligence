@@ -1,0 +1,300 @@
+BLOCCO 55 - STRATEGIC DATA ENRICHMENT V1
+Report finale - 2026-08-13
+
+1. COMMIT INIZIALE
+c0e5dda feat: add squad construction and value engine
+
+2. WORKING TREE INIZIALE
+Pulita. `git status --short` non ha prodotto output.
+
+3. AUDIT TABELLE/COLONNE
+AVAILABLE
+- player_season_statistics (V7/V39/V40/V41): player/season/source, source_external_id,
+  appearances, starts, minutes_played, goals, assists, penalties_taken/scored/missed,
+  expected_goals, expected_assists, imported_at, source_updated_at, import_batch_id.
+  Dati nullable, current e storici per stagione, normalizzati e separati per fonte.
+- player_statistics_import_batches/rows (V25): fonte, stagione, file, stato, conteggi,
+  raw_data JSONB, mapping player/club e tracciamento batch.
+- player_statistical_source_links (V41): mapping statistico FBref verificato, confidence
+  HIGH ed evidence JSONB; FBref non crea identita giocatore.
+- player_tactical_profiles (V7): real_position e tactical_role testo libero; flag generici
+  set_piece_taker, penalty_taker, corner_taker, free_kick_taker; projected_starter e
+  starter_probability. I boolean legacy sono NOT NULL con default false e quindi non
+  sono evidenza sufficiente per una gerarchia.
+- player_roles: ruolo fantasy per fonte/stagione; Fantacalcio resta autorita P/D/C/A.
+- player_availability/player_availability_history (V15/V24): stato, starting_probability,
+  availability_probability, osservazione e storico.
+- player_evaluations (V7): proiezioni presenze/titolarita/gol/assist e score di
+  affidabilita/potenziale/rischio/valore.
+- international_competition_statistics (V47): presenze, starts, minuti e statistiche
+  internazionali con source/evidence/imported_at.
+- player_performance_features (V48), fantasy_player_values (V49), auction_price_model
+  (V50): layer derivati B49/B50/B51 con evidence/confidence; non modificati.
+- fixtures e fixture import tracking (V12/V21): calendario, difficolta e provenance
+  sufficiente per calendar fit esistente; non arricchito in B55.
+
+PARTIAL
+- Set pieces: solo flag generici legacy; nessuna gerarchia o lato esplicito.
+- Real position: testo libero senza tassonomia, source o confidence sul profilo legacy.
+- Attacking: xG/xA e rigori disponibili; shots, SOT, box touches, key passes, SCA/GCA mancanti.
+- Minutes/starts: disponibili per stagione/fonte; recent trend e role usage non disponibili.
+- Starter probability: disponibile nei profili/availability, ma con provenance non uniforme.
+- Aerial: nessuna metrica offensiva strutturata esistente.
+
+MISSING
+- Gerarchie rigoristi/punizioni/corner supportate da evidenza.
+- Direct/indirect free kick distinti, lato e rotazione condivisa certificati.
+- Headed shots/goals/xG, offensive box touches, set-piece box presence e corner targets.
+- Trend minuti granulare e position/role usage strutturato.
+
+4. AUDIT SERVIZI/IMPORTER
+- PlayerStatisticsImportService: CSV idempotente per player/season/source, batch/row audit,
+  FBref consentito solo tramite identity link sicuro; importa minutes/starts/xG/xA/rigori.
+- PlayerDetailService: espone statistiche stagionali e calcola per90/start percentage solo
+  con denominatore positivo.
+- PlayerAvailabilityService: upsert e storico delle probabilita con observed_at.
+- IdentityEnrichmentImportService e riconciliazione: mantengono separata identity authority.
+- FixtureImportService/DataRefreshService: refresh tracciato e idempotente.
+- ForeignPlayerScoutingService: confidence ed evidence per scouting estero.
+- B49/B50/B51/B54: servizi performance/value/price/squad construction auditati e invariati.
+
+5. AVAILABLE / PARTIAL / MISSING
+Classificazione dettagliata ai punti 3 e 4. Nessun MISSING e stato trasformato in 0,
+false o PRIMARY.
+
+6. SCHEMA SCELTO
+Nuova tabella osservazionale player_strategic_data_observations, separata dai ruoli fantasy
+e dalle statistiche raw esistenti. Chiave logica player/season/source/source_record_id;
+indice univoco parziale quando source_record_id e NULL. Fonti discordanti convivono.
+
+7. MIGRATION FLYWAY
+V51__create_strategic_data_enrichment.sql. Applicata e validata su PostgreSQL test;
+schema portato da V50 a V51.
+
+8. SET PIECES MODEL
+penalty: PRIMARY/SECONDARY/EMERGENCY/UNKNOWN; direct/indirect free kick e corner:
+PRIMARY/SECONDARY/UNKNOWN; side LEFT/RIGHT/BOTH; shared nullable. Un flag generico
+produce solo UNKNOWN, mai PRIMARY.
+
+9. REAL POSITION TAXONOMY
+GK, CB, RCB, LCB, RB, LB, RWB, LWB, DM, CM, RCM, LCM, AM, RAM, LAM, RW, LW,
+SS, CF, ST, UTILITY, UNKNOWN. Raw preservato; normalizzato separato. Mapping solo exact
+e prudente; testi ambigui restano UNKNOWN. player_roles non modificato.
+
+10. ATTACKING METRICS
+Schema pronto per shots, shots_on_target, xG, xA, touches_in_box, key_passes, SCA, GCA
+e rigori. Mapper importa solo colonne presenti; assenti restano NULL. I per90 sono
+calcolati read-only solo con minuti > 0.
+
+11. AERIAL/HEADER METRICS
+Schema pronto per aerial duels/won, headed shots/goals/xG, offensive box touches,
+set-piece box presence e corner target frequency. Nessun uso dell'altezza come proxy.
+Le percentuali richiedono totale > 0; heading mancante resta NULL.
+
+12. MINUTES/START METRICS
+Osservazioni supportano appearances, starts, minutes, starter_probability, recent trend
+e position_usage JSONB. Start rate e minutes/appearance richiedono denominatore positivo.
+
+13. PROVENANCE/EVIDENCE/CONFIDENCE
+Ogni osservazione include source, source_record_id, observed_at, imported_at, season,
+evidence_status, confidence_score ed evidence JSONB.
+
+14. SOURCE PRIORITY/CONFLICT POLICY
+- Fantacalcio resta autorita esclusiva del ruolo fantasy.
+- FBref e fonte statistica, mai identity authority.
+- Transfermarkt/Fantamarkt restano fonti mapping/mercato secondo convenzioni esistenti.
+- I conflitti non vengono risolti arbitrariamente: osservazioni separate per fonte/record.
+- Nessun selected value automatico finche B56 non definisce una rationale esplicita.
+- NULL significa non fornito; UNKNOWN significa osservato ma non classificabile;
+  NOT_AVAILABLE significa fonte verificata senza disponibilita del dato.
+- Dati stale rimangono storici tramite stagione/observed_at; non vengono cancellati.
+
+15. IMPORT/UPSERT/IDEMPOTENZA
+Vincoli univoci impediscono duplicati per player/season/source/record. StrategicCsvValueMapper
+normalizza valori presenti, preserva NULL e rifiuta negativi. L'aggancio automatico alla
+pipeline CSV generale non e stato effettuato: serve prima definire, fonte per fonte, header
+ufficiali e policy di aggiornamento per non sovrascrivere evidenza migliore.
+
+16. INTEGRAZIONE CON B54
+Nessuna formula QUALITY/VALUE/FIT, targetPrice, contextualMax o Auction Priority modificata.
+B54 continua a leggere i layer esistenti. B55 fornisce un layer additivo per B56.
+
+17. FILE MODIFICATI/CREATI
+- BLOCCO-55-REPORT.txt
+- backend/src/main/resources/db/migration/V51__create_strategic_data_enrichment.sql
+- backend/src/main/java/.../strategic/RealPosition.java
+- backend/src/main/java/.../strategic/RealPositionNormalizer.java
+- backend/src/main/java/.../strategic/StrategicDataQualityPolicy.java
+- backend/src/main/java/.../strategic/StrategicCsvValueMapper.java
+- backend/src/main/java/.../strategic/StrategicDataInspectionService.java
+- backend/src/main/java/.../strategic/StrategicObservationResponse.java
+- backend/src/test/java/.../strategic/RealPositionNormalizerTest.java
+- backend/src/test/java/.../strategic/StrategicDataQualityPolicyTest.java
+- backend/src/test/java/.../strategic/StrategicCsvValueMapperTest.java
+
+18. TEST AGGIUNTI
+8 test: 2 normalizer, 3 data quality policy, 3 CSV value mapper.
+
+19. TEST MIRATI
+9 test (incluso BackendApplicationTests/Flyway): 0 failures, 0 errors, BUILD SUCCESS.
+
+20. FULL REGRESSION
+Comando equivalente: mvn -Dmaven.repo.local=C:\Users\user\.m2\repository clean test.
+Risultato: Tests run 250, Failures 0, Errors 0, Skipped 1, BUILD SUCCESS.
+Il wrapper .\mvnw.cmd non parte in questo ambiente per un errore preesistente nel proprio
+script PowerShell su (Get-Item $MAVEN_M2_PATH).Target[0]; usato Maven 3.9.16 locale.
+
+21. SANDBOX
+B55_SANDBOX_CERTIFICATION non eseguita. Suite standard eseguita su
+fantacalcio_intelligence_test; migration V51 applicata con successo.
+
+22. GIT DIFF --CHECK
+Nessun errore.
+
+23. GIT DIFF --STAT
+I file sono tutti untracked, quindi `git diff --stat` non produce output finche non sono
+staged. Nessun file e stato aggiunto allo stage, come richiesto.
+
+24. GIT STATUS --SHORT
+?? BLOCCO-55-REPORT.txt
+?? backend/src/main/java/it/fantacalciointelligence/backend/strategic/
+?? backend/src/main/resources/db/migration/V51__create_strategic_data_enrichment.sql
+?? backend/src/test/java/it/fantacalciointelligence/backend/strategic/
+
+25. RISCHI/GAP RESIDUI
+- Nessuna fonte reale B55 e stata inventata o importata: la tabella parte vuota.
+- Il mapper non e ancora collegato a endpoint/import batch perche non esiste un contratto
+  CSV strategico certificato per fonte.
+- Mancano test DB dedicati di conflict/upsert/season isolation; i vincoli sono stati
+  validati da Flyway e la regressione completa e verde.
+- Nessun endpoint HTTP aggiunto; e disponibile un servizio read-only interno.
+- La selezione tra fonti conflittuali e intenzionalmente rinviata.
+
+26. COSA DEVE FARE B56
+- Definire feed/header certificati e collegare il mapper a import batch idempotenti.
+- Aggiungere test DB per upsert, conflitti, isolamento stagione e storico inactive.
+- Definire source priority per singola metrica con rationale verificabile.
+- Consumare il layer osservazionale per Bonus Opportunity V2, Role Advantage V2,
+  Aerial Threat reale e Upside, mantenendo INSUFFICIENT_EVIDENCE quando necessario.
+- Non attribuire score avanzati a osservazioni MISSING/UNKNOWN/NOT_AVAILABLE.
+
+Nessun commit e nessun push eseguito.
+
+============================================================
+B55.1 DATABASE CERTIFICATION
+============================================================
+
+1. GAP RILEVATI
+La revisione B55.1 ha confermato l'assenza di test PostgreSQL dedicati e di un servizio
+di persistenza/upsert per player_strategic_data_observations. Il mapper era correttamente
+non collegato ad alcun feed non certificato.
+
+2. PERSISTENCE SERVICE/REPOSITORY INTRODOTTO
+Aggiunto StrategicDataObservationService basato su JdbcClient e @Transactional, con DTO
+StrategicObservationUpsert. Il servizio accetta esclusivamente player_id e season_id gia
+esistenti; non contiene INSERT o creazione di players, registrazioni o identity mapping.
+
+3. IDEMPOTENZA
+Certificata su PostgreSQL 17 per entrambe le chiavi logiche:
+- player/season/source/source_record_id quando il record id e presente;
+- player/season/source tramite indice univoco parziale quando source_record_id e NULL.
+Due salvataggi restituiscono lo stesso id e lasciano una sola observation.
+
+4. UPSERT POLICY
+Per la stessa chiave logica, il payload piu recente ricevuto dalla stessa fonte sostituisce
+in modo deterministico il precedente snapshot e aggiorna imported_at/updated_at. I NULL
+espliciti restano NULL: non vengono trasformati in zero o valori derivati. Fonte diversa
+o stagione diversa non entrano mai nello stesso ON CONFLICT.
+
+5. CONFLICT PRESERVATION
+Test DB con FBREF e GAZZETTA discordanti: entrambe le righe restano persistite e il servizio
+di inspection le restituisce separate con source, evidence status e confidence distinti.
+Nessun selected value e nessuna source priority globale sono stati introdotti.
+
+6. SEASON ISOLATION
+Testata la stessa source_record_id nelle stagioni 2025/2026 e 2026/2027. L'update della
+stagione corrente non modifica il record storico; inspection filtra correttamente season.
+
+7. HISTORICAL INACTIVE BEHAVIOR
+Testata una registration INACTIVE reale. L'observation 2025/2026 resta persistita e
+ispezionabile; lo stato registration rimane INACTIVE e non viene modificato dal layer B55.
+
+8. NO DUPLICATE PLAYER
+Il conteggio players resta invariato durante upsert e re-import. Una fonte statistica si
+collega solo al player_id esistente. FBref non acquisisce autorita identitaria.
+
+9. MIGRATION CONSTRAINTS
+V51 e stata mantenuta senza V52. Testati schema Flyway reale, FK player, unique key,
+indice unique parziale, source allow-list, evidence status e confidence > 100. I vincoli
+season FK, JSONB object, metriche non negative, relazioni tra conteggi e nullable strategici
+sono definiti direttamente in V51 e validati da Flyway/PostgreSQL. Nessuna correzione
+della migration e risultata necessaria.
+
+10. NULL/UNKNOWN PRESERVATION
+Test DB/service: xG NULL, xA NULL, aerial NULL e missing minutes restano NULL; minuti zero
+e minuti mancanti producono per90 NULL; penalty hierarchy UNKNOWN resta UNKNOWN; posizione
+raw ambigua e normalizzata UNKNOWN restano separate. La policy unitaria conferma che il
+flag penalty_taker TRUE legacy non diventa PRIMARY.
+
+11. INSPECTION SERVICE
+Certificati filtro player, filtro season, distinzione source, conflitti non fusi,
+provenance/evidence/confidence esposte e assenza di selected value automatico.
+
+12. FONTE REALE
+NO CERTIFIED FEED AVAILABLE per gerarchie rigori, punizioni, corner, shots, box touches,
+aerial e header. Nessun CSV, header, endpoint o dato DEV e stato inventato.
+
+13. PLAYER_SEASON_STATISTICS VS OBSERVATION LAYER
+player_season_statistics e gia il system of record importato e testato per appearances,
+starts, minutes, penalties e xG/xA, con season/source/external id/batch provenance. Copiare
+questi valori automaticamente in B55 creerebbe due copie dello stesso dato e rischi di
+drift senza aggiungere evidenza. B55 resta quindi destinato alle osservazioni strategiche
+nuove/non coperte; i consumer possono leggere le statistiche raw esistenti direttamente.
+
+14. FILE MODIFICATI/CREATI IN B55.1
+- backend/src/main/java/.../strategic/StrategicObservationUpsert.java
+- backend/src/main/java/.../strategic/StrategicDataObservationService.java
+- backend/src/test/java/.../strategic/StrategicDataObservationIntegrationTest.java
+- BLOCCO-55-REPORT.txt aggiornato.
+
+15. TEST DB AGGIUNTI
+7 integration test PostgreSQL reali: upsert/re-import/no duplicate player, record id NULL,
+source conflict/inspection, season isolation, historical INACTIVE, NULL/UNKNOWN/per90,
+constraint enforcement.
+
+16. TEST MIRATI
+15 test: 7 integration DB + 8 unitari B55. Failures 0, Errors 0, Skipped 0,
+BUILD SUCCESS.
+
+17. FULL REGRESSION
+Comando equivalente eseguito: mvn -Dmaven.repo.local=C:\Users\user\.m2\repository clean test.
+Risultato finale: Tests run 257, Failures 0, Errors 0, Skipped 1, BUILD SUCCESS.
+Una prima esecuzione aveva rilevato il noto bordo temporale di DataFreshnessServiceTest
+(99 ore calcolate contro 100 attese); il rerun completo e risultato interamente verde.
+Il wrapper .\mvnw.cmd conserva il problema ambientale preesistente documentato in B55;
+non e stato modificato.
+
+18. GIT DIFF --CHECK
+Nessun errore prima dei test mirati e nessun errore nel controllo finale.
+
+19. GIT STATUS --SHORT
+?? BLOCCO-55-REPORT.txt
+?? backend/src/main/java/it/fantacalciointelligence/backend/strategic/
+?? backend/src/main/resources/db/migration/V51__create_strategic_data_enrichment.sql
+?? backend/src/test/java/it/fantacalciointelligence/backend/strategic/
+Nessun file staged.
+
+20. RISCHI RESIDUI
+- Nessun feed reale certificato per le metriche strategiche mancanti.
+- La policy upsert considera ogni payload della stessa chiave un nuovo snapshot completo;
+  un futuro importer dovra validare freshness/source contract prima di chiamarla.
+- Nessuna selezione metrica-per-metrica tra fonti discordanti e stata definita.
+
+21. COSA RESTA PER B56/B59
+- Definire contratti sorgente verificabili per set pieces, tiri, box touches e aerial/header.
+- Aggiungere importer specifici che validino freshness e completezza prima dell'upsert.
+- Definire eventuale selection rationale per singola metrica, mai globale/arbitraria.
+- B56 potra costruire gli score V2 soltanto su osservazioni AVAILABLE/PARTIAL adeguatamente
+  supportate, mantenendo NULL/UNKNOWN/NOT_AVAILABLE quando manca evidenza.
+
+Nessun commit, push o staging eseguito in B55.1.

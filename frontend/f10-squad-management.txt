@@ -1,0 +1,2 @@
+F10 SQUAD MANAGEMENT — PASS
+Protected real active roster, budgets, role grouping data, search/select/add and remove mutations with disabled/loading/error feedback, 409 propagation and query invalidation. Real analysis summary, coverage and warnings. Cross-navigation to players and auction.

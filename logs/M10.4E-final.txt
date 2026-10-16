@@ -1,0 +1,290 @@
+﻿
+=== M10.4E CLEANUP FIX ===
+BACKUP=C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\logs\M10.4E-backup-20260902-190434
+CLEANUP_IMPORT=ADDED
+AFTEREACH_IMPORT=ADDED
+AFTEREACH_CLEANUP=ADDED
+[[31merror[39m] src/pages/AuctionPage.test.tsx: SyntaxError: ')' expected. (7:42)
+[[31merror[39m]    5 |                     $items = $m.Groups[1].Value.Trim()
+[[31merror[39m]    6 |
+[[31merror[39m] >  7 |                     if ($items -notmatch '\bcleanup\b') {
+[[31merror[39m]      |                                          ^
+[[31merror[39m]    8 |                         $items = "cleanup, " + $items
+[[31merror[39m]    9 |                     }
+[[31merror[39m]   10 |
+
+ RUN  v4.1.11 C:/Users/user/OneDrive/Desktop/Fantafoot/fantacalcio-intelligence/frontend
+
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pages/AuctionPage.test.tsx [ src/pages/AuctionPage.test.tsx ]
+Error: Transform failed with 1 error:
+
+[31m[PARSE_ERROR] [0mExpected `)` but found `string`
+   [38;5;246m╭[0m[38;5;246m─[0m[38;5;246m[[0m src/pages/AuctionPage.test.tsx:7:42 [38;5;246m][0m
+   [38;5;246m│[0m
+ [38;5;246m7 │[0m [38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249mi[0m[38;5;249mf[0m[38;5;249m [0m([38;5;249m$[0m[38;5;249mi[0m[38;5;249mt[0m[38;5;249me[0m[38;5;249mm[0m[38;5;249ms[0m[38;5;249m [0m[38;5;249m-[0m[38;5;249mn[0m[38;5;249mo[0m[38;5;249mt[0m[38;5;249mm[0m[38;5;249ma[0m[38;5;249mt[0m[38;5;249mc[0m[38;5;249mh[0m[38;5;249m [0m'\bcleanup\b'[38;5;249m)[0m[38;5;249m [0m[38;5;249m{[0m
+ [38;5;240m  │[0m                        ┬                 ──────┬──────  
+ [38;5;240m  │[0m                        ╰──────────────────────────────── Opened here
+ [38;5;240m  │[0m                                                │        
+ [38;5;240m  │[0m                                                ╰──────── `)` expected
+[38;5;246m───╯[0m
+
+  Plugin: vite:oxc
+  File: C:/Users/user/OneDrive/Desktop/Fantafoot/fantacalcio-intelligence/frontend/src/pages/AuctionPage.test.tsx
+ ❯ transformWithOxc node_modules/vite/dist/node/chunks/node.js:4103:19
+ ❯ TransformPluginContext.transform node_modules/vite/dist/node/chunks/node.js:4174:26
+ ❯ EnvironmentPluginContainer.transform node_modules/vite/dist/node/chunks/node.js:30932:51
+ ❯ loadAndTransform node_modules/vite/dist/node/chunks/node.js:20671:26
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  19:04:38
+   Duration  2.28s (transform 44ms, setup 430ms, import 0ms, tests 0ms, environment 1.48s)
+
+AUCTION_PAGE_EXIT=1
+
+ RUN  v4.1.11 C:/Users/user/OneDrive/Desktop/Fantafoot/fantacalcio-intelligence/frontend
+
+·······
+
+ Test Files  1 passed (1)
+      Tests  7 passed (7)
+   Start at  19:04:42
+   Duration  5.84s (transform 433ms, setup 343ms, import 1.46s, tests 2.17s, environment 1.56s)
+
+
+> fantacalcio-intelligence-frontend@0.1.0 test
+> vitest --run
+
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.11 [39m[90mC:/Users/user/OneDrive/Desktop/Fantafoot/fantacalcio-intelligence/frontend[39m
+
+ [31m❯[39m src/pages/AuctionPage.test.tsx [2m([22m[2m0 test[22m[2m)[22m
+ [32m✓[39m src/app/bootstrap/App.test.tsx [2m([22m[2m12 tests[22m[2m)[22m[33m 8316[2mms[22m[39m
+     [33m[2m✓[22m[39m renderizza la dashboard foundation con landmark e navigazione attiva [33m 651[2mms[22m[39m
+     [33m[2m✓[22m[39m mostra stato backend offline senza far collassare gli altri widget [33m 3182[2mms[22m[39m
+     [33m[2m✓[22m[39m rende navigabili le sezioni non ancora disponibili [33m 2229[2mms[22m[39m
+     [33m[2m✓[22m[39m renderizza /design-system [33m 374[2mms[22m[39m
+     [33m[2m✓[22m[39m porta l’utente autenticato alla Live Auction e spiega la rosa mancante [33m 571[2mms[22m[39m
+     [33m[2m✓[22m[39m mostra un errore specifico per credenziali non valide [33m 404[2mms[22m[39m
+ [32m✓[39m src/features/intelligence/IntelligencePages.test.tsx [2m([22m[2m15 tests[22m[2m)[22m[33m 4283[2mms[22m[39m
+     [33m[2m✓[22m[39m renderizza titolari, panchina, modulo e reasoning reali [33m 601[2mms[22m[39m
+     [33m[2m✓[22m[39m mostra empty state con motivi reali del backend [33m 363[2mms[22m[39m
+     [33m[2m✓[22m[39m distingue la rosa non riconosciuta dal motore [33m 439[2mms[22m[39m
+     [33m[2m✓[22m[39m renderizza fixture, difficoltà e naviga giornata [33m 534[2mms[22m[39m
+     [33m[2m✓[22m[39m carica matchup reale scegliendo il club [33m 428[2mms[22m[39m
+     [33m[2m✓[22m[39m renderizza e ordina opportunità reali [33m 440[2mms[22m[39m
+     [33m[2m✓[22m[39m filtra per ricerca e mostra zero results [33m 338[2mms[22m[39m
+ [32m✓[39m src/pages/RealDashboardPage.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[33m 3655[2mms[22m[39m
+     [33m[2m✓[22m[39m inoltra stagione della rosa e Basic Auth al motore [33m 456[2mms[22m[39m
+     [33m[2m✓[22m[39m mostra la causa reale quando il motore fallisce [33m 3190[2mms[22m[39m
+ [32m✓[39m src/features/core/PlayerFlows.test.tsx [2m([22m[2m6 tests[22m[2m)[22m[33m 1721[2mms[22m[39m
+     [33m[2m✓[22m[39m naviga dalla prima alla seconda pagina e torna alla prima [33m 820[2mms[22m[39m
+     [33m[2m✓[22m[39m renderizza tutte le stagioni storiche restituite dal contratto backend [33m 470[2mms[22m[39m
+ [32m✓[39m src/features/core/SquadManagementFlows.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 3419[2mms[22m[39m
+     [33m[2m✓[22m[39m crea una rosa vuota con i vincoli restituiti dalla lega [33m 1248[2mms[22m[39m
+     [33m[2m✓[22m[39m aggiunge, modifica il prezzo e rimuove un giocatore reale [33m 1589[2mms[22m[39m
+     [33m[2m✓[22m[39m acquista dal catalogo nella rosa attiva senza dati fittizi [33m 572[2mms[22m[39m
+ [32m✓[39m src/layouts/AppShell.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[33m 1565[2mms[22m[39m
+     [33m[2m✓[22m[39m accetta input e invia con Enter mostrando un risultato navigabile [33m 350[2mms[22m[39m
+     [33m[2m✓[22m[39m supporta il pulsante, loading e zero risultati [33m 307[2mms[22m[39m
+ [32m✓[39m src/features/admin/AdminPage.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[33m 2436[2mms[22m[39m
+     [33m[2m✓[22m[39m mostra stato, fonti e storico reali [33m 665[2mms[22m[39m
+     [33m[2m✓[22m[39m carica il dettaglio import solo su richiesta [33m 897[2mms[22m[39m
+     [33m[2m✓[22m[39m conferma e completa il refresh impedendo il doppio invio [33m 517[2mms[22m[39m
+ [32m✓[39m src/pages/LiveAuctionPage.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[33m 2196[2mms[22m[39m
+     [33m[2m✓[22m[39m attiva una sessione DRAFT e impedisce il doppio submit [33m 673[2mms[22m[39m
+     [33m[2m✓[22m[39m nomina, valuta e aggiudica aggiornando budget e storico [33m 667[2mms[22m[39m
+     [33m[2m✓[22m[39m mostra il rifiuto backend per offerta troppo bassa o oltre budget [33m 708[2mms[22m[39m
+ [32m✓[39m src/components/ui/ui.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[33m 677[2mms[22m[39m
+ [32m✓[39m src/auth/AuthContext.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[33m 598[2mms[22m[39m
+ [32m✓[39m src/pages/HistoricalPlayersPage.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[33m 656[2mms[22m[39m
+     [33m[2m✓[22m[39m mostra giocatori storici reali senza trasformarli nel catalogo operativo [33m 338[2mms[22m[39m
+     [33m[2m✓[22m[39m propaga filtro ruolo e paginazione al contratto API [33m 311[2mms[22m[39m
+ [32m✓[39m src/components/navigation/BackButton.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[33m 353[2mms[22m[39m
+ [32m✓[39m src/pages/HistoricalPlayerDetailPage.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[33m 488[2mms[22m[39m
+     [33m[2m✓[22m[39m carica il profilo identity-first della stagione selezionata [33m 394[2mms[22m[39m
+ [32m✓[39m src/components/data-display/data-display.test.tsx [2m([22m[2m9 tests[22m[2m)[22m[32m 259[2mms[22m[39m
+ [32m✓[39m src/components/feedback/FatalErrorBoundary.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[32m 266[2mms[22m[39m
+ [32m✓[39m src/features/core/api.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 122[2mms[22m[39m
+ [32m✓[39m src/api/client/httpClient.test.ts [2m([22m[2m15 tests[22m[2m)[22m[32m 99[2mms[22m[39m
+ [32m✓[39m src/api/dashboardApi.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 57[2mms[22m[39m
+ [32m✓[39m src/features/intelligence/api.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 69[2mms[22m[39m
+ [32m✓[39m src/features/admin/api.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 61[2mms[22m[39m
+ [32m✓[39m src/observability/fatalTelemetry.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 17[2mms[22m[39m
+ [32m✓[39m src/app/providers/queryClient.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+ [32m✓[39m src/app/bootstrap/env.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 16[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Suites 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m src/pages/AuctionPage.test.tsx[2m [ src/pages/AuctionPage.test.tsx ][22m
+[31m[1mError[22m: Transform failed with 1 error:
+
+[31m[PARSE_ERROR] [0mExpected `)` but found `string`
+   [38;5;246m╭[0m[38;5;246m─[0m[38;5;246m[[0m src/pages/AuctionPage.test.tsx:7:42 [38;5;246m][0m
+   [38;5;246m│[0m
+ [38;5;246m7 │[0m [38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249mi[0m[38;5;249mf[0m[38;5;249m [0m([38;5;249m$[0m[38;5;249mi[0m[38;5;249mt[0m[38;5;249me[0m[38;5;249mm[0m[38;5;249ms[0m[38;5;249m [0m[38;5;249m-[0m[38;5;249mn[0m[38;5;249mo[0m[38;5;249mt[0m[38;5;249mm[0m[38;5;249ma[0m[38;5;249mt[0m[38;5;249mc[0m[38;5;249mh[0m[38;5;249m [0m'\bcleanup\b'[38;5;249m)[0m[38;5;249m [0m[38;5;249m{[0m
+ [38;5;240m  │[0m                        ┬                 ──────┬──────  
+ [38;5;240m  │[0m                        ╰──────────────────────────────── Opened here
+ [38;5;240m  │[0m                                                │        
+ [38;5;240m  │[0m                                                ╰──────── `)` expected
+[38;5;246m───╯[0m
+[39m
+  Plugin: [35mvite:oxc[39m
+  File: [36mC:/Users/user/OneDrive/Desktop/Fantafoot/fantacalcio-intelligence/frontend/src/pages/AuctionPage.test.tsx[39m
+[90m [2m❯[22m transformWithOxc node_modules/vite/dist/node/chunks/node.js:[2m4103:19[22m[39m
+[90m [2m❯[22m TransformPluginContext.transform node_modules/vite/dist/node/chunks/node.js:[2m4174:26[22m[39m
+[90m [2m❯[22m EnvironmentPluginContainer.transform node_modules/vite/dist/node/chunks/node.js:[2m30932:51[22m[39m
+[90m [2m❯[22m loadAndTransform node_modules/vite/dist/node/chunks/node.js:[2m20671:26[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m23 passed[39m[22m[90m (24)[39m
+[2m      Tests [22m [1m[32m127 passed[39m[22m[90m (127)[39m
+[2m   Start at [22m 19:04:49
+[2m   Duration [22m 92.57s[2m (transform 1.39s, setup 8.21s, import 12.11s, tests 31.34s, environment 35.58s)[22m
+
+
+> fantacalcio-intelligence-frontend@0.1.0 typecheck
+> tsc -b --pretty false
+
+src/pages/AuctionPage.test.tsx(7,42): error TS1005: ')' expected.
+src/pages/AuctionPage.test.tsx(7,55): error TS1005: ';' expected.
+src/pages/AuctionPage.test.tsx(21,42): error TS1005: ')' expected.
+src/pages/AuctionPage.test.tsx(21,57): error TS1005: ';' expected.
+
+> fantacalcio-intelligence-frontend@0.1.0 lint
+> eslint . --max-warnings 0
+
+
+C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\frontend\src\pages\AuctionPage.test.tsx
+  7:41  error  Parsing error: ')' expected
+
+✖ 1 problem (1 error, 0 warnings)
+
+
+> fantacalcio-intelligence-frontend@0.1.0 build
+> tsc -b && vite build
+
+src/pages/AuctionPage.test.tsx(7,42): error TS1005: ')' expected.
+src/pages/AuctionPage.test.tsx(7,55): error TS1005: ';' expected.
+src/pages/AuctionPage.test.tsx(21,42): error TS1005: ')' expected.
+src/pages/AuctionPage.test.tsx(21,57): error TS1005: ';' expected.
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] -----------------< it.fantacalciointelligence:backend >-----------------
+[INFO] Building backend 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.5.0:resources (default-resources) @ backend ---
+[INFO] Copying 3 resources from src\main\resources to target\classes
+[INFO] Copying 70 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.15.0:compile (default-compile) @ backend ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- resources:3.5.0:testResources (default-testResources) @ backend ---
+[INFO] Copying 2 resources from src\test\resources to target\test-classes
+[INFO] 
+[INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ backend ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- surefire:3.5.6:test (default-test) @ backend ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running it.fantacalciointelligence.backend.auctionranking.AuctionRankingServiceTest
+19:07:08.422 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [it.fantacalciointelligence.backend.auctionranking.AuctionRankingServiceTest]: AuctionRankingServiceTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+19:07:08.713 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration it.fantacalciointelligence.backend.BackendApplication for test class it.fantacalciointelligence.backend.auctionranking.AuctionRankingServiceTest
+19:07:08.866 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [it.fantacalciointelligence.backend.auctionranking.AuctionRankingServiceTest]: AuctionRankingServiceTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+19:07:08.869 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration it.fantacalciointelligence.backend.BackendApplication for test class it.fantacalciointelligence.backend.auctionranking.AuctionRankingServiceTest
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.1.0)
+
+2026-09-02T19:07:09.417+02:00  INFO 20804 --- [           main] i.f.b.a.AuctionRankingServiceTest        : Starting AuctionRankingServiceTest using Java 21.0.11 with PID 20804 (started by user in C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\backend)
+2026-09-02T19:07:09.418+02:00  INFO 20804 --- [           main] i.f.b.a.AuctionRankingServiceTest        : The following 1 profile is active: "dev"
+2026-09-02T19:07:12.470+02:00  INFO 20804 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-09-02T19:07:12.742+02:00  INFO 20804 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 257 ms. Found 3 JPA repository interfaces.
+Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build as described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3
+WARNING: A Java agent has been loaded dynamically (C:\Users\user\.m2\repository\net\bytebuddy\byte-buddy-agent\1.18.10\byte-buddy-agent-1.18.10.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+2026-09-02T19:07:16.496+02:00  INFO 20804 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-09-02T19:07:17.027+02:00  INFO 20804 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@2f498f21
+2026-09-02T19:07:17.029+02:00  INFO 20804 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-09-02T19:07:17.084+02:00  INFO 20804 --- [           main] org.flywaydb.core.FlywayExecutor         : Database: jdbc:postgresql://localhost:5432/fantacalcio_intelligence (PostgreSQL 17.10)
+2026-09-02T19:07:17.593+02:00  INFO 20804 --- [           main] o.f.core.internal.command.DbValidate     : Successfully validated 70 migrations (execution time 00:00.338s)
+2026-09-02T19:07:17.634+02:00  INFO 20804 --- [           main] o.f.core.internal.command.DbMigrate      : Current version of schema "public": 69
+2026-09-02T19:07:17.647+02:00  INFO 20804 --- [           main] o.f.core.internal.command.DbMigrate      : Schema "public" is up to date. No migration necessary.
+2026-09-02T19:07:18.254+02:00  INFO 20804 --- [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-09-02T19:07:18.447+02:00  INFO 20804 --- [           main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.4.1.Final
+2026-09-02T19:07:19.506+02:00  INFO 20804 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-09-02T19:07:19.830+02:00  INFO 20804 --- [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/fantacalcio_intelligence]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 17.10
+	Default catalog/schema: fantacalcio_intelligence/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-09-02T19:07:21.901+02:00  INFO 20804 --- [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-09-02T19:07:22.061+02:00  INFO 20804 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-09-02T19:07:23.281+02:00  INFO 20804 --- [           main] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-09-02T19:07:25.751+02:00  INFO 20804 --- [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name databaseUserDetailsService
+2026-09-02T19:07:28.018+02:00  INFO 20804 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 2 endpoints beneath base path '/actuator'
+2026-09-02T19:07:28.200+02:00  INFO 20804 --- [           main] i.f.b.a.AuctionRankingServiceTest        : Started AuctionRankingServiceTest in 19.237 seconds (process running for 21.2)
+[INFO] Tests run: 11, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 22.94 s -- in it.fantacalciointelligence.backend.auctionranking.AuctionRankingServiceTest
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 11, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  28.906 s
+[INFO] Finished at: 2026-09-02T19:07:31+02:00
+[INFO] ------------------------------------------------------------------------
+BACKEND_READY=True
+
+=== FINAL ===
+PRETTIER_EXIT=2
+AUCTION_PAGE_EXIT=1
+APPSHELL_EXIT=0
+FULL_FRONTEND_EXIT=1
+TYPECHECK_EXIT=2
+LINT_EXIT=1
+BUILD_EXIT=2
+BACKEND_AUCTION_EXIT=0
+BACKEND_READY=True
+RANKING_TOTAL=456
+VERGARA_COUNT=1
+M10_4_STATUS=BLOCKED
+ALL_GREEN=NO
+COMMIT_CREATED=NO
+PUSH_EXECUTED=NO
+ORACLE_CONTACTED=NO
+TERMINAL_STAYS_OPEN=YES
+LOG_FILE=C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\logs\M10.4E-final.txt

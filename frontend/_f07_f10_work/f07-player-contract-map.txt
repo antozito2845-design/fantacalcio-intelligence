@@ -1,0 +1,9 @@
+F07 PLAYER CONTRACT MAP — 2026-08-22
+Source: controller/DTO/service backend, read-only audit.
+
+GET /api/v1/players — public. Query: season(default current), search?, club? (name/slug exact), role? (P/D/C/A), page(default 0), size(default 25, clamped 1..100). Response PageResponse<PlayerCatalogResponse>{content,page,size,totalElements,totalPages}; nullable: gazzettaRole, fantamarktRole. Sort fixed server-side: display_name ASC. Errors: 400 validation, 429, 5xx.
+GET /api/v1/players/{playerId} — public. Path playerId; query season(default current). Response PlayerDetailResponse with roles map, nullable tacticalProfile/clubTactics/evaluation, statistics list. Errors: 404, 429, 5xx.
+GET /api/v1/seasons — public. Response SeasonResponse[].
+GET /api/v1/clubs — public. Response ClubResponse[].
+
+Catalog supports server search/filter/pagination; no configurable sort endpoint. Detail already aggregates evaluation and historical statistics. Separate intelligence/development/availability endpoints were audited but are not required because the real detail DTO exposes the supported sections without client joins.

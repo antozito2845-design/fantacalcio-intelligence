@@ -1,0 +1,1512 @@
+
+================================================================================
+M03.5B FIXED - HISTORICAL PLAYERS FRONTEND IMPLEMENTATION
+================================================================================
+
+================================================================================
+1. PRE-WRITE SAFETY
+================================================================================
+GIT_STATUS_BEFORE:
+ M frontend/src/features/core/SquadManagementFlows.test.tsx
+ M frontend/src/layouts/GlobalSearch.tsx
+?? FANTAFOOT-FINAL-STATE.txt
+?? FANTAFOOT-FULL-AUDIT.txt
+?? FANTAFOOT-TARGETED-AUDIT.txt
+?? backend/src/main/java/it/fantacalciointelligence/backend/player/HistoricalPlayerCatalogController.java
+?? backend/src/main/java/it/fantacalciointelligence/backend/player/HistoricalPlayerCatalogResponse.java
+?? backend/src/main/java/it/fantacalciointelligence/backend/player/HistoricalPlayerCatalogService.java
+?? backend/src/test/java/it/fantacalciointelligence/backend/player/HistoricalPlayerCatalogServiceTest.java
+?? project-audit-current.txt
+?? project-file-list.txt
+
+================================================================================
+2. EXTEND FRONTEND API CONTRACT
+================================================================================
+MODIFIED=frontend\src\features\core\api.ts
+
+================================================================================
+3. CREATE HISTORICAL PLAYERS PAGE
+================================================================================
+CREATED=frontend\src\pages\HistoricalPlayersPage.tsx
+
+================================================================================
+4. ADD ROUTE
+================================================================================
+MODIFIED=frontend\src\app\router\AppRouter.tsx
+
+================================================================================
+5. ADD CATALOG NAVIGATION LINK
+================================================================================
+MODIFIED=frontend\src\pages\PlayersPage.tsx
+
+================================================================================
+6. CREATE HISTORICAL PAGE TEST
+================================================================================
+CREATED=frontend\src\pages\HistoricalPlayersPage.test.tsx
+
+================================================================================
+7. STRUCTURAL CERTIFICATION
+================================================================================
+HISTORICAL_API_PRESENT=YES
+HISTORICAL_ROUTE_PRESENT=YES
+HISTORICAL_PAGE_PRESENT=YES
+HISTORICAL_TEST_PRESENT=YES
+CURRENT_API_STILL_PRESENT=YES
+CURRENT_PAGE_LINKS_TO_HISTORY=YES
+NO_HISTORICAL_PURCHASE_ACTION=YES
+CURRENT_SEASON_FILTERED=YES
+STRUCTURAL_GREEN=YES
+
+================================================================================
+8. PRETTIER
+================================================================================
+>>> npx.cmd prettier --write src/features/core/api.ts src/pages/PlayersPage.tsx src/app/router/AppRouter.tsx src/pages/HistoricalPlayersPage.tsx src/pages/HistoricalPlayersPage.test.tsx
+src/features/core/api.ts 159ms
+src/pages/PlayersPage.tsx 167ms
+[90msrc/app/router/AppRouter.tsx[39m 38ms (unchanged)
+src/pages/HistoricalPlayersPage.tsx 65ms
+src/pages/HistoricalPlayersPage.test.tsx 29ms
+EXIT=0
+
+================================================================================
+9. TYPECHECK
+================================================================================
+>>> npm.cmd run typecheck
+
+> fantacalcio-intelligence-frontend@0.1.0 typecheck
+> tsc -b --pretty false
+EXIT=0
+
+================================================================================
+10. LINT
+================================================================================
+>>> npm.cmd run lint
+
+> fantacalcio-intelligence-frontend@0.1.0 lint
+> eslint . --max-warnings 0
+EXIT=0
+
+================================================================================
+11. TARGETED HISTORICAL FRONTEND TEST
+================================================================================
+>>> npx.cmd vitest run src/pages/HistoricalPlayersPage.test.tsx
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.11 [39m[90mC:/Users/user/OneDrive/Desktop/Fantafoot/fantacalcio-intelligence/frontend[39m
+
+ [31m❯[39m src/pages/HistoricalPlayersPage.test.tsx [2m([22m[2m2 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[33m 2189[2mms[22m[39m
+[31m     [31m×[31m mostra giocatori storici reali senza trasformarli nel catalogo operativo[39m[33m 1173[2mms[22m[39m
+[31m     [31m×[31m mantiene filtri e paginazione nello URL[39m[33m 1011[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 2 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m src/pages/HistoricalPlayersPage.test.tsx[2m > [22mcatalogo storico giocatori[2m > [22mmostra giocatori storici reali senza trasformarli nel catalogo operativo
+[31m[1mTestingLibraryElementError[22m[39m: Found multiple elements with the text: Andrea Belotti
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<strong>[39m
+  [0mAndrea Belotti[0m
+[36m</strong>[39m
+
+Ignored nodes: comments, script, style
+[36m<strong>[39m
+  [0mAndrea Belotti[0m
+[36m</strong>[39m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"_page_623194"[39m
+    [36m>[39m
+      [36m<header[39m
+        [33mclass[39m=[32m"_hero_623194"[39m
+      [36m>[39m
+        [36m<div>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"_eyebrow_623194"[39m
+          [36m>[39m
+            [0mArchivio stagionale[0m
+          [36m</span>[39m
+          [36m<h1>[39m
+            [0mCatalogo storico[0m
+          [36m</h1>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"_muted_623194"[39m
+          [36m>[39m
+            [0m663 giocatori ? 2025/2026[0m
+          [36m</p>[39m
+        [36m</div>[39m
+      [36m</header>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"Filtri catalogo storico"[39m
+        [33mclass[39m=[32m"_panel_623194 _filters_623194"[39m
+      [36m>[39m
+        [36m<label>[39m
+          [0mStagione[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"Stagione"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"2025/2026"[39m
+            [36m>[39m
+              [0m2025/2026[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"2024/2025"[39m
+            [36m>[39m
+              [0m2024/2025[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [0mCerca[0m
+          [36m<input[39m
+            [33mplaceholder[39m=[32m"Nome giocatore"[39m
+            [33mvalue[39m=[32m""[39m
+          [36m/>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [0mRuolo[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"Ruolo"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0mTutti[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"P"[39m
+            [36m>[39m
+              [0mP[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"D"[39m
+            [36m>[39m
+              [0mD[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"C"[39m
+            [36m>[39m
+              [0mC[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"A"[39m
+            [36m>[39m
+              [0mA[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"_button_623194 _secondary_623194"[39m
+        [36m>[39m
+          [0mAzzera[0m
+        [36m</button>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33maria-live[39m=[32m"polite"[39m
+        [33mclass[39m=[32m"_panel_623194"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"_tableWrap_623194 _desktopTable_623194"[39m
+        [36m>[39m
+          [36m<table[39m
+            [33mclass[39m=[32m"_table_623194"[39m
+          [36m>[39m
+            [36m<thead>[39m
+              [36m<tr>[39m
+                [36m<th>[39m
+                  [0mGiocatore[0m
+                [36m</th>[39m
+                [36m<th>[39m
+                  [0mStato[0m
+                [36m</th>[39m
+                [36m<th>[39m
+                  [0mRuolo[0m
+                [36m</th>[39m
+                [36m<th>[39m
+                  [0mClub[0m
+                [36m</th>[39m
+                [36m<th>[39m
+                  [0mPresenze[0m
+                [36m</th>[39m
+                [36m<th>[39m
+                  [0mFantamedia[0m
+                [36m</th>[39m
+                [36m<th>[39m
+                  [0mGol[0m
+                [36m</th>[39m
+                [36m<th>[39m
+                  [0mAssist[0m
+                [36m</th>[39m
+              [36m</tr>[39m
+            [36m</thead>[39m
+            [36m<tbody>[39m
+              [36m<tr>[39m
+                [36m<td>[39m
+                  [36m<strong>[39m
+                    [0mAndrea Belotti[0m
+                  [36m</strong>[39m
+                [36m</td>[39m
+                [36m<td>[39m
+                  [0mStorico[0m
+                [36m</td>[39m
+                [36m<td>[39m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"_role_623194"[39m
+                  [36m>[39m
+                    [0mA[0m
+                  [36m</span>[39m
+                [36m</td>[39m
+                [36m<td>[39m
+                  [0mCagliari[0m
+                [36m</td>[39m
+                [36m<td>[39m
+                  [0m28[0m
+                [36m</td>[39m
+                [36m<td>[39m
+                  [0m6.4[0m
+                [36m</td>[39m
+                [36m<td>[39m
+                  [0m7[0m
+                [36m</td>[39m
+                [36m<td>[39m
+                  [0m2[0m
+                [36m</td>[39m
+              [36m</tr>[39m
+            [36m</tbody>[39m
+          [36m</table>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"_cards_623194"[39m
+        [36m>[39m
+          [36m<article[39m
+            [33mclass[39m=[32m"_card_623194"[39m
+          [36m>[39m
+            [36m<strong>[39m
+              [0mAndrea Belotti[0m
+            [36m</strong>[39m
+            [36m<span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"_role_623194"[39m
+              [36m>[39m
+                [0mA[0m
+              [36m</span>[39m
+              [0m ?[0m
+              [0m [0m
+              [0mCagliari[0m
+            [36m</span>[39m
+            [36m<span>[39m
+              [0mStorico[0m
+              [0m ? [0m
+              [0m28[0m
+              [0m presenze ? FM [0m
+              [0m6.4[0m
+            [36m</span>[39m
+            [36m<span>[39m
+              [0mGol [0m
+              [0m7[0m
+              [0m ? Assist [0m
+              [0m2[0m
+            [36m</span>[39m
+          [36m</article>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"_pager_623194"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"_button_623194 _secondary_623194"[39m
+            [33mdisabled[39m=[32m""[39m
+          [36m>[39m
+            [0mPrecedente[0m
+          [36m</button>[39m
+          [36m<span>[39m
+            [0m1[0m
+            [0m / [0m
+            [0m27[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"_button_623194 _secondary_623194"[39m
+          [36m>[39m
+            [0mSuccessiva[0m
+          [36m</button>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"_page_623194"[39m
+    [36m>[39m
+      [36m<header[39m
+        [33mclass[39m=[32m"_hero_623194"[39m
+      [36m>[39m
+        [36m<div>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"_eyebrow_623194"[39m
+          [36m>[39m
+            [0mArchivio stagionale[0m
+          [36m</span>[39m
+          [36m<h1>[39m
+            [0mCatalogo storico[0m
+          [36m</h1>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"_muted_623194"[39m
+          [36m>[39m
+            [0m663 giocatori ? 2025/2026[0m
+          [36m</p>[39m
+        [36m</div>[39m
+      [36m</header>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"Filtri catalogo storico"[39m
+        [33mclass[39m=[32m"_panel_623194 _filters_623194"[39m
+      [36m>[39m
+        [36m<label>[39m
+          [0mStagione[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"Stagione"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"2025/2026"[39m
+            [36m>[39m
+              [0m2025/2026[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"2024/2025"[39m
+            [36m>[39m
+              [0m2024/2025[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [0mCerca[0m
+          [36m<input[39m
+            [33mplaceholder[39m=[32m"Nome giocatore"[39m
+            [33mvalue[39m=[32m""[39m
+          [36m/>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [0mRuolo[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"Ruolo"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0mTutti[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"P"[39m
+            [36m>[39m
+              [0mP[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"D"[39m
+            [36m>[39m
+              [0mD[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"C"[39m
+            [36m>[39m
+              [0mC[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"A"[39m
+            [36m>[39m
+              [0mA[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"_button_623194 _secondary_623194"[39m
+        [36m>[39m
+          [0mAzzera[0m
+        [36m</button>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33maria-live[39m=[32m"polite"[39m
+        [33mclass[39m=[32m"_panel_623194"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"_tableWrap_623194 _desktopTable_623194"[39m
+        [36m>[39m
+          [36m<table[39m
+            [33mclass[39m=[32m"_table_623194"[39m
+          [36m>[39m
+            [36m<thead>[39m
+              [36m<tr>[39m
+                [36m<th>[39m
+                  [0mGiocatore[0m
+                [36m</th>[39m
+                [36m<th>[39m
+                  [0mStato[0m
+                [36m</th>[39m
+                [36m<th>[39m
+                  [0mRuolo[0m
+                [36m</th>[39m
+                [36m<th>[39m
+                  [0mClub[0m
+                [36m</th>[39m
+                [36m<th>[39m
+                  [0mPresenze[0m
+                [36m</th>[39m
+                [36m<th>[39m
+                  [0mFantamedia[0m
+                [36m</th>[39m
+                [36m<th>[39m
+                  [0mGol[0m
+                [36m</th>[39m
+                [36m<th>[39m
+                  [0mAssist[0m
+                [36m</th>[39m
+              [36m</tr>[39m
+            [36m</thead>[39m
+            [36m<tbody>[39m
+              [36m<tr>[39m
+                [36m<td>[39m
+                  [36m<strong>[39m
+                    [0mAndrea Belotti[0m
+                  [36m</strong>[39m
+                [36m</td>[39m
+                [36m<td>[39m
+                  [0mStorico[0m
+                [36m</td>[39m
+                [36m<td>[39m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"_role_623194"[39m
+                  [36m>[39m
+                    [0mA[0m
+                  [36m</span>[39m
+                [36m</td>[39m
+                [36m<td>[39m
+                  [0mCagliari[0m
+                [36m</td>[39m
+                [36m<td>[39m
+                  [0m28[0m
+                [36m</td>[39m
+                [36m<td>[39m
+                  [0m6.4[0m
+                [36m</td>[39m
+                [36m<td>[39m
+                  [0m7[0m
+                [36m</td>[39m
+                [36m<td>[39m
+                  [0m2[0m
+                [36m</td>[39m
+              [36m</tr>[39m
+            [36m</tbody>[39m
+          [36m</table>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"_cards_623194"[39m
+        [36m>[39m
+          [36m<article[39m
+            [33mclass[39m=[32m"_card_623194"[39m
+          [36m>[39m
+            [36m<strong>[39m
+              [0mAndrea Belotti[0m
+            [36m</strong>[39m
+            [36m<span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"_role_623194"[39m
+              [36m>[39m
+                [0mA[0m
+              [36m</span>[39m
+              [0m ?[0m
+              [0m [0m
+              [0mCagliari[0m
+            [36m</span>[39m
+            [36m<span>[39m
+              [0mStorico[0m
+              [0m ? [0m
+              [0m28[0m
+              [0m presenze ? FM [0m
+              [0m6.4[0m
+            [36m</span>[39m
+            [36m<span>[39m
+              [0mGol [0m
+              [0m7[0m
+              [0m ? Assist [0m
+              [0m2[0m
+            [36m</span>[39m
+          [36m</article>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"_pager_623194"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"_button_623194 _secondary_623194"[39m
+            [33mdisabled[39m=[32m""[39m
+          [36m>[39m
+            [0mPrecedente[0m
+          [36m</button>[39m
+          [36m<span>[39m
+            [0m1[0m
+            [0m / [0m
+            [0m27[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"_button_623194 _secondary_623194"[39m
+          [36m>[39m
+            [0mSuccessiva[0m
+          [36m</button>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+[90m [2m❯[22m waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:[2m163:27[22m[39m
+[90m [2m❯[22m node_modules/@testing-library/dom/dist/query-helpers.js:[2m86:33[22m[39m
+[36m [2m❯[22m src/pages/HistoricalPlayersPage.test.tsx:[2m83:25[22m[39m
+    [90m 81|[39m     )[33m.[39m[34mtoBeVisible[39m()[33m;[39m
+    [90m 82|[39m
+    [90m 83|[39m     [34mexpect[39m([35mawait[39m screen[33m.[39m[34mfindByText[39m([32m'Andrea Belotti'[39m))[33m.[39m[34mtoBeVisible[39m()[33m;[39m
+    [90m   |[39m                         [31m^[39m
+    [90m 84|[39m
+    [90m 85|[39m     [34mexpect[39m(screen[33m.[39m[34mgetByText[39m([32m'Storico'[39m))[33m.[39m[34mtoBeVisible[39m()[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/pages/HistoricalPlayersPage.test.tsx[2m > [22mcatalogo storico giocatori[2m > [22mmantiene filtri e paginazione nello URL
+[31m[1mTestingLibraryElementError[22m[39m: Found multiple elements with the text: Prima pagina
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<strong>[39m
+  [0mPrima pagina[0m
+[36m</strong>[39m
+
+Ignored nodes: comments, script, style
+[36m<strong>[39m
+  [0mPrima pagina[0m
+[36m</strong>[39m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"_page_623194"[39m
+    [36m>[39m
+      [36m<header[39m
+        [33mclass[39m=[32m"_hero_623194"[39m
+      [36m>[39m
+        [36m<div>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"_eyebrow_623194"[39m
+          [36m>[39m
+            [0mArchivio stagionale[0m
+          [36m</span>[39m
+          [36m<h1>[39m
+            [0mCatalogo storico[0m
+          [36m</h1>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"_muted_623194"[39m
+          [36m>[39m
+            [0m663 giocatori ? 2025/2026[0m
+          [36m</p>[39m
+        [36m</div>[39m
+      [36m</header>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"Filtri catalogo storico"[39m
+        [33mclass[39m=[32m"_panel_623194 _filters_623194"[39m
+      [36m>[39m
+        [36m<label>[39m
+          [0mStagione[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"Stagione"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"2025/2026"[39m
+            [36m>[39m
+              [0m2025/2026[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"2024/2025"[39m
+            [36m>[39m
+              [0m2024/2025[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [0mCerca[0m
+          [36m<input[39m
+            [33mplaceholder[39m=[32m"Nome giocatore"[39m
+            [33mvalue[39m=[32m""[39m
+          [36m/>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [0mRuolo[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"Ruolo"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0mTutti[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"P"[39m
+            [36m>[39m
+              [0mP[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"D"[39m
+            [36m>[39m
+              [0mD[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"C"[39m
+            [36m>[39m
+              [0mC[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"A"[39m
+            [36m>[39m
+              [0mA[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"_button_623194 _secondary_623194"[39m
+        [36m>[39m
+          [0mAzzera[0m
+        [36m</button>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33maria-live[39m=[32m"polite"[39m
+        [33mclass[39m=[32m"_panel_623194"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"_tableWrap_623194 _desktopTable_623194"[39m
+        [36m>[39m
+          [36m<table[39m
+            [33mclass[39m=[32m"_table_623194"[39m
+          [36m>[39m
+            [36m<thead>[39m
+              [36m<tr>[39m
+                [36m<th>[39m
+                  [0mGiocatore[0m
+                [36m</th>[39m
+                [36m<th>[39m
+                  [0mStato[0m
+                [36m</th>[39m
+                [36m<th>[39m
+                  [0mRuolo[0m
+                [36m</th>[39m
+                [36m<th>[39m
+                  [0mClub[0m
+                [36m</th>[39m
+                [36m<th>[39m
+                  [0mPresenze[0m
+                [36m</th>[39m
+                [36m<th>[39m
+                  [0mFantamedia[0m
+                [36m</th>[39m
+                [36m<th>[39m
+                  [0mGol[0m
+                [36m</th>[39m
+                [36m<th>[39m
+                  [0mAssist[0m
+                [36m</th>[39m
+              [36m</tr>[39m
+            [36m</thead>[39m
+            [36m<tbody>[39m
+              [36m<tr>[39m
+                [36m<td>[39m
+                  [36m<strong>[39m
+                    [0mAndrea Belotti[0m
+                  [36m</strong>[39m
+                [36m</td>[39m
+                [36m<td>[39m
+                  [0mStorico[0m
+                [36m</td>[39m
+                [36m<td>[39m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"_role_623194"[39m
+                  [36m>[39m
+                    [0mA[0m
+                  [36m</span>[39m
+                [36m</td>[39m
+                [36m<td>[39m
+                  [0mCagliari[0m
+                [36m</td>[39m
+                [36m<td>[39m
+                  [0m28[0m
+                [36m</td>[39m
+                [36m<td>[39m
+                  [0m6.4[0m
+                [36m</td>[39m
+                [36m<td>[39m
+                  [0m7[0m
+                [36m</td>[39m
+                [36m<td>[39m
+                  [0m2[0m
+                [36m</td>[39m
+              [36m</tr>[39m
+            [36m</tbody>[39m
+          [36m</table>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"_cards_623194"[39m
+        [36m>[39m
+          [36m<article[39m
+            [33mclass[39m=[32m"_card_623194"[39m
+          [36m>[39m
+            [36m<strong>[39m
+              [0mAndrea Belotti[0m
+            [36m</strong>[39m
+            [36m<span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"_role_623194"[39m
+              [36m>[39m
+                [0mA[0m
+              [36m</span>[39m
+              [0m ?[0m
+              [0m [0m
+              [0mCagliari[0m
+            [36m</span>[39m
+            [36m<span>[39m
+              [0mStorico[0m
+              [0m ? [0m
+              [0m28[0m
+              [0m presenze ? FM [0m
+              [0m6.4[0m
+            [36m</span>[39m
+            [36m<span>[39m
+              [0mGol [0m
+              [0m7[0m
+              [0m ? Assist [0m
+              [0m2[0m
+            [36m</span>[39m
+          [36m</article>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"_pager_623194"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"_button_623194 _secondary_623194"[39m
+            [33mdisabled[39m=[32m""[39m
+          [36m>[39m
+            [0mPrecedente[0m
+          [36m</button>[39m
+          [36m<span>[39m
+            [0m1[0m
+            [0m / [0m
+            [0m27[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"_button_623194 _secondary_623194"[39m
+          [36m>[39m
+            [0mSuccessiva[0m
+          [36m</button>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"_page_623194"[39m
+    [36m>[39m
+      [36m<header[39m
+        [33mclass[39m=[32m"_hero_623194"[39m
+      [36m>[39m
+        [36m<div>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"_eyebrow_623194"[39m
+          [36m>[39m
+            [0mArchivio stagionale[0m
+          [36m</span>[39m
+          [36m<h1>[39m
+            [0mCatalogo storico[0m
+          [36m</h1>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"_muted_623194"[39m
+          [36m>[39m
+            [0m30 giocatori ? 2025/2026[0m
+          [36m</p>[39m
+        [36m</div>[39m
+      [36m</header>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"Filtri catalogo storico"[39m
+        [33mclass[39m=[32m"_panel_623194 _filters_623194"[39m
+      [36m>[39m
+        [36m<label>[39m
+          [0mStagione[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"Stagione"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"2025/2026"[39m
+            [36m>[39m
+              [0m2025/2026[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"2024/2025"[39m
+            [36m>[39m
+              [0m2024/2025[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [0mCerca[0m
+          [36m<input[39m
+            [33mplaceholder[39m=[32m"Nome giocatore"[39m
+            [33mvalue[39m=[32m""[39m
+          [36m/>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [0mRuolo[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"Ruolo"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0mTutti[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"P"[39m
+            [36m>[39m
+              [0mP[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"D"[39m
+            [36m>[39m
+              [0mD[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"C"[39m
+            [36m>[39m
+              [0mC[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"A"[39m
+            [36m>[39m
+              [0mA[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"_button_623194 _secondary_623194"[39m
+        [36m>[39m
+          [0mAzzera[0m
+        [36m</button>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33maria-live[39m=[32m"polite"[39m
+        [33mclass[39m=[32m"_panel_623194"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"_tableWrap_623194 _desktopTable_623194"[39m
+        [36m>[39m
+          [36m<table[39m
+            [33mclass[39m=[32m"_table_623194"[39m
+          [36m>[39m
+            [36m<thead>[39m
+              [36m<tr>[39m
+                [36m<th>[39m
+                  [0mGiocatore[0m
+                [36m</th>[39m
+                [36m<th>[39m
+                  [0mStato[0m
+                [36m</th>[39m
+                [36m<th>[39m
+                  [0mRuolo[0m
+                [36m</th>[39m
+                [36m<th>[39m
+                  [0mClub[0m
+                [36m</th>[39m
+                [36m<th>[39m
+                  [0mPresenze[0m
+                [36m</th>[39m
+                [36m<th>[39m
+                  [0mFantamedia[0m
+                [36m</th>[39m
+                [36m<th>[39m
+                  [0mGol[0m
+                [36m</th>[39m
+                [36m<th>[39m
+                  [0mAssist[0m
+                [36m</th>[39m
+              [36m</tr>[39m
+            [36m</thead>[39m
+            [36m<tbody>[39m
+              [36m<tr>[39m
+                [36m<td>[39m
+                  [36m<strong>[39m
+                    [0mPrima pagina[0m
+                  [36m</strong>[39m
+                [36m</td>[39m
+                [36m<td>[39m
+                  [0mStorico[0m
+                [36m</td>[39m
+                [36m<td>[39m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"_role_623194"[39m
+                  [36m>[39m
+                    [0mD[0m
+                  [36m</span>[39m
+                [36m</td>[39m
+                [36m<td>[39m
+                  [0mDato non disponibile[0m
+                [36m</td>[39m
+                [36m<td>[39m
+                  [0m10[0m
+                [36m</td>[39m
+                [36m<td>[39m
+                  [0m6[0m
+                [36m</td>[39m
+                [36m<td>[39m
+                  [0m0[0m
+                [36m</td>[39m
+                [36m<td>[39m
+                  [0m0[0m
+                [36m</td>[39m
+              [36m</tr>[39m
+            [36m</tbody>[39m
+          [36m</table>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"_cards_623194"[39m
+        [36m>[39m
+          [36m<article[39m
+            [33mclass[39m=[32m"_card_623194"[39m
+          [36m>[39m
+            [36m<strong>[39m
+              [0mPrima pagina[0m
+            [36m</strong>[39m
+            [36m<span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"_role_623194"[39m
+              [36m>[39m
+                [0mD[0m
+              [36m</span>[39m
+              [0m ?[0m
+              [0m [0m
+              [0mClub non disponibile[0m
+            [36m</span>[39m
+            [36m<span>[39m
+              [0mStorico[0m
+              [0m ? [0m
+              [0m10[0m
+              [0m presenze ? FM [0m
+              [0m6[0m
+            [36m</span>[39m
+            [36m<span>[39m
+              [0mGol [0m
+              [0m0[0m
+              [0m ? Assist [0m
+              [0m0[0m
+            [36m</span>[39m
+          [36m</article>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"_pager_623194"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"_button_623194 _secondary_623194"[39m
+            [33mdisabled[39m=[32m""[39m
+          [36m>[39m
+            [0mPrecedente[0m
+          [36m</button>[39m
+          [36m<span>[39m
+            [0m1[0m
+            [0m / [0m
+            [0m2[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"_button_623194 _secondary_623194"[39m
+          [36m>[39m
+            [0mSuccessiva[0m
+          [36m</button>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"_page_623194"[39m
+    [36m>[39m
+      [36m<header[39m
+        [33mclass[39m=[32m"_hero_623194"[39m
+      [36m>[39m
+        [36m<div>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"_eyebrow_623194"[39m
+          [36m>[39m
+            [0mArchivio stagionale[0m
+          [36m</span>[39m
+          [36m<h1>[39m
+            [0mCatalogo storico[0m
+          [36m</h1>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"_muted_623194"[39m
+          [36m>[39m
+            [0m663 giocatori ? 2025/2026[0m
+          [36m</p>[39m
+        [36m</div>[39m
+      [36m</header>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"Filtri catalogo storico"[39m
+        [33mclass[39m=[32m"_panel_623194 _filters_623194"[39m
+      [36m>[39m
+        [36m<label>[39m
+          [0mStagione[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"Stagione"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"2025/2026"[39m
+            [36m>[39m
+              [0m2025/2026[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"2024/2025"[39m
+            [36m>[39m
+              [0m2024/2025[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [0mCerca[0m
+          [36m<input[39m
+            [33mplaceholder[39m=[32m"Nome giocatore"[39m
+            [33mvalue[39m=[32m""[39m
+          [36m/>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [0mRuolo[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"Ruolo"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0mTutti[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"P"[39m
+            [36m>[39m
+              [0mP[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"D"[39m
+            [36m>[39m
+              [0mD[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"C"[39m
+            [36m>[39m
+              [0mC[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"A"[39m
+            [36m>[39m
+              [0mA[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"_button_623194 _secondary_623194"[39m
+        [36m>[39m
+          [0mAzzera[0m
+        [36m</button>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33maria-live[39m=[32m"polite"[39m
+        [33mclass[39m=[32m"_panel_623194"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"_tableWrap_623194 _desktopTable_623194"[39m
+        [36m>[39m
+          [36m<table[39m
+            [33mclass[39m=[32m"_table_623194"[39m
+          [36m>[39m
+            [36m<thead>[39m
+              [36m<tr>[39m
+                [36m<th>[39m
+                  [0mGiocatore[0m
+                [36m</th>[39m
+                [36m<th>[39m
+                  [0mStato[0m
+                [36m</th>[39m
+                [36m<th>[39m
+                  [0mRuolo[0m
+                [36m</th>[39m
+                [36m<th>[39m
+                  [0mClub[0m
+                [36m</th>[39m
+                [36m<th>[39m
+                  [0mPresenze[0m
+                [36m</th>[39m
+                [36m<th>[39m
+                  [0mFantamedia[0m
+                [36m</th>[39m
+                [36m<th>[39m
+                  [0mGol[0m
+                [36m</th>[39m
+                [36m<th>[39m
+                  [0mAssist[0m
+                [36m</th>[39m
+              [36m</tr>[39m
+            [36m</thead>[39m
+            [36m<tbody>[39m
+              [36m<tr>[39m
+                [36m<td>[39m
+                  [36m<strong>[39m
+                    [0mAndrea Belotti[0m
+                  [36m</strong>[39m
+                [36m</td>[39m
+                [36m<td>[39m
+                  [0mStorico[0m
+                [36m</td>[39m
+                [36m<td>[39m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"_role_623194"[39m
+                  [36m>[39m
+                    [0mA[0m
+                  [36m</span>[39m
+                [36m</td>[39m
+                [36m<td>[39m
+                  [0mCagliari[0m
+                [36m</td>[39m
+                [36m<td>[39m
+                  [0m28[0m
+                [36m</td>[39m
+                [36m<td>[39m
+                  [0m6.4[0m
+                [36m</td>[39m
+                [36m<td>[39m
+                  [0m7[0m
+                [36m</td>[39m
+                [36m<td>[39m
+                  [0m2[0m
+                [36m</td>[39m
+              [36m</tr>[39m
+            [36m</tbody>[39m
+          [36m</table>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"_cards_623194"[39m
+        [36m>[39m
+          [36m<article[39m
+            [33mclass[39m=[32m"_card_623194"[39m
+          [36m>[39m
+            [36m<strong>[39m
+              [0mAndrea Belotti[0m
+            [36m</strong>[39m
+            [36m<span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"_role_623194"[39m
+              [36m>[39m
+                [0mA[0m
+              [36m</span>[39m
+              [0m ?[0m
+              [0m [0m
+              [0mCagliari[0m
+            [36m</span>[39m
+            [36m<span>[39m
+              [0mStorico[0m
+              [0m ? [0m
+              [0m28[0m
+              [0m presenze ? FM [0m
+              [0m6.4[0m
+            [36m</span>[39m
+            [36m<span>[39m
+              [0mGol [0m
+              [0m7[0m
+              [0m ? Assist [0m
+              [0m2[0m
+            [36m</span>[39m
+          [36m</article>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"_pager_623194"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"_button_623194 _secondary_623194"[39m
+            [33mdisabled[39m=[32m""[39m
+          [36m>[39m
+            [0mPrecedente[0m
+          [36m</button>[39m
+          [36m<span>[39m
+            [0m1[0m
+            [0m / [0m
+            [0m27[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"_button_623194 _secondary_623194"[39m
+          [36m>[39m
+            [0mSuccessiva[0m
+          [36m</button>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"_page_623194"[39m
+    [36m>[39m
+      [36m<header[39m
+        [33mclass[39m=[32m"_hero_623194"[39m
+      [36m>[39m
+        [36m<div>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"_eyebrow_623194"[39m
+          [36m>[39m
+            [0mArchivio stagionale[0m
+          [36m</span>[39m
+          [36m<h1>[39m
+            [0mCatalogo storico[0m
+          [36m</h1>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"_muted_623194"[39m
+          [36m>[39m
+            [0m30 giocatori ? 2025/2026[0m
+          [36m</p>[39m
+        [36m</div>[39m
+      [36m</header>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"Filtri catalogo storico"[39m
+        [33mclass[39m=[32m"_panel_623194 _filters_623194"[39m
+      [36m>[39m
+        [36m<label>[39m
+          [0mStagione[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"Stagione"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"2025/2026"[39m
+            [36m>[39m
+              [0m2025/2026[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"2024/2025"[39m
+            [36m>[39m
+              [0m2024/2025[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [0mCerca[0m
+          [36m<input[39m
+            [33mplaceholder[39m=[32m"Nome giocatore"[39m
+            [33mvalue[39m=[32m""[39m
+          [36m/>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [0mRuolo[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"Ruolo"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0mTutti[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"P"[39m
+            [36m>[39m
+              [0mP[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"D"[39m
+            [36m>[39m
+              [0mD[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"C"[39m
+            [36m>[39m
+              [0mC[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"A"[39m
+            [36m>[39m
+              [0mA[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"_button_623194 _secondary_623194"[39m
+        [36m>[39m
+          [0mAzzera[0m
+        [36m</button>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33maria-live[39m=[32m"polite"[39m
+        [33mclass[39m=[32m"_panel_623194"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"_tableWrap_623194 _desktopTable_623194"[39m
+        [36m>[39m
+          [36m<table[39m
+            [33mclass[39m=[32m"_table_623194"[39m
+          [36m>[39m
+            [36m<thead>[39m
+              [36m<tr>[39m
+                [36m<th>[39m
+                  [0mGiocatore[0m
+                [36m</th>[39m
+                [36m<th>[39m
+                  [0mStato[0m
+                [36m</th>[39m
+                [36m<th>[39m
+                  [0mRuolo[0m
+                [36m</th>[39m
+                [36m<th>[39m
+                  [0mClub[0m
+                [36m</th>[39m
+                [36m<th>[39m
+                  [0mPresenze[0m
+                [36m</th>[39m
+                [36m<th>[39m
+                  [0mFantamedia[0m
+                [36m</th>[39m
+                [36m<th>[39m
+                  [0mGol[0m
+                [36m</th>[39m
+                [36m<th>[39m
+                  [0mAssist[0m
+                [36m</th>[39m
+              [36m</tr>[39m
+            [36m</thead>[39m
+            [36m<tbody>[39m
+              [36m<tr>[39m
+                [36m<td>[39m
+                  [36m<strong>[39m
+                    [0mPrima pagina[0m
+                  [36m</strong>[39m
+                [36m</td>[39m
+                [36m<td>[39m
+                  [0mStorico[0m
+                [36m</td>[39m
+                [36m<td>[39m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"_role_623194"[39m
+                  [36m>[39m
+                    [0mD[0m
+                  [36m</span>[39m
+                [36m</td>[39m
+                [36m<td>[39m
+                  [0mDato non disponibile[0m
+                [36m</td>[39m
+                [36m<td>[39m
+                  [0m10[0m
+                [36m</td>[39m
+                [36m<td>[39m
+                  [0m6[0m
+                [36m</td>[39m
+                [36m<td>[39m
+                  [0m0[0m
+                [36m</td>[39m
+                [36m<td>[39m
+                  [0m0[0m
+                [36m</td>[39m
+              [36m</tr>[39m
+            [36m</tbody>[39m
+          [36m</table>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"_cards_623194"[39m
+        [36m>[39m
+          [36m<article[39m
+            [33mclass[39m=[32m"_card_623194"[39m
+          [36m>[39m
+            [36m<strong>[39m
+              [0mPrima pagina[0m
+            [36m</strong>[39m
+            [36m<span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"_role_623194"[39m
+              [36m>[39m
+                [0mD[0m
+              [36m</span>[39m
+              [0m ?[0m
+              [0m [0m
+              [0mClub non disponibile[0m
+            [36m</span>[39m
+            [36m<span>[39m
+              [0mStorico[0m
+              [0m ? [0m
+              [0m10[0m
+              [0m presenze ? FM [0m
+              [0m6[0m
+            [36m</span>[39m
+            [36m<span>[39m
+              [0mGol [0m
+              [0m0[0m
+              [0m ? Assist [0m
+              [0m0[0m
+            [36m</span>[39m
+          [36m</article>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"_pager_623194"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"_button_623194 _secondary_623194"[39m
+            [33mdisabled[39m=[32m""[39m
+          [36m>[39m
+            [0mPrecedente[0m
+          [36m</button>[39m
+          [36m<span>[39m
+            [0m1[0m
+            [0m / [0m
+            [0m2[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"_button_623194 _secondary_623194"[39m
+          [36m>[39m
+            [0mSuccessiva[0m
+          [36m</button>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+[90m [2m❯[22m waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:[2m163:27[22m[39m
+[90m [2m❯[22m node_modules/@testing-library/dom/dist/query-helpers.js:[2m86:33[22m[39m
+[36m [2m❯[22m src/pages/HistoricalPlayersPage.test.tsx:[2m143:25[22m[39m
+    [90m141|[39m     [34mrenderPage[39m()[33m;[39m
+    [90m142|[39m
+    [90m143|[39m     [34mexpect[39m([35mawait[39m screen[33m.[39m[34mfindByText[39m([32m'Prima pagina'[39m))[33m.[39m[34mtoBeVisible[39m()[33m;[39m
+    [90m   |[39m                         [31m^[39m
+    [90m144|[39m
+    [90m145|[39m     [35mawait[39m userEvent[33m.[39m[34mselectOptions[39m(screen[33m.[39m[34mgetByLabelText[39m([32m'Ruolo'[39m)[33m,[39m [32m'A'[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[90m (2)[39m
+[2m   Start at [22m 16:02:14
+[2m   Duration [22m 4.66s[2m (transform 214ms, setup 307ms, import 514ms, tests 2.19s, environment 1.38s)[22m
+EXIT=1
+
+================================================================================
+ROLLBACK
+================================================================================
+REASON=Targeted historical frontend test failed
+RESTORED=frontend\src\features\core\api.ts
+RESTORED=frontend\src\pages\PlayersPage.tsx
+RESTORED=frontend\src\app\router\AppRouter.tsx
+REMOVED=frontend\src\pages\HistoricalPlayersPage.tsx
+REMOVED=frontend\src\pages\HistoricalPlayersPage.test.tsx
+ROLLBACK_COMPLETED=YES
+ALL_GREEN=NO
+LOG_FILE=C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\logs\M03-historical-frontend-implementation-fixed.txt

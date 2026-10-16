@@ -1,0 +1,50 @@
+D02.26 — NAVIGAZIONE E SIDEBAR
+Data: 2026-08-27
+Branch: arena/01a043d3-fantacalcio-intelligence
+Scope: solo frontend. Nessuna modifica a backend, database, dati reali/test, migrazioni, produzione o deploy.
+
+DIAGNOSI
+Le voci Analisi, Statistiche, Comparatore, Market e Impostazioni erano anchor con
+`href="#preview"`, quindi non cambiavano route e non offrivano una destinazione reale.
+La sidebar aveva già label ARIA sulle voci, ma nascondeva il testo a viewport ridotta
+senza tooltip nativi. La navigazione non aveva un contenitore scrollabile dedicato:
+a schermi bassi il blocco inferiore poteva uscire dall'area visibile. Le route esistenti
+non includevano pagine per le cinque voci future.
+
+FIX
+- Tutte le voci ora sono `NavLink` con destinazione reale e `aria-label`/`title` coerenti.
+- Aggiunte le route `/analysis`, `/statistics`, `/comparator`, `/market` e `/settings`.
+  Ognuna apre una pagina esplicita "Questa sezione non è ancora disponibile", senza
+  dati fittizi o pulsanti inerti.
+- La sidebar collassa al cambio di sezione, resta compatta a viewport ridotta, si
+  espande su hover o focus-within e torna compatta quando il puntatore esce. La lista
+  della navigazione è scrollabile e il contenuto inferiore non viene più tagliato.
+  Su mobile resta disponibile il menu overlay esistente.
+- Aggiunto il componente riutilizzabile `BackButton`: prova la cronologia browser/router
+  con `navigate(-1)` e usa prima l'origine valida nello state, poi il fallback indicato.
+  Integrato nel dettaglio giocatore e nel dettaglio sessione Live Auction; aggiornati i
+  link origine verso il dettaglio giocatore.
+
+TEST
+- Route future tramite App: PASS.
+- Sidebar: route, tooltip/ARIA e collasso: PASS.
+- `BackButton`: cronologia e fallback: PASS.
+- Suite frontend: PASS — 20 file / 112 test.
+- Typecheck: PASS.
+- Build: PASS.
+- `git diff --check`: PASS.
+
+FILE PRINCIPALI
+- `frontend/src/layouts/AppShell.tsx`
+- `frontend/src/layouts/AppShell.module.css`
+- `frontend/src/app/router/AppRouter.tsx`
+- `frontend/src/pages/ComingSoonPage.tsx`
+- `frontend/src/components/navigation/BackButton.tsx`
+- `frontend/src/components/navigation/BackButton.module.css`
+- Test di app shell, route, dettaglio giocatore e BackButton.
+
+LIMITI RESIDUI
+Le cinque sezioni future hanno routing e stato esplicito, ma non hanno ancora funzionalità
+dominio: non sono state implementate Analisi, Statistiche, Comparatore, Market o
+Impostazioni. Il lint globale continua a segnalare i due errori preesistenti in
+`frontend/src/layouts/GlobalSearch.tsx`; il file non è stato modificato per risolverli.

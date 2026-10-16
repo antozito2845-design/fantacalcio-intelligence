@@ -1,0 +1,75 @@
+@import './tokens.css';
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html {
+  font-family: var(--font-sans);
+  background: var(--color-canvas);
+  color: var(--color-text-primary);
+}
+body {
+  min-inline-size: 20rem;
+  min-block-size: 100vh;
+  margin: 0;
+  background:
+    radial-gradient(circle at 72% -8%, rgb(39 118 187 / 16%), transparent 34rem),
+    radial-gradient(circle at 18% 82%, rgb(38 213 216 / 5%), transparent 28rem), var(--color-canvas);
+  background-attachment: fixed;
+}
+html,
+body,
+#root {
+  max-inline-size: 100%;
+  overflow-x: hidden;
+}
+button,
+input,
+select {
+  font: inherit;
+}
+button,
+a,
+input,
+select {
+  -webkit-tap-highlight-color: transparent;
+}
+a {
+  color: inherit;
+}
+h1,
+h2,
+h3,
+p {
+  margin-block-start: 0;
+}
+svg {
+  flex: 0 0 auto;
+}
+:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 3px;
+}
+::selection {
+  color: var(--color-text-inverse);
+  background: var(--color-accent-primary);
+}
+.status-page {
+  max-inline-size: 42rem;
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-6);
+}
+.status-page a {
+  color: var(--color-accent-primary);
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

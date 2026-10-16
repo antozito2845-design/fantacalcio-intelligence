@@ -1,0 +1,494 @@
+FANTACALCIO INTELLIGENCE
+B63 TRANSFERMARKT - REPORT DI HANDOFF
+Data: 2026-08-16
+
+======================================================================
+1. SCOPO DELLA SESSIONE
+======================================================================
+
+Obiettivo richiesto:
+- completare e certificare il discovery Transfermarkt B63 in DRY-RUN
+  per le 19 squadre Serie A 2026/2027 diverse da Atalanta;
+- preservare Atalanta come baseline certificata;
+- non effettuare persistence massiva;
+- non modificare il frontend;
+- non modificare/cancellare i report FINAL_BACKEND_*.txt;
+- non modificare/cancellare backup-before-v34-alignment-20260814.dump;
+- non eseguire git add, commit o push.
+
+Tutti i discovery descritti in questo report hanno restituito:
+persisted=false
+
+Non sono stati eseguiti git add, commit o push.
+Non e' stato modificato il frontend.
+Non sono stati modificati o cancellati i report FINAL_BACKEND_*.
+Non e' stato modificato o cancellato il dump di backup.
+
+======================================================================
+2. ANALISI ESEGUITA
+======================================================================
+
+E' stata studiata l'implementazione esistente nel package:
+
+backend/src/main/java/it/fantacalciointelligence/backend/identity/
+enrichment/transfermarkt
+
+In particolare sono stati esaminati:
+- TransfermarktDiscoveryService
+- TransfermarktDiscoveryClient
+- TransfermarktDiscoveryProperties
+- TransfermarktDiscoveryController
+- TransfermarktCandidateMatcher
+- TransfermarktSearchParser
+- TransfermarktProfileParser
+- response/record associati
+- test Transfermarkt esistenti
+- query di selezione dei giocatori operativi
+- configurazioni applicative e profilo dev
+- schema DB relativo a seasons, season_clubs, players,
+  player_registrations, player_reconciliation_results e
+  player_identity_profiles.
+
+E' stato confermato che il discovery seleziona soltanto:
+- players.active = TRUE
+- player_registrations.registration_status = ACTIVE
+- stagione richiesta
+- giocatori presenti in player_reconciliation_results
+
+Atalanta continua quindi a richiedere 24 giocatori, escludendo i due
+out_of_game/INACTIVE gia' certificati.
+
+======================================================================
+3. CLUB IDENTIFICATI DAL DB
+======================================================================
+
+I club sono stati ricavati da season_clubs per la stagione autoritativa
+2026/2027, non da una lista hardcoded obsoleta.
+
+Le 19 squadre target, esclusa Atalanta, sono:
+
+1. Bologna
+2. Cagliari
+3. Como
+4. Fiorentina
+5. Frosinone
+6. Genoa
+7. Inter
+8. Juventus
+9. Lazio
+10. Lecce
+11. Milan
+12. Monza
+13. Napoli
+14. Parma
+15. Roma
+16. Sassuolo
+17. Torino
+18. Udinese
+19. Venezia
+
+======================================================================
+4. BASELINE INIZIALE PRIMA DEI FIX
+======================================================================
+
+Prima delle modifiche e' stata eseguita una baseline completa dei 19 club.
+I principali problemi osservati erano:
+
+- abbreviazioni Fantacalcio come Mas., Se., Ju., Je., Hj.;
+- surnames/display name brevi che producevano omonimi storici;
+- matcher che ignorava nome canonico, data di nascita e ID Transfermarkt
+  gia' presenti in player_identity_profiles;
+- club Transfermarkt trattato come requisito rigido anche con identita'
+  forte, in contrasto con la distinzione identityVerified/rosterConfirmed;
+- URL diretto Transfermarkt non affidabile se lo slug non coincideva con
+  lo slug effettivamente usato dal sito;
+- alcune risposte remote incomplete/HTTP 403 durante sequenze lunghe,
+  compatibili con rate limiting temporaneo.
+
+La baseline Atalanta, con accesso di rete autorizzato, era:
+
+requested=24, matched=24, review=0, notFound=0, failed=0,
+persisted=false
+
+======================================================================
+5. MODIFICHE IMPLEMENTATE
+======================================================================
+
+File modificato:
+
+backend/src/main/java/it/fantacalciointelligence/backend/identity/
+enrichment/transfermarkt/TransfermarktDiscoveryService.java
+
+Modifiche effettuate:
+
+1. La query dei giocatori operativi carica anche da
+   player_identity_profiles:
+   - canonical_full_name
+   - birth_date
+   - transfermarkt_player_id
+
+2. Se esiste un transfermarkt_player_id locale gia' noto, viene costruito
+   un candidato per quello stesso ID invece di affidarsi soltanto alla
+   ricerca testuale del display name abbreviato.
+
+3. Lo scoring usa il nome canonico quando disponibile.
+
+4. Se l'URL sintetico con ID non produce un profilo verificabile, viene
+   eseguito un fallback di ricerca usando:
+   - nome canonico;
+   - display name Fantacalcio;
+   - query semplificata senza suffisso abbreviato.
+
+5. Il fallback accetta soltanto il candidato con lo stesso identico
+   transfermarkt_player_id locale. Non viene sostituito con un candidato
+   dal nome meramente simile.
+
+6. E' stata separata la forza dell'identita' dalla conferma del roster:
+   un'identita' con ID Transfermarkt, nome compatibile e data di nascita
+   coincidente puo' essere MATCHED_VERIFIED anche se il club Transfermarkt
+   e' momentaneamente diverso o non leggibile.
+
+7. Una data di nascita Transfermarkt diversa da quella del profilo locale
+   produce sempre NOT_FOUND.
+
+8. Le iniziali Fantacalcio continuano a disambiguare gli omonimi.
+   Esempio verificato dai test:
+   - Paul Mendy non puo' essere verificato come Benjamin Mendy.
+
+9. E' stato supportato il caso generico dei nomi professionali abbreviati,
+   come Ederson rispetto al nome anagrafico completo, senza introdurre una
+   eccezione hardcoded per il singolo giocatore.
+
+10. Non sono stati aggiunti nuovi fix Unicode al parser.
+    repairMojibake() e' rimasto il meccanismo esistente.
+
+======================================================================
+6. TEST AGGIUNTO
+======================================================================
+
+File aggiunto:
+
+backend/src/test/java/it/fantacalciointelligence/backend/identity/
+enrichment/transfermarkt/TransfermarktDiscoveryIdentityVerificationTest.java
+
+Coperture aggiunte:
+- identita' forte con roster Transfermarkt temporalmente diverso;
+- identita' forte con roster Transfermarkt non leggibile;
+- rifiuto del mismatch della data di nascita;
+- rifiuto di persona diversa nonostante una similarita' parziale;
+- accettazione sicura di un nome professionale piu' corto del nome
+  anagrafico quando ID e data di nascita coincidono.
+
+======================================================================
+7. RISULTATO DRY-RUN FINALE DISPONIBILE
+======================================================================
+
+Club          Requested  Matched  Review  NotFound  Failed
+------------- ---------  -------  ------  --------  ------
+Bologna              26       26       0         0       0
+Cagliari             26       25       1         0       0
+Como                 29       29       0         0       0
+Fiorentina           23       23       0         0       0
+Frosinone            29       29       0         0       0
+Genoa                25       23       0         2       0
+Inter                23       23       0         0       0
+Juventus             25       24       0         1       0
+Lazio                26       26       0         0       0
+Lecce                21       19       1         1       0
+Milan                26       26       0         0       0
+Monza                21       21       0         0       0
+Napoli               26       24       0         2       0
+Parma                23       21       0         2       0
+Roma                 22       21       0         1       0
+Sassuolo             25       25       0         0       0
+Torino               24       24       0         0       0
+Udinese              27       27       0         0       0
+Venezia              27       27       0         0       0
+------------- ---------  -------  ------  --------  ------
+TOTALE              474      463       2         9       0
+
+Controllo regressione Atalanta finale:
+
+Atalanta: requested=24, matched=24, review=0, notFound=0, failed=0,
+persisted=false
+
+Club perfetti nella passata finale:
+- Bologna
+- Como
+- Fiorentina
+- Frosinone
+- Inter
+- Lazio
+- Milan
+- Monza
+- Sassuolo
+- Torino
+- Udinese
+- Venezia
+
+======================================================================
+8. CASI NON PERFETTI DELLA PASSATA FINALE
+======================================================================
+
+CAGLIARI
+
+- Aurelio
+  Stato: REVIEW_REQUIRED
+  Candidato: Aurelio Milani
+  Transfermarkt ID: 126010
+  Data di nascita letta: 1934-05-14
+  Club corrente: non leggibile
+  Valutazione: probabile omonimo storico. Correttamente NON verificato.
+
+GENOA
+
+- Ostigard
+  Stato: NOT_FOUND
+  Transfermarkt ID locale: 367284
+  Nome locale canonico: Leo Ostigard
+  Motivo osservato: profilo remoto non letto completamente nella passata.
+
+- Vitinha O.
+  Stato: NOT_FOUND
+  Transfermarkt ID locale: 586853
+  Nome locale canonico: Vitinha Carvalho Olivera
+  Motivo osservato: profilo remoto non letto completamente nella passata.
+
+JUVENTUS
+
+- Yildiz
+  Stato: NOT_FOUND
+  Transfermarkt ID locale: 845654
+  Nome locale canonico: Kenan Yildiz
+  Motivo osservato: profilo remoto non letto completamente nella passata.
+
+LECCE
+
+- Gaspar K.
+  Stato: NOT_FOUND
+  Transfermarkt ID locale: 836441
+  Nome locale canonico: Kialonda Gaspar
+  Motivo osservato: profilo remoto non letto completamente nella passata.
+
+- Penev
+  Stato: REVIEW_REQUIRED
+  Candidato: Dimitar Penev
+  Transfermarkt ID: 143319
+  Data di nascita letta: 1945-07-12
+  Club corrente: non leggibile
+  Valutazione: probabile omonimo storico. Correttamente NON verificato.
+
+NAPOLI
+
+- Hojlund
+  Stato: NOT_FOUND
+  Transfermarkt ID locale: 610442
+  Nome locale canonico: Rasmus Hojlund
+  Motivo osservato: profilo remoto non letto completamente nella passata.
+
+- Zambo Anguissa
+  Stato: NOT_FOUND
+  Transfermarkt ID locale: 354361
+  Nome locale canonico: Andre Zambo Anguissa
+  Motivo osservato: profilo remoto non letto completamente nella passata.
+
+PARMA
+
+- Romero D.
+  Stato: NOT_FOUND
+  Candidato osservato: Cristian Romero
+  Transfermarkt ID candidato: 355915
+  Valutazione: non esistono prove locali sufficienti per verificare questa
+  identita'. Il matcher ha correttamente evitato il match.
+
+- Sorensen O.
+  Stato: NOT_FOUND
+  Transfermarkt ID locale: 514888
+  Nome locale canonico: Oliver Sorensen
+  Motivo osservato: profilo remoto non letto completamente nella passata.
+
+ROMA
+
+- N'Dicka
+  Stato: NOT_FOUND
+  Transfermarkt ID locale: 371149
+  Nome locale canonico: Evan N'Dicka
+  Motivo osservato: profilo remoto non letto completamente nella passata.
+
+Nota importante:
+i nove NOT_FOUND non sono stati dichiarati VERIFIED. Diversi hanno un ID
+locale plausibile, ma l'ultima risposta remota non conteneva prove leggibili
+sufficienti. Sono da rieseguire dopo cooldown e da certificare singolarmente.
+
+======================================================================
+9. TEST E BUILD ESEGUITI
+======================================================================
+
+Esecuzioni completate durante lo sviluppo:
+
+- gruppo Transfermarkt: 21 test eseguiti, 0 failure, 0 error;
+- gruppo successivo: 9 test eseguiti, 0 failure, 0 error;
+- identity verification: 5 test eseguiti, 0 failure, 0 error;
+- varie clean compilation/package: BUILD SUCCESS.
+
+Problema ambientale incontrato:
+- Maven nel sandbox Windows riceveva AccessDeniedException sul realPath del
+  JAR HdrHistogram nella cache C:\Users\user\.m2;
+- Maven e' stato quindi eseguito con autorizzazione fuori sandbox;
+- e' stato inoltre necessario usare clean build per evitare classi target
+  stale dovute ai timestamp/OneDrive.
+
+IMPORTANTE:
+dopo gli ultimissimi aggiustamenti e' stata completata una clean compilation
+con BUILD SUCCESS, ma i test erano saltati per completare i club entro la
+sessione. Pertanto i risultati test precedenti non costituiscono ancora la
+certificazione definitiva dell'esatto stato finale dei sorgenti.
+
+NON ESEGUITO NELLO STATO FINALE:
+
+1. comando mirato obbligatorio completo:
+   .\mvnw.cmd "-Dtest=TransfermarktDiscoveryServiceTest,
+   TransfermarktProfileParserTest,TransferDetectionServiceTest,
+   PlayerReconciliationServiceTest" test
+
+   Nota: nel repository non esiste TransfermarktDiscoveryServiceTest con
+   quel nome; sono presenti test Transfermarkt con nomi differenti, incluso
+   TransfermarktDiscoveryIdentityVerificationTest.
+
+2. full suite:
+   .\mvnw.cmd test
+
+3. riepilogo definitivo del numero totale test rispetto alla baseline:
+   Tests run: 525, Failures: 0, Errors: 0, Skipped: 1.
+
+Questi controlli devono essere eseguiti domani con
+SPRING_PROFILES_ACTIVE, DATABASE_URL e credenziali runtime rimossi
+dall'ambiente Maven.
+
+======================================================================
+10. GIT DIAGNOSTICS
+======================================================================
+
+git diff --check:
+
+DIFF_CHECK_EXIT=0
+
+Sono comparsi soltanto warning di conversione LF/CRLF su file gia'
+presenti/modificati. Nessun errore whitespace.
+
+git status --short osservato a fine sessione:
+
+ M backend/pom.xml
+ M backend/src/main/java/it/fantacalciointelligence/backend/catalog/readiness/CatalogReadinessService.java
+ M backend/src/main/java/it/fantacalciointelligence/backend/ingestion/AutomatedDataUpdateService.java
+ M backend/src/main/java/it/fantacalciointelligence/backend/reconciliation/PlayerReconciliationService.java
+ M backend/src/main/java/it/fantacalciointelligence/backend/refresh/DataRefreshScheduler.java
+ M backend/src/main/java/it/fantacalciointelligence/backend/transfer/detection/TransferDetectionResponse.java
+ M backend/src/main/java/it/fantacalciointelligence/backend/transfer/detection/TransferDetectionService.java
+ M backend/src/main/resources/application-prod.properties
+ M backend/src/main/resources/application.properties
+ M backend/src/test/java/it/fantacalciointelligence/backend/catalog/readiness/CatalogReadinessServiceTest.java
+ M backend/src/test/java/it/fantacalciointelligence/backend/reconciliation/PlayerReconciliationServiceTest.java
+ M backend/src/test/java/it/fantacalciointelligence/backend/transfer/detection/TransferDetectionServiceTest.java
+?? FINAL_BACKEND_AUDIT_REPORT.txt
+?? FINAL_BACKEND_CORRECTIVE_PASS_2_REPORT.txt
+?? FINAL_BACKEND_DB_FUNCTIONAL_CERTIFICATION_REPORT.txt
+?? FINAL_BACKEND_REMEDIATION_REPORT.txt
+?? backend/backup-before-v34-alignment-20260814.dump
+?? backend/src/main/java/it/fantacalciointelligence/backend/identity/enrichment/transfermarkt/
+?? backend/src/main/java/it/fantacalciointelligence/backend/ingestion/FantacalcioListoneClient.java
+?? backend/src/main/java/it/fantacalciointelligence/backend/ingestion/FantacalcioListoneParser.java
+?? backend/src/main/java/it/fantacalciointelligence/backend/ingestion/FantacalcioListoneProperties.java
+?? backend/src/main/java/it/fantacalciointelligence/backend/ingestion/FantacalcioListoneSyncController.java
+?? backend/src/main/java/it/fantacalciointelligence/backend/ingestion/FantacalcioListoneSyncResponse.java
+?? backend/src/main/java/it/fantacalciointelligence/backend/ingestion/FantacalcioListoneSyncService.java
+?? backend/src/main/resources/db/migration/V61__allow_fantacalcio_authoritative_reconciliation.sql
+?? backend/src/main/resources/db/migration/V62__make_secondary_player_sources_non_blocking.sql
+?? backend/src/main/resources/db/migration/V63__allow_unknown_destination_for_detected_serie_a_exits.sql
+?? backend/src/test/java/it/fantacalciointelligence/backend/identity/enrichment/transfermarkt/
+?? backend/src/test/java/it/fantacalciointelligence/backend/ingestion/FantacalcioListoneParserTest.java
+
+Le modifiche non relative al lavoro Transfermarkt erano gia' presenti nella
+working tree e non sono state ripulite o sovrascritte.
+
+File effettivamente modificati/aggiunti durante questa sessione:
+
+- MODIFICATO:
+  backend/src/main/java/it/fantacalciointelligence/backend/identity/
+  enrichment/transfermarkt/TransfermarktDiscoveryService.java
+
+- AGGIUNTO:
+  backend/src/test/java/it/fantacalciointelligence/backend/identity/
+  enrichment/transfermarkt/TransfermarktDiscoveryIdentityVerificationTest.java
+
+- AGGIUNTO COME HANDOFF:
+  B63_TRANSFERMARKT_HANDOFF_20260816.txt
+
+======================================================================
+11. STATO DI CERTIFICAZIONE
+======================================================================
+
+NON dichiarare ancora tutte le 19 squadre certificate.
+
+Stato attuale:
+- 12 club perfetti nella passata finale;
+- Atalanta ancora verde 24/24;
+- 7 club con almeno un caso residuo;
+- 2 casi REVIEW_REQUIRED probabilmente riconducibili a omonimi storici;
+- 9 casi NOT_FOUND da rieseguire/analizzare;
+- zero FAILED nella passata finale;
+- nessuna persistence eseguita;
+- test finali obbligatori e full suite ancora da eseguire.
+
+======================================================================
+12. CHECKLIST PER DOMANI
+======================================================================
+
+1. Verificare git status e leggere questo report.
+
+2. Eseguire i regression test Transfermarkt sull'esatto stato finale.
+
+3. Attendere un cooldown Transfermarkt e rieseguire soltanto i club/casi:
+   - Cagliari: Aurelio
+   - Genoa: Ostigard, Vitinha O.
+   - Juventus: Yildiz
+   - Lecce: Gaspar K., Penev
+   - Napoli: Hojlund, Zambo Anguissa
+   - Parma: Romero D., Sorensen O.
+   - Roma: N'Dicka
+
+4. Per i profili con ID locale, controllare individualmente:
+   - URL finale realmente restituito;
+   - HTTP status;
+   - full name;
+   - birth date;
+   - current club/history;
+   - eventuali differenze di slug o pagina incompleta.
+
+5. Non verificare Aurelio/Penev/Romero D. senza prove aggiuntive.
+
+6. Rieseguire tutti i club toccati da eventuali nuovi fix generici.
+
+7. Rieseguire Atalanta e richiedere ancora:
+   requested=24, matched=24, review=0, notFound=0, failed=0.
+
+8. Eseguire test mirati richiesti, adattando i nomi reali dei test.
+
+9. Pulire l'ambiente prima della full suite:
+   - rimuovere SPRING_PROFILES_ACTIVE;
+   - rimuovere DATABASE_URL/DATABASE_USERNAME/DATABASE_PASSWORD;
+   - non ereditare credenziali/runtime env del server.
+
+10. Eseguire full suite e confrontare con la baseline certificata:
+    Tests run: 525, Failures: 0, Errors: 0, Skipped: 1.
+
+11. Eseguire:
+    git diff --check
+    git status --short
+
+12. Solo dopo queste prove dichiarare quali club sono definitivamente
+    certificati e quali richiedono intervento umano.
+
+======================================================================
+FINE REPORT
+======================================================================

@@ -1,0 +1,52 @@
+
+================================================================================
+M03.6B CRASH RECOVERY
+================================================================================
+
+================================================================================
+1. RESTORE API
+================================================================================
+REMOVED_HISTORICAL_DETAIL_SCHEMA=YES
+REMOVED_HISTORICAL_DETAIL_API=YES
+
+================================================================================
+2. RESTORE ROUTER
+================================================================================
+REMOVED_HISTORICAL_DETAIL_LAZY=YES
+REMOVED_HISTORICAL_DETAIL_ROUTE=YES
+
+================================================================================
+3. RESTORE HISTORICAL LIST
+================================================================================
+RESTORED_DESKTOP_PLAYER_NAME=NOT_PRESENT
+RESTORED_MOBILE_PLAYER_NAME=YES
+
+================================================================================
+4. REMOVE NEW M03.6B FILES
+================================================================================
+REMOVED=backend\src\main\java\it\fantacalciointelligence\backend\player\HistoricalPlayerDetailController.java
+REMOVED=backend\src\main\java\it\fantacalciointelligence\backend\player\HistoricalPlayerDetailResponse.java
+REMOVED=backend\src\main\java\it\fantacalciointelligence\backend\player\HistoricalPlayerDetailService.java
+REMOVED=backend\src\test\java\it\fantacalciointelligence\backend\player\HistoricalPlayerDetailServiceTest.java
+REMOVED=frontend\src\pages\HistoricalPlayerDetailPage.tsx
+REMOVED=frontend\src\pages\HistoricalPlayerDetailPage.test.tsx
+
+================================================================================
+5. RECOVERY CERTIFICATION
+================================================================================
+M03_5_HISTORICAL_API_STILL_PRESENT=YES
+M03_5_HISTORY_ROUTE_STILL_PRESENT=YES
+M03_5_HISTORY_PAGE_STILL_PRESENT=YES
+M03_6_DETAIL_SCHEMA_REMOVED=YES
+M03_6_DETAIL_API_REMOVED=YES
+M03_6_DETAIL_ROUTE_REMOVED=YES
+M03_6_LINKS_REMOVED=NO
+M03_6_NEW_FILES_REMOVED=YES
+
+================================================================================
+FINAL SUMMARY
+================================================================================
+DATABASE_MUTATIONS=NONE
+M03_5_PRESERVED=CHECK_REQUIRED
+CRASH_RECOVERY_GREEN=NO
+LOG_FILE=C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\logs\M03-historical-detail-crash-recovery.txt

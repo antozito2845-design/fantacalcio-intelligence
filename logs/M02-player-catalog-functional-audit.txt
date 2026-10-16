@@ -1,0 +1,584 @@
+
+==============================================================================
+M02.2 - PLAYER CATALOG FUNCTIONAL AUDIT
+==============================================================================
+
+==============================================================================
+1. GIT STATUS
+==============================================================================
+ M frontend/src/features/core/SquadManagementFlows.test.tsx
+ M frontend/src/layouts/GlobalSearch.tsx
+?? FANTAFOOT-FINAL-STATE.txt
+?? FANTAFOOT-FULL-AUDIT.txt
+?? FANTAFOOT-TARGETED-AUDIT.txt
+?? project-audit-current.txt
+?? project-file-list.txt
+GIT_STATUS_EXIT=0
+
+==============================================================================
+2. BACKEND CONTROLLER CONTRACT
+==============================================================================
+
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\player\PlayerCatalogController.java
+  23:     public PageResponse<PlayerCatalogResponse> findPlayers(
+  24:             @RequestParam(defaultValue = "#{@currentSeasonResolver.resolve()}")
+  25:             String season,
+  27:             @RequestParam(required = false)
+  28:             String search,
+  30:             @RequestParam(required = false)
+  31:             String club,
+  33:             @RequestParam(required = false)
+  34:             String role,
+  36:             @RequestParam(defaultValue = "0")
+  39:             @RequestParam(defaultValue = "25")
+  42:         return playerCatalogService.findPlayers(
+  43:                 season,
+  44:                 search,
+  45:                 club,
+  46:                 role,
+  55:             @RequestParam(defaultValue = "#{@currentSeasonResolver.resolve()}")
+  56:             String season
+  60:                 season
+
+FILE=backend\src\main\java\it\fantacalciointelligence\backend\player\PlayerCatalogService.java
+  25:     public PageResponse<PlayerCatalogResponse> findPlayers(
+  26:             String season,
+  27:             String search,
+  28:             String club,
+  29:             String role,
+  38:                 WHERE s.code = :season
+  39:                   AND p.active = TRUE
+  40:                   AND registration.registration_status = 'ACTIVE'
+  41:                   AND role_fantacalcio.fantasy_role IS NOT NULL
+  45:         params.put("season", season);
+  49:         if (search != null && !search.isBlank()) {
+  52:                         LOWER(p.display_name) LIKE :search
+  53:                         OR p.normalized_name LIKE :search
+  58:                     "search",
+  59:                     "%" + search.trim().toLowerCase() + "%"
+  63:         if (club != null && !club.isBlank()) {
+  66:                         LOWER(c.name) = :club
+  67:                         OR LOWER(c.slug) = :club
+  72:                     "club",
+  73:                     club.trim().toLowerCase()
+  77:         if (role != null && !role.isBlank()) {
+  81:                         FROM player_roles filter_role
+  82:                         WHERE filter_role.player_id = p.id
+  83:                           AND filter_role.season_id = s.id
+  84:                           AND filter_role.source = 'FANTACALCIO'
+  85:                           AND filter_role.fantasy_role = :role
+  90:                     "role",
+  91:                     role.trim().toUpperCase()
+  98:                 INNER JOIN player_reconciliation_results r
+ 101:                 INNER JOIN seasons s
+ 102:                     ON s.id = r.season_id
+ 104:                 INNER JOIN player_registrations registration
+ 105:                     ON registration.player_id = p.id
+ 106:                     AND registration.season_id = s.id
+ 108:                 INNER JOIN clubs c
+ 109:                     ON c.id = registration.club_id
+ 111:                 INNER JOIN season_clubs season_club
+ 112:                     ON season_club.season_id = s.id
+ 113:                     AND season_club.club_id = c.id
+ 115:                 LEFT JOIN player_roles role_fantacalcio
+ 116:                     ON role_fantacalcio.player_id = p.id
+ 117:                     AND role_fantacalcio.season_id = s.id
+ 118:                     AND role_fantacalcio.source = 'FANTACALCIO'
+ 120:                 LEFT JOIN player_roles role_gazzetta
+ 121:                     ON role_gazzetta.player_id = p.id
+ 122:                     AND role_gazzetta.season_id = s.id
+ 123:                     AND role_gazzetta.source = 'GAZZETTA'
+ 125:                 LEFT JOIN player_roles role_fantamarkt
+ 126:                     ON role_fantamarkt.player_id = p.id
+ 127:                     AND role_fantamarkt.season_id = s.id
+ 128:                     AND role_fantamarkt.source = 'FANTAMARKT'
+ 135:                     c.name AS club_name,
+ 136:                     c.slug AS club_slug,
+ 137:                     role_fantacalcio.fantasy_role
+ 138:                         AS fantacalcio_role,
+ 139:                     role_gazzetta.fantasy_role
+ 140:                         AS gazzetta_role,
+ 141:                     role_fantamarkt.fantasy_role
+ 142:                         AS fantamarkt_role,
+ 148:                 ORDER BY p.display_name ASC
+ 149:                 LIMIT :limit
+ 150:                 OFFSET :offset
+ 164:                                                 "club_name"
+ 167:                                                 "club_slug"
+ 170:                                                 "fantacalcio_role"
+ 173:                                                 "gazzetta_role"
+ 176:                                                 "fantamarkt_role"
+ 196:         long totalElements = total == null ? 0 : total;
+ 199:                 (double) totalElements / safeSize
+ 206:                 totalElements,
+
+==============================================================================
+3. FRONTEND CATALOG CONTRACT
+==============================================================================
+
+FILE=frontend\src\pages\PlayersPage.tsx
+  15:   const [search, setSearch] = useState(url.get('search') ?? '');
+  18:   const role = url.get('role') ?? '';
+  19:   const club = url.get('club') ?? '';
+  20:   const page = Number(url.get('page') ?? 0);
+  24:         const next = new URLSearchParams(current);
+  25:         const currentSearch = current.get('search') ?? '';
+  26:         if (search === currentSearch) return current;
+  27:         if (search) next.set('search', search);
+  28:         else next.delete('search');
+  29:         next.set('page', '0');
+  34:   }, [search, setUrl]);
+  36:     queryKey: ['players', { search: url.get('search') ?? '', role, club, page }],
+  38:       featureApi.players(
+  40:           search: url.get('search') ?? undefined,
+  41:           role: role || undefined,
+  42:           club: club || undefined,
+  43:           page,
+  44:           size: 25,
+  66:   const duplicate = squad.data?.players.some((entry) => entry.playerId === selected?.id) ?? false;
+  69:     const next = new URLSearchParams(url);
+  72:     if (key !== 'page') next.set('page', '0');
+  77:       <div className={styles.page}>
+  91:               value={search}
+  98:             <select value={role} onChange={(e) => update('role', e.target.value)}>
+ 108:               value={club}
+ 109:               onChange={(e) => update('club', e.target.value)}
+ 134:               {add.isError && <p className={styles.error} role="alert">{add.error instanceof AppError ? add.error.message : 'Acquisto rifiutato.'}</p>}
+ 165:                           <Link to={`/players/${p.id}`} state={{ from: '/players' }}>{p.name}</Link>
+ 168:                           <span className={styles.role}>{p.fantacalcioRole}</span>
+ 170:                         <td>{p.club}</td>
+ 172:                         {squad.data && <td><button className={`${styles.button} ${styles.secondary}`} disabled={squad.data.players.some((entry) => entry.playerId === p.id)} onClick={() => setSelected({ id: p.id, name: p.name })}>{squad.data.players.some((entry) => entry.playerId === p.id) ? 'Già in rosa' : 'Aggiungi'}</button></td>}
+ 181:                     <Link to={`/players/${p.id}`} state={{ from: '/players' }}>
+ 185:                       <span className={styles.role}>{p.fantacalcioRole}</span> · {p.club}
+ 187:                     {squad.data && <button className={`${styles.button} ${styles.secondary}`} disabled={squad.data.players.some((entry) => entry.playerId === p.id)} onClick={() => setSelected({ id: p.id, name: p.name })}>{squad.data.players.some((entry) => entry.playerId === p.id) ? 'Già in rosa' : 'Aggiungi alla rosa'}</button>}
+ 191:               <div className={styles.pager}>
+ 194:                   disabled={page === 0}
+ 195:                   onClick={() => update('page', String(page - 1))}
+ 200:                   {page + 1} / {Math.max(query.data.totalPages, 1)}
+ 204:                   disabled={page + 1 >= query.data.totalPages}
+ 205:                   onClick={() => update('page', String(page + 1))}
+
+FILE=frontend\src\features\core\api.ts
+   9:   club: z.string(),
+  10:   clubSlug: z.string(),
+  18:   page: numeric,
+  19:   size: numeric,
+  39:     season: z.string(),
+  42:     club: z.string().nullish(),
+  75:   club: z.string(),
+  76:   clubSlug: z.string(),
+  77:   roles: z.record(z.string(), z.string()),
+  95:   clubTactics: z.unknown().nullable(),
+ 103:   club: z.string(),
+ 121:   season: z.string(),
+ 125:   role: z.string().nullable(),
+ 126:   club: z.string().nullable(),
+ 131:   players: z.array(auctionPlayerSchema),
+ 134:   season: z.string(),
+ 143:   roles: z.array(
+ 146:         role: z.string(),
+ 162:   club: z.string(),
+ 163:   role: z.string(),
+ 169:   season: z.string(),
+ 175:   roles: z.record(z.string(), z.object({ current: numeric, maximum: numeric, remaining: numeric })),
+ 176:   players: z.array(squadPlayerSchema),
+ 181:   season: z.string(),
+ 198:     season: z.string(),
+ 205:     roles: z.array(
+ 207:         role: z.string(),
+ 222:   season: z.string(),
+ 239:   players: z.array(
+ 243:       role: z.string(),
+ 251:   const p = new URLSearchParams();
+ 268:   players: (
+ 269:     filters: { search?: string; club?: string; role?: string; page: number; size: number },
+ 271:   ) => parsed(`/players?${params(filters)}`, playerPageSchema, signal),
+ 273:     parsed(`/players/${id}`, playerDetailSchema, signal),
+ 274:   ranking: (role: string, signal?: AbortSignal) =>
+ 276:       `/auction/intelligence-rankings?${params({ role: role || undefined, limit: 100 })}`,
+ 294:     parsed('/squad/players', squadSchema, undefined, auth, {
+ 300:     parsed(`/squad/players/${playerId}`, squadSchema, undefined, auth, { method: 'DELETE' }),
+ 306:     parsed(`/squad/players/${playerId}`, squadSchema, undefined, auth, {
+
+==============================================================================
+4. BASELINE CATALOG
+==============================================================================
+URL=http://localhost:8080/api/v1/players?page=0&size=25
+HTTP_STATUS=200
+CONTENT_TYPE=application/json
+BASELINE_IS_OBJECT=YES
+BASELINE_PAGE=0
+BASELINE_SIZE=25
+BASELINE_TOTAL_ELEMENTS=498
+BASELINE_TOTAL_PAGES=20
+BASELINE_CONTENT_COUNT=25
+BASELINE_SAMPLE=[{"id": 44, "name": "Abankwah", "club": "Udinese", "clubSlug": "udinese", "fantacalcioRole": "D", "gazzettaRole": "D", "fantamarktRole": "D", "sourcesCount": 3}, {"id": 45, "name": "Aboukhlal", "club": "Torino", "clubSlug": "torino", "fantacalcioRole": "C", "gazzettaRole": "A", "fantamarktRole": "A", "sourcesCount": 3}, {"id": 419, "name": "Adams A.", "club": "Venezia", "clubSlug": "venezia", "fantacalcioRole": "A", "gazzettaRole": null, "fantamarktRole": "A", "sourcesCount": 2}, {"id": 420, "name": "Adams C.", "club": "Torino", "clubSlug": "torino", "fantacalcioRole": "A", "gazzettaRole": "A", "fantamarktRole": "A", "sourcesCount": 3}, {"id": 46, "name": "Addai", "club": "Como", "clubSlug": "como", "fantacalcioRole": "C", "gazzettaRole": "A", "fantamarktRole": "A", "sourcesCount": 3}, {"id": 47, "name": "Adopo", "club": "Cagliari", "clubSlug": "cagliari", "fantacalcioRole": "C", "gazzettaRole": "D", "fantamarktRole": "C", "sourcesCount": 3}, {"id": 48, "name": "Adorante", "club": "Venezia", "clubSlug": "venezia", "fantacalcioRole": "A", "gazzettaRole": "A", "fantamarktRole": "A", "sourcesCount": 3}, {"id": 421, "name": "Adzic", "club": "Sassuolo", "clubSlug": "sassuolo", "fantacalcioRole": "C", "gazzettaRole": "D", "fantamarktRole": "C", "sourcesCount": 3}, {"id": 49, "name": "Ahanor", "club": "Atalanta", "clubSlug": "atalanta", "fantacalcioRole": "D", "gazzettaRole": "D", "fantamarktRole": "D", "sourcesCount": 3}, {"id": 50, "name": "Akanji", "club": "Inter", "clubSlug": "inter", "fantacalcioRole": "D", "gazzettaRole": "D", "fantamarktRole": "D", "sourcesCount": 3}]
+
+==============================================================================
+5. RUNTIME SAMPLE SELECTION
+==============================================================================
+SAMPLE_NAME=Abankwah
+SAMPLE_ROLE=D
+SAMPLE_CLUB=Udinese
+SAMPLE_CLUB_SLUG=udinese
+
+==============================================================================
+6. SEARCH FILTER
+==============================================================================
+URL=http://localhost:8080/api/v1/players?search=Abankwah&page=0&size=25
+HTTP_STATUS=200
+SEARCH_IS_OBJECT=YES
+SEARCH_PAGE=0
+SEARCH_SIZE=25
+SEARCH_TOTAL_ELEMENTS=1
+SEARCH_TOTAL_PAGES=1
+SEARCH_CONTENT_COUNT=1
+SEARCH_SAMPLE=[{"id": 44, "name": "Abankwah", "club": "Udinese", "clubSlug": "udinese", "fantacalcioRole": "D", "gazzettaRole": "D", "fantamarktRole": "D", "sourcesCount": 3}]
+SEARCH_FILTER_CERTIFIED=YES
+
+==============================================================================
+7. ROLE FILTER
+==============================================================================
+URL=http://localhost:8080/api/v1/players?role=D&page=0&size=25
+HTTP_STATUS=200
+ROLE_IS_OBJECT=YES
+ROLE_PAGE=0
+ROLE_SIZE=25
+ROLE_TOTAL_ELEMENTS=177
+ROLE_TOTAL_PAGES=8
+ROLE_CONTENT_COUNT=25
+ROLE_SAMPLE=[{"id": 44, "name": "Abankwah", "club": "Udinese", "clubSlug": "udinese", "fantacalcioRole": "D", "gazzettaRole": "D", "fantamarktRole": "D", "sourcesCount": 3}, {"id": 49, "name": "Ahanor", "club": "Atalanta", "clubSlug": "atalanta", "fantacalcioRole": "D", "gazzettaRole": "D", "fantamarktRole": "D", "sourcesCount": 3}, {"id": 50, "name": "Akanji", "club": "Inter", "clubSlug": "inter", "fantacalcioRole": "D", "gazzettaRole": "D", "fantamarktRole": "D", "sourcesCount": 3}, {"id": 423, "name": "Akpoguma", "club": "Frosinone", "clubSlug": "frosinone", "fantacalcioRole": "D", "gazzettaRole": null, "fantamarktRole": "D", "sourcesCount": 2}, {"id": 52, "name": "Alhassane", "club": "Bologna", "clubSlug": "bologna", "fantacalcioRole": "D", "gazzettaRole": "D", "fantamarktRole": "D", "sourcesCount": 3}, {"id": 54, "name": "Amey", "club": "Frosinone", "clubSlug": "frosinone", "fantacalcioRole": "D", "gazzettaRole": "D", "fantamarktRole": "D", "sourcesCount": 3}, {"id": 58, "name": "Antov", "club": "Monza", "clubSlug": "monza", "fantacalcioRole": "D", "gazzettaRole": "D", "fantamarktRole": "D", "sourcesCount": 3}, {"id": 59, "name": "Arizala", "club": "Udinese", "clubSlug": "udinese", "fantacalcioRole": "D", "gazzettaRole": "D", "fantamarktRole": "C", "sourcesCount": 3}, {"id": 1038, "name": "Aurelio", "club": "Cagliari", "clubSlug": "cagliari", "fantacalcioRole": "D", "gazzettaRole": null, "fantamarktRole": null, "sourcesCount": 1}, {"id": 63, "name": "Bakoune", "club": "Monza", "clubSlug": "monza", "fantacalcioRole": "D", "gazzettaRole": "D", "fantamarktRole": "D", "sourcesCount": 3}]
+ROLE_FILTER_CERTIFIED=YES
+
+==============================================================================
+8. CLUB FILTER
+==============================================================================
+URL=http://localhost:8080/api/v1/players?club=udinese&page=0&size=25
+HTTP_STATUS=200
+CLUB_IS_OBJECT=YES
+CLUB_PAGE=0
+CLUB_SIZE=25
+CLUB_TOTAL_ELEMENTS=27
+CLUB_TOTAL_PAGES=2
+CLUB_CONTENT_COUNT=25
+CLUB_SAMPLE=[{"id": 44, "name": "Abankwah", "club": "Udinese", "clubSlug": "udinese", "fantacalcioRole": "D", "gazzettaRole": "D", "fantamarktRole": "D", "sourcesCount": 3}, {"id": 59, "name": "Arizala", "club": "Udinese", "clubSlug": "udinese", "fantacalcioRole": "D", "gazzettaRole": "D", "fantamarktRole": "C", "sourcesCount": 3}, {"id": 427, "name": "Bayo V.", "club": "Udinese", "clubSlug": "udinese", "fantacalcioRole": "A", "gazzettaRole": "A", "fantamarktRole": "A", "sourcesCount": 3}, {"id": 77, "name": "Bertola", "club": "Udinese", "clubSlug": "udinese", "fantacalcioRole": "D", "gazzettaRole": "D", "fantamarktRole": "D", "sourcesCount": 3}, {"id": 92, "name": "Buksa", "club": "Udinese", "clubSlug": "udinese", "fantacalcioRole": "A", "gazzettaRole": "A", "fantamarktRole": "A", "sourcesCount": 3}, {"id": 431, "name": "Camara A.", "club": "Udinese", "clubSlug": "udinese", "fantacalcioRole": "C", "gazzettaRole": "C", "fantamarktRole": "C", "sourcesCount": 3}, {"id": 113, "name": "Chakvetadze", "club": "Udinese", "clubSlug": "udinese", "fantacalcioRole": "C", "gazzettaRole": "C", "fantamarktRole": "C", "sourcesCount": 3}, {"id": 442, "name": "Davis K.", "club": "Udinese", "clubSlug": "udinese", "fantacalcioRole": "A", "gazzettaRole": "A", "fantamarktRole": "A", "sourcesCount": 3}, {"id": 160, "name": "Ebosse", "club": "Udinese", "clubSlug": "udinese", "fantacalcioRole": "D", "gazzettaRole": "D", "fantamarktRole": "D", "sourcesCount": 3}, {"id": 162, "name": "Ekkelenkamp", "club": "Udinese", "clubSlug": "udinese", "fantacalcioRole": "C", "gazzettaRole": "C", "fantamarktRole": "C", "sourcesCount": 3}]
+CLUB_FILTER_CERTIFIED=YES
+
+==============================================================================
+9. COMBINED FILTERS
+==============================================================================
+URL=http://localhost:8080/api/v1/players?search=Abankwah&role=D&club=udinese&page=0&size=25
+HTTP_STATUS=200
+COMBINED_IS_OBJECT=YES
+COMBINED_PAGE=0
+COMBINED_SIZE=25
+COMBINED_TOTAL_ELEMENTS=1
+COMBINED_TOTAL_PAGES=1
+COMBINED_CONTENT_COUNT=1
+COMBINED_SAMPLE=[{"id": 44, "name": "Abankwah", "club": "Udinese", "clubSlug": "udinese", "fantacalcioRole": "D", "gazzettaRole": "D", "fantamarktRole": "D", "sourcesCount": 3}]
+COMBINED_FILTER_CERTIFIED=YES
+
+==============================================================================
+10. PARAMETER BOUNDARIES
+==============================================================================
+
+CASE=NEGATIVE_PAGE
+URL=http://localhost:8080/api/v1/players?page=-1&size=10
+HTTP_STATUS=200
+BODY={"content": [{"id": 44, "name": "Abankwah", "club": "Udinese", "clubSlug": "udinese", "fantacalcioRole": "D", "gazzettaRole": "D", "fantamarktRole": "D", "sourcesCount": 3}, {"id": 45, "name": "Aboukhlal", "club": "Torino", "clubSlug": "torino", "fantacalcioRole": "C", "gazzettaRole": "A", "fantamarktRole": "A", "sourcesCount": 3}, {"id": 419, "name": "Adams A.", "club": "Venezia", "clubSlug": "venezia", "fantacalcioRole": "A", "gazzettaRole": null, "fantamarktRole": "A", "sourcesCount": 2}, {"id": 420, "name": "Adams C.", "club": "Torino", "clubSlug": "torino", "fantacalcioRole": "A", "gazzettaRole": "A", "fantamarktRole": "A", "sourcesCount": 3}, {"id": 46, "name": "Addai", "club": "Como", "clubSlug": "como", "fantacalcioRole": "C", "gazzettaRole": "A", "fantamarktRole": "A", "sourcesCount": 3}, {"id": 47, "name": "Adopo", "club": "Cagliari", "clubSlug": "cagliari", "fantacalcioRole": "C", "gazzettaRole": "D", "fantamarktRole": "C", "sourcesCount": 3}, {"id": 48, "name": "Adorante", "club": "Venezia", "clubSlug": "venezia", "fantacalcioRole": "A", "gazzettaRole": "A", "fantamarktRole": "A", "sourcesCount": 3}, {"id": 421, "name": "Adzic", "club": "Sassuolo", "clubSlug": "sassuolo", "fantacalcioRole": "C", "gazzettaRole": "D", "fantamarktRole": "C", "sourcesCount": 3}, {"id": 49, "name": "Ahanor", "club": "Atalanta", "clubSlug": "atalanta", "fantacalcioRole": "D", "gazzettaRole": "D", "fantamarktRole": "D", "sourcesCount": 3}, {"id": 50, "name": "Akanji", "club": "Inter", "c
+
+CASE=ZERO_SIZE
+URL=http://localhost:8080/api/v1/players?page=0&size=0
+HTTP_STATUS=200
+BODY={"content": [{"id": 44, "name": "Abankwah", "club": "Udinese", "clubSlug": "udinese", "fantacalcioRole": "D", "gazzettaRole": "D", "fantamarktRole": "D", "sourcesCount": 3}], "page": 0, "size": 1, "totalElements": 498, "totalPages": 498}
+
+CASE=OVERSIZED_SIZE
+URL=http://localhost:8080/api/v1/players?page=0&size=1000
+HTTP_STATUS=200
+BODY={"content": [{"id": 44, "name": "Abankwah", "club": "Udinese", "clubSlug": "udinese", "fantacalcioRole": "D", "gazzettaRole": "D", "fantamarktRole": "D", "sourcesCount": 3}, {"id": 45, "name": "Aboukhlal", "club": "Torino", "clubSlug": "torino", "fantacalcioRole": "C", "gazzettaRole": "A", "fantamarktRole": "A", "sourcesCount": 3}, {"id": 419, "name": "Adams A.", "club": "Venezia", "clubSlug": "venezia", "fantacalcioRole": "A", "gazzettaRole": null, "fantamarktRole": "A", "sourcesCount": 2}, {"id": 420, "name": "Adams C.", "club": "Torino", "clubSlug": "torino", "fantacalcioRole": "A", "gazzettaRole": "A", "fantamarktRole": "A", "sourcesCount": 3}, {"id": 46, "name": "Addai", "club": "Como", "clubSlug": "como", "fantacalcioRole": "C", "gazzettaRole": "A", "fantamarktRole": "A", "sourcesCount": 3}, {"id": 47, "name": "Adopo", "club": "Cagliari", "clubSlug": "cagliari", "fantacalcioRole": "C", "gazzettaRole": "D", "fantamarktRole": "C", "sourcesCount": 3}, {"id": 48, "name": "Adorante", "club": "Venezia", "clubSlug": "venezia", "fantacalcioRole": "A", "gazzettaRole": "A", "fantamarktRole": "A", "sourcesCount": 3}, {"id": 421, "name": "Adzic", "club": "Sassuolo", "clubSlug": "sassuolo", "fantacalcioRole": "C", "gazzettaRole": "D", "fantamarktRole": "C", "sourcesCount": 3}, {"id": 49, "name": "Ahanor", "club": "Atalanta", "clubSlug": "atalanta", "fantacalcioRole": "D", "gazzettaRole": "D", "fantamarktRole": "D", "sourcesCount": 3}, {"id": 50, "name": "Akanji", "club": "Inter", "c
+
+==============================================================================
+11. CURRENT CATALOG VISIBILITY CONSTRAINTS
+==============================================================================
+
+CONTEXT_AROUND_LINE=1
+   1: package it.fantacalciointelligence.backend.player;
+   2: 
+   3: import java.util.HashMap;
+   4: import java.util.List;
+
+CONTEXT_AROUND_LINE=11
+   9: import org.springframework.transaction.annotation.Transactional;
+  10: 
+  11: import it.fantacalciointelligence.backend.common.PageResponse;
+  12: 
+  13: @Service
+  14: public class PlayerCatalogService {
+
+CONTEXT_AROUND_LINE=26
+  24:     @Transactional(readOnly = true)
+  25:     public PageResponse<PlayerCatalogResponse> findPlayers(
+  26:             String season,
+  27:             String search,
+  28:             String club,
+  29:             String role,
+
+CONTEXT_AROUND_LINE=38
+  36: 
+  37:         StringBuilder where = new StringBuilder("""
+  38:                 WHERE s.code = :season
+  39:                   AND p.active = TRUE
+  40:                   AND registration.registration_status = 'ACTIVE'
+  41:                   AND role_fantacalcio.fantasy_role IS NOT NULL
+
+CONTEXT_AROUND_LINE=39
+  37:         StringBuilder where = new StringBuilder("""
+  38:                 WHERE s.code = :season
+  39:                   AND p.active = TRUE
+  40:                   AND registration.registration_status = 'ACTIVE'
+  41:                   AND role_fantacalcio.fantasy_role IS NOT NULL
+  42:                 """);
+
+CONTEXT_AROUND_LINE=40
+  38:                 WHERE s.code = :season
+  39:                   AND p.active = TRUE
+  40:                   AND registration.registration_status = 'ACTIVE'
+  41:                   AND role_fantacalcio.fantasy_role IS NOT NULL
+  42:                 """);
+  43: 
+
+CONTEXT_AROUND_LINE=41
+  39:                   AND p.active = TRUE
+  40:                   AND registration.registration_status = 'ACTIVE'
+  41:                   AND role_fantacalcio.fantasy_role IS NOT NULL
+  42:                 """);
+  43: 
+  44:         Map<String, Object> params = new HashMap<>();
+
+CONTEXT_AROUND_LINE=45
+  43: 
+  44:         Map<String, Object> params = new HashMap<>();
+  45:         params.put("season", season);
+  46:         params.put("limit", safeSize);
+  47:         params.put("offset", offset);
+  48: 
+
+CONTEXT_AROUND_LINE=81
+  79:                     AND EXISTS (
+  80:                         SELECT 1
+  81:                         FROM player_roles filter_role
+  82:                         WHERE filter_role.player_id = p.id
+  83:                           AND filter_role.season_id = s.id
+  84:                           AND filter_role.source = 'FANTACALCIO'
+
+CONTEXT_AROUND_LINE=83
+  81:                         FROM player_roles filter_role
+  82:                         WHERE filter_role.player_id = p.id
+  83:                           AND filter_role.season_id = s.id
+  84:                           AND filter_role.source = 'FANTACALCIO'
+  85:                           AND filter_role.fantasy_role = :role
+  86:                     )
+
+CONTEXT_AROUND_LINE=84
+  82:                         WHERE filter_role.player_id = p.id
+  83:                           AND filter_role.season_id = s.id
+  84:                           AND filter_role.source = 'FANTACALCIO'
+  85:                           AND filter_role.fantasy_role = :role
+  86:                     )
+  87:                     """);
+
+CONTEXT_AROUND_LINE=98
+  96:                 FROM players p
+  97: 
+  98:                 INNER JOIN player_reconciliation_results r
+  99:                     ON r.player_id = p.id
+ 100: 
+ 101:                 INNER JOIN seasons s
+
+CONTEXT_AROUND_LINE=101
+  99:                     ON r.player_id = p.id
+ 100: 
+ 101:                 INNER JOIN seasons s
+ 102:                     ON s.id = r.season_id
+ 103: 
+ 104:                 INNER JOIN player_registrations registration
+
+CONTEXT_AROUND_LINE=102
+ 100: 
+ 101:                 INNER JOIN seasons s
+ 102:                     ON s.id = r.season_id
+ 103: 
+ 104:                 INNER JOIN player_registrations registration
+ 105:                     ON registration.player_id = p.id
+
+CONTEXT_AROUND_LINE=104
+ 102:                     ON s.id = r.season_id
+ 103: 
+ 104:                 INNER JOIN player_registrations registration
+ 105:                     ON registration.player_id = p.id
+ 106:                     AND registration.season_id = s.id
+ 107: 
+
+CONTEXT_AROUND_LINE=105
+ 103: 
+ 104:                 INNER JOIN player_registrations registration
+ 105:                     ON registration.player_id = p.id
+ 106:                     AND registration.season_id = s.id
+ 107: 
+ 108:                 INNER JOIN clubs c
+
+CONTEXT_AROUND_LINE=106
+ 104:                 INNER JOIN player_registrations registration
+ 105:                     ON registration.player_id = p.id
+ 106:                     AND registration.season_id = s.id
+ 107: 
+ 108:                 INNER JOIN clubs c
+ 109:                     ON c.id = registration.club_id
+
+CONTEXT_AROUND_LINE=109
+ 107: 
+ 108:                 INNER JOIN clubs c
+ 109:                     ON c.id = registration.club_id
+ 110: 
+ 111:                 INNER JOIN season_clubs season_club
+ 112:                     ON season_club.season_id = s.id
+
+CONTEXT_AROUND_LINE=111
+ 109:                     ON c.id = registration.club_id
+ 110: 
+ 111:                 INNER JOIN season_clubs season_club
+ 112:                     ON season_club.season_id = s.id
+ 113:                     AND season_club.club_id = c.id
+ 114: 
+
+CONTEXT_AROUND_LINE=112
+ 110: 
+ 111:                 INNER JOIN season_clubs season_club
+ 112:                     ON season_club.season_id = s.id
+ 113:                     AND season_club.club_id = c.id
+ 114: 
+ 115:                 LEFT JOIN player_roles role_fantacalcio
+
+CONTEXT_AROUND_LINE=113
+ 111:                 INNER JOIN season_clubs season_club
+ 112:                     ON season_club.season_id = s.id
+ 113:                     AND season_club.club_id = c.id
+ 114: 
+ 115:                 LEFT JOIN player_roles role_fantacalcio
+ 116:                     ON role_fantacalcio.player_id = p.id
+
+CONTEXT_AROUND_LINE=115
+ 113:                     AND season_club.club_id = c.id
+ 114: 
+ 115:                 LEFT JOIN player_roles role_fantacalcio
+ 116:                     ON role_fantacalcio.player_id = p.id
+ 117:                     AND role_fantacalcio.season_id = s.id
+ 118:                     AND role_fantacalcio.source = 'FANTACALCIO'
+
+CONTEXT_AROUND_LINE=116
+ 114: 
+ 115:                 LEFT JOIN player_roles role_fantacalcio
+ 116:                     ON role_fantacalcio.player_id = p.id
+ 117:                     AND role_fantacalcio.season_id = s.id
+ 118:                     AND role_fantacalcio.source = 'FANTACALCIO'
+ 119: 
+
+CONTEXT_AROUND_LINE=117
+ 115:                 LEFT JOIN player_roles role_fantacalcio
+ 116:                     ON role_fantacalcio.player_id = p.id
+ 117:                     AND role_fantacalcio.season_id = s.id
+ 118:                     AND role_fantacalcio.source = 'FANTACALCIO'
+ 119: 
+ 120:                 LEFT JOIN player_roles role_gazzetta
+
+CONTEXT_AROUND_LINE=118
+ 116:                     ON role_fantacalcio.player_id = p.id
+ 117:                     AND role_fantacalcio.season_id = s.id
+ 118:                     AND role_fantacalcio.source = 'FANTACALCIO'
+ 119: 
+ 120:                 LEFT JOIN player_roles role_gazzetta
+ 121:                     ON role_gazzetta.player_id = p.id
+
+CONTEXT_AROUND_LINE=120
+ 118:                     AND role_fantacalcio.source = 'FANTACALCIO'
+ 119: 
+ 120:                 LEFT JOIN player_roles role_gazzetta
+ 121:                     ON role_gazzetta.player_id = p.id
+ 122:                     AND role_gazzetta.season_id = s.id
+ 123:                     AND role_gazzetta.source = 'GAZZETTA'
+
+CONTEXT_AROUND_LINE=122
+ 120:                 LEFT JOIN player_roles role_gazzetta
+ 121:                     ON role_gazzetta.player_id = p.id
+ 122:                     AND role_gazzetta.season_id = s.id
+ 123:                     AND role_gazzetta.source = 'GAZZETTA'
+ 124: 
+ 125:                 LEFT JOIN player_roles role_fantamarkt
+
+CONTEXT_AROUND_LINE=125
+ 123:                     AND role_gazzetta.source = 'GAZZETTA'
+ 124: 
+ 125:                 LEFT JOIN player_roles role_fantamarkt
+ 126:                     ON role_fantamarkt.player_id = p.id
+ 127:                     AND role_fantamarkt.season_id = s.id
+ 128:                     AND role_fantamarkt.source = 'FANTAMARKT'
+
+CONTEXT_AROUND_LINE=127
+ 125:                 LEFT JOIN player_roles role_fantamarkt
+ 126:                     ON role_fantamarkt.player_id = p.id
+ 127:                     AND role_fantamarkt.season_id = s.id
+ 128:                     AND role_fantamarkt.source = 'FANTAMARKT'
+ 129:                 """;
+ 130: 
+
+CONTEXT_AROUND_LINE=137
+ 135:                     c.name AS club_name,
+ 136:                     c.slug AS club_slug,
+ 137:                     role_fantacalcio.fantasy_role
+ 138:                         AS fantacalcio_role,
+ 139:                     role_gazzetta.fantasy_role
+ 140:                         AS gazzetta_role,
+
+CONTEXT_AROUND_LINE=138
+ 136:                     c.slug AS club_slug,
+ 137:                     role_fantacalcio.fantasy_role
+ 138:                         AS fantacalcio_role,
+ 139:                     role_gazzetta.fantasy_role
+ 140:                         AS gazzetta_role,
+ 141:                     role_fantamarkt.fantasy_role
+
+CONTEXT_AROUND_LINE=170
+ 168:                                         ),
+ 169:                                         resultSet.getString(
+ 170:                                                 "fantacalcio_role"
+ 171:                                         ),
+ 172:                                         resultSet.getString(
+ 173:                                                 "gazzetta_role"
+
+==============================================================================
+12. HISTORICAL CATALOG SURFACE SEARCH
+==============================================================================
+HISTORICAL_SURFACE_MATCH_COUNT=0
+
+==============================================================================
+13. FINAL GIT STATUS
+==============================================================================
+ M frontend/src/features/core/SquadManagementFlows.test.tsx
+ M frontend/src/layouts/GlobalSearch.tsx
+?? FANTAFOOT-FINAL-STATE.txt
+?? FANTAFOOT-FULL-AUDIT.txt
+?? FANTAFOOT-TARGETED-AUDIT.txt
+?? project-audit-current.txt
+?? project-file-list.txt
+GIT_STATUS_EXIT=0
+
+==============================================================================
+M02.2 FINAL SUMMARY
+==============================================================================
+SEARCH_FILTER_CERTIFIED=YES
+ROLE_FILTER_CERTIFIED=YES
+CLUB_FILTER_CERTIFIED=YES
+COMBINED_FILTER_CERTIFIED=YES
+MODE=READ_ONLY
+FILES_MODIFIED_BY_AUDIT=NONE
+LOG_FILE=C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\logs\M02-player-catalog-functional-audit.txt

@@ -1,0 +1,21 @@
+﻿
+
+===============================================================================================
+M10.3C PIPELINE FIX
+===============================================================================================
+BRANCH=stabilization/m01-local-green
+HEAD=a40557e4132189fbb7aa02e869cf126072e03945
+TARGET=LOCAL_ONLY
+ORACLE_CONTACTED=NO
+COMMIT_CREATED=NO
+PUSH_EXECUTED=NO
+
+===============================================================================================
+1. BACKUP
+BACKUP_DIR=C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\logs\M10.3C-backup-20260902-161559
+
+===============================================================================================
+2. READINESS POLICY
+===============================================================================================
+STATUS=BLOCKED
+REASON=READINESS_PATTERN_NOT_FOUND

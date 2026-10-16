@@ -1,0 +1,512 @@
+FANTAFOOT / fantacalcio-intelligence
+M04 — SQUAD + LINEUP E2E CERTIFICATION
+Data: 2026-08-31
+Root locale: C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence
+
+============================================================
+1. SCOPO E VERDETTO
+============================================================
+
+M04 è stato eseguito end-to-end sul solo ambiente Windows locale.
+
+Esito: CLOSED_GREEN.
+
+Sono stati certificati i contratti reali Squad, Squad Analysis e Recommended
+Lineup; i controlli di autenticazione e ownership; budget e vincoli di ruolo;
+il ciclo reversibile add/update-price/remove; il runtime dev locale; il frontend
+reale tramite browser Codex; i test mirati e completi frontend/backend.
+
+Durante l'audit è stato trovato un IDOR reale negli endpoint Squad Analysis:
+la protezione Spring richiedeva autenticazione, ma il controller/service non
+propagava l'identità dell'utente alle lookup della rosa. Il gap è stato corretto
+con un fix minimo owner-aware e test HTTP di regressione. Non è stata indebolita
+la Security.
+
+Non sono stati eseguiti commit, push, deploy, contatti Oracle, migration o
+modifiche intenzionali dello schema.
+
+============================================================
+2. PRECHECK E TOOLCHAIN
+============================================================
+
+BRANCH_ATTESO=stabilization/m01-local-green
+BRANCH_REALE=stabilization/m01-local-green
+HEAD_RIFERIMENTO=a40557e4132189fbb7aa02e869cf126072e03945
+HEAD_FINALE=a40557e4132189fbb7aa02e869cf126072e03945
+
+JAVA_VERSION=21.0.11
+MAVEN_VERSION=3.9.16
+NODE_VERSION=v22.21.0
+NPM_VERSION=10.9.4
+
+Il Maven wrapper è stato invocato dal percorso assoluto del progetto, con:
+-Dmaven.repo.local=C:\Users\user\.m2\repository
+
+Al precheck erano ancora attivi i servizi M03 riconducibili al workspace:
+- backend 127.0.0.1:8080, health HTTP 200 / UP;
+- Vite 127.0.0.1:5173, HTTP 200.
+
+Dopo il fix il backend è stato riavviato con il profilo dev. Per la
+ricertificazione finale entrambi i servizi sono stati riportati online:
+- backend listener PID 6792, porta 8080;
+- frontend listener PID 10472, porta 5173;
+- GET /actuator/health: HTTP 200, status UP;
+- GET frontend root: HTTP 200.
+
+Il log runtime backend conferma PostgreSQL locale e il database dev
+fantacalcio_intelligence. La suite completa è stata invece forzata sul database
+isolato fantacalcio_intelligence_test. Nessuna corrispondenza Oracle è presente
+nel log runtime M04.
+
+Sidecar runtime:
+- logs\M04-backend-runtime.txt
+- logs\M04-backend-runtime.stderr.txt
+- logs\M04-vite-runtime.txt
+- logs\M04-vite-runtime.stderr.txt
+
+============================================================
+3. AUDIT CONTRATTO SQUAD
+============================================================
+
+Endpoint reali rilevati:
+
+- GET /api/v1/squad
+  Restituisce la rosa attiva dell'utente autenticato.
+- POST /api/v1/squad/players
+  Aggiunge un giocatore alla rosa attiva.
+- PATCH /api/v1/squad/players/{playerId}
+  Modifica il prezzo di acquisto del giocatore nella rosa attiva.
+- DELETE /api/v1/squad/players/{playerId}
+  Rimuove il giocatore dalla rosa attiva.
+- GET /api/v1/squads
+  Elenca le rose accessibili all'utente.
+- POST /api/v1/squads
+  Crea una rosa; body reale: leagueConfigurationId, name, active.
+- GET /api/v1/squads/{id}
+  Legge una rosa esplicita con controllo ownership/admin.
+- endpoint di mutazione sotto /api/v1/squads/{id}/... per la rosa esplicita.
+- GET /api/v1/league/configuration
+  Legge la configurazione di lega; la modifica è riservata all'admin.
+- GET /api/v1/squad-analysis
+  Analizza la rosa attiva owner-scoped.
+- GET /api/v1/squad-analysis/squads/{id}
+  Analizza una rosa esplicita owner-scoped/admin.
+
+Autenticazione e ownership:
+- le operazioni Squad richiedono autenticazione;
+- le lookup attive sono risolte per username;
+- le lookup con ID negano la rosa altrui con 404, evitando enumeration;
+- l'admin può accedere quando previsto dal contratto applicativo;
+- Squad Analysis è ora allineata alle stesse regole.
+
+Vincoli applicativi rilevati nel service:
+- budget totale della configurazione di lega;
+- budget speso e budget residuo ricalcolati sul prezzo di acquisto;
+- almeno 1 credito riservato per ogni slot ancora vuoto;
+- dimensione massima della rosa;
+- massimi per ruolo P/D/C/A;
+- rifiuto del giocatore duplicato;
+- giocatore corrente, attivo e registrabile;
+- conflitti/vincoli restituiti come risposta 4xx coerente.
+
+Configurazione runtime reale:
+LEAGUE_CONFIGURATION_HTTP=200
+LEAGUE_CONFIGURATION_ID=1
+INITIAL_BUDGET=1000
+MAX_PLAYERS=25
+ROLE_LIMIT_P=3
+ROLE_LIMIT_D=8
+ROLE_LIMIT_C=8
+ROLE_LIMIT_A=6
+MAX_SUBSTITUTIONS=3
+DEFENSE_MODIFIER_ENABLED=YES
+CAPTAIN_ENABLED=NO
+
+Stato rosa reale prima e dopo il ciclo reversibile:
+SQUAD_HTTP=200
+SQUAD_ID=5
+SQUAD_NAME=Cert user B 190634
+SEASON=2026/2027
+TOTAL_PLAYERS=23
+SPENT_BUDGET=879
+REMAINING_BUDGET=121
+ROLE_P=3/3
+ROLE_D=8/8
+ROLE_C=7/8
+ROLE_A=5/6
+
+============================================================
+4. E2E SQUAD RUNTIME REALE E CLEANUP
+============================================================
+
+È stata usata la rosa attiva preesistente senza crearne o cancellarne una nuova.
+Il contratto non offre una cancellazione sicura della rosa; per questo CREATE è
+stato verificato dai test di integrazione, mentre il runtime dev ha usato una
+mutazione perfettamente reversibile.
+
+Il candidato è stato scelto dinamicamente dal catalogo corrente reale:
+PLAYER_ID=45
+PLAYER_NAME=Aboukhlal
+PLAYER_ROLE=C
+
+Ciclo eseguito tramite API pubbliche:
+
+1. ADD a prezzo 1: HTTP 200.
+   totalPlayers 23 -> 24; spentBudget 879 -> 880;
+   remainingBudget 121 -> 120; ruolo C 7/8 -> 8/8.
+2. ADD duplicato dello stesso giocatore: HTTP 409.
+3. ADD di un secondo centrocampista (ID 46) a ruolo pieno: HTTP 409.
+4. PATCH prezzo 1 -> 2: HTTP 200.
+   spentBudget 880 -> 881; remainingBudget 120 -> 119.
+5. DELETE del giocatore temporaneamente aggiunto: HTTP 200.
+   Stato tornato a 23 giocatori, spent 879, remaining 121, C 7/8.
+
+La risposta finale della rosa coincide byte-per-byte con quella salvata prima
+della mutazione:
+FINAL_SQUAD_EQUALS_INITIAL=YES
+
+Squad Analysis runtime, dopo cleanup:
+SQUAD_ANALYSIS_ACTIVE_HTTP=200
+SQUAD_ANALYSIS_BY_ID_HTTP=200
+SQUAD_ANALYSIS_SQUAD_ID=5
+SQUAD_ANALYSIS_TOTAL_PLAYERS=23
+SQUAD_ANALYSIS_MAXIMUM_PLAYERS=25
+SQUAD_ANALYSIS_REMAINING_SLOTS=2
+SQUAD_ANALYSIS_CONSTRAINTS_VALID=YES
+SQUAD_ANALYSIS_SQUAD_COMPLETE=NO
+SQUAD_ANALYSIS_ROLE_ENTRIES=4
+SQUAD_ANALYSIS_WARNINGS=0
+SQUAD_ANALYSIS_SUMMARY=23/25 players, 2 slots, 121 credits, 62 pairings
+
+TEMP_SQUAD_CREATED=NO
+TEMP_SQUAD_ID=
+TEMP_PLAYERS_ADDED=45 (transitorio, poi rimosso)
+TEMP_LINEUP_CREATED=NO
+TEMP_PLAYER_REMAINING=NO
+PREEXISTING_PRICE_RESTORED=YES
+ORIGINAL_ACTIVE_SQUAD_RESTORED=YES
+TEMP_DATA_CLEANUP_OK=YES
+
+============================================================
+5. AUDIT E E2E LINEUP
+============================================================
+
+Contratto reale rilevato:
+
+- GET /api/v1/lineups/recommended
+- query: season, matchday, squadId opzionale, unavailablePlayerIds opzionale;
+- la lineup è calcolata/raccomandata, non persistita;
+- non esistono in questo contratto POST/PUT/PATCH/DELETE per salvare una lineup;
+- non esiste un capitano perché la configurazione locale lo disabilita e la
+  response non espone un capitano;
+- il controller propaga username e ruolo admin al service owner-aware;
+- l'utente non proprietario riceve 404 per uno squadId altrui;
+- senza autenticazione l'endpoint risponde 401;
+- il service seleziona modulo, 11 titolari, panchina, sostituzioni, reasoning e
+  warnings secondo disponibilità, ruoli e dati reali.
+
+Formazioni supportate rilevate dal codice, inclusa 3-4-3 usata nel runtime.
+
+E2E HTTP reale sulla rosa 5:
+LINEUP_HTTP=200
+LINEUP_SEASON=2026/2027
+LINEUP_MATCHDAY=1
+LINEUP_COMPLETE=YES
+LINEUP_FORMATION=3-4-3
+LINEUP_SELECTED_PLAYERS=11
+LINEUP_STARTERS=11
+LINEUP_BENCH=12
+LINEUP_WARNINGS=0
+
+Il flusso completo è stato verificato sia nel runtime dev reale sia nei test
+automatici. Lo stato di rosa incompleta è coperto dai test service/UI e dalla
+logica frontend, senza alterare pesantemente dati preesistenti.
+
+============================================================
+6. SECURITY / OWNERSHIP
+============================================================
+
+AUTH_METHOD=BASIC
+AUTH_USER=user
+AUTH_ADMIN_USER=admin
+AUTH_SECRET_REDACTED=YES
+
+Verifiche HTTP runtime:
+- anonimo GET /api/v1/squad: 401;
+- anonimo GET /api/v1/squad-analysis: 401;
+- anonimo GET /api/v1/lineups/recommended: 401;
+- proprietario GET rosa/analysis/lineup: 200;
+- utente diverso GET /api/v1/squads/2: 404;
+- utente diverso GET /api/v1/squad-analysis/squads/2: 404;
+- utente diverso recommended lineup con squadId 2: 404.
+
+Test HTTP aggiunti per Squad Analysis:
+- anonimo: 401;
+- owner sulla rosa attiva: 200 e squadId corretto;
+- altro utente su ID esplicito: 404;
+- admin su ID esplicito: 200 e squadId corretto.
+
+Fix owner-aware:
+- SquadAnalysisController riceve Authentication;
+- username e flag ROLE_ADMIN vengono propagati;
+- SquadAnalysisService usa findActiveSquad(username, administrator) e
+  findSquad(id, username, administrator);
+- la costruzione dell'analisi è condivisa senza duplicare la logica;
+- le firme interne precedenti sono preservate per compatibilità.
+
+============================================================
+7. FRONTEND E BROWSER E2E REALE
+============================================================
+
+Il browser Codex è stato usato contro Vite reale su 127.0.0.1:5173 e backend
+reale su 127.0.0.1:8080. Nessun MSW è stato usato nel browser E2E.
+
+Autenticazione:
+- login Basic con account locale dev esistente;
+- sessione mostrata come utente "user";
+- dashboard personale visibile.
+
+/squad:
+- pagina protetta dal route guard;
+- rosa "Cert user B 190634" visibile;
+- budget 1000 / 879 / 121 visibile;
+- contatore 23/25 e riepilogo analisi visibili.
+
+/players -> Squad:
+- ricerca reale di Aboukhlal;
+- pulsante Aggiungi disponibile;
+- apertura del dialog di acquisizione con giocatore, prezzo e conferma;
+- dialog annullato nel browser per non duplicare la mutazione API già
+  certificata e ripristinata.
+
+/lineup:
+- componente autenticato e rosa attiva riconosciuta;
+- modulo 3-4-3 visibile;
+- 11/11 titolari sul campo;
+- 12 elementi in panchina;
+- motivazioni/reasoning visibili;
+- nessuno stato incompleto spurio.
+
+Nota sul routing: /squad è sotto ProtectedRoute. /lineup è una route pubblica a
+livello router, ma LineupPage richiede autenticazione e mostra il prompt di login
+all'anonimo; l'API backend rimane comunque protetta. Non è stato considerato il
+solo controllo UI come confine di sicurezza.
+
+BROWSER_CONSOLE_ERROR_COUNT=0
+BROWSER_CONSOLE_WARNING_COUNT=0
+HYDRATION_WARNING_COUNT=0
+
+============================================================
+8. TEST AUTOMATICI E BUILD
+============================================================
+
+BASELINE BACKEND PRIMA DEL FIX
+
+Test mirati eseguiti:
+- SquadServiceTest
+- SquadAnalysisServiceTest
+- SquadOwnershipHttpIntegrationTest
+- SquadConcurrencyIntegrationTest
+- RecommendedLineupServiceTest
+- B68LineupScorerTest
+- SecurityConfigurationTest
+
+BACKEND_TARGETED_BASELINE_EXIT=0
+BACKEND_COMPILE_BASELINE_EXIT=0
+
+BASELINE FRONTEND PRIMA DEL FIX
+
+TYPECHECK_BASELINE_EXIT=0
+LINT_BASELINE_EXIT=0
+SQUAD_TARGETED_BASELINE=3/3 PASS
+LINEUP_AND_API_TARGETED_BASELINE=19/19 PASS
+TARGETED_BASELINE_HTML_WARNING=NO
+
+RICERTIFICAZIONE BACKEND DOPO IL FIX
+
+BACKEND_COMPILE_EXIT=0
+BACKEND_SQUAD_TEST_EXIT=0
+BACKEND_LINEUP_TEST_EXIT=0
+BACKEND_SECURITY_TEST_EXIT=0
+
+Suite backend completa eseguita sul solo database test isolato, con host e URL
+PostgreSQL locali forzati esplicitamente:
+BACKEND_FULL_SUITE_EXIT=0
+BACKEND_FULL_TESTS=634
+BACKEND_FULL_FAILURES=0
+BACKEND_FULL_ERRORS=0
+BACKEND_FULL_SKIPPED=4
+
+I 4 skip sono environment-gated già noti; nessun test ha usato il DB dev.
+
+RICERTIFICAZIONE FRONTEND
+
+È stato applicato Prettier soltanto al file frontend modificato in M04.
+
+PRETTIER_EXIT=0
+TYPECHECK_EXIT=0
+LINT_EXIT=0
+SQUAD_TARGETED_TEST=3/3 PASS
+SQUAD_TARGETED_TEST_EXIT=0
+LINEUP_AND_API_TARGETED_TEST=19/19 PASS
+LINEUP_TARGETED_TEST_EXIT=0
+APP_ISOLATED_TEST=12/12 PASS
+FULL_FRONTEND_TEST_FILES=22/22 PASS
+FULL_FRONTEND_TESTS=119/119 PASS
+FULL_FRONTEND_EXIT=0
+BUILD_EXIT=0
+BUILD_MODULES=1988
+
+La prima esecuzione full ha mostrato un unico timeout flakey del test di
+navigazione placeholder in App.test.tsx, al limite predefinito di 5 secondi:
+118/119 pass, nessun errore prodotto e nessun warning HTML. Il test isolato ha
+confermato che il limite era troppo stretto su questa macchina. Il solo timeout
+del test è stato portato a 10 secondi; la suite finale completa è quindi passata
+119/119. Nessun codice prodotto è stato modificato per questo punto.
+
+TARGETED_HTML_WARNING=NO
+FULL_SUITE_HTML_WARNING=NO
+
+Pattern verificati su stdout e stderr:
+- <a> cannot be a descendant of <a>
+- <a> cannot contain a nested <a>
+- This will cause a hydration error
+
+============================================================
+9. MODIFICHE M04
+============================================================
+
+M04_INTENTIONAL:
+- backend/src/main/java/it/fantacalciointelligence/backend/squadanalysis/
+  SquadAnalysisController.java
+- backend/src/main/java/it/fantacalciointelligence/backend/squadanalysis/
+  SquadAnalysisService.java
+- backend/src/test/java/it/fantacalciointelligence/backend/squad/
+  SquadOwnershipHttpIntegrationTest.java
+- frontend/src/app/bootstrap/App.test.tsx
+
+Statistica M04: 4 file, 83 inserimenti, 7 rimozioni.
+
+PREEXISTING, preservati senza rollback o cancellazione:
+- frontend/src/app/router/AppRouter.tsx
+- frontend/src/features/core/SquadManagementFlows.test.tsx
+- frontend/src/features/core/api.ts
+- frontend/src/layouts/GlobalSearch.tsx
+- frontend/src/pages/PlayersPage.tsx
+- frontend/src/pages/HistoricalPlayersPage.tsx
+- frontend/src/pages/HistoricalPlayersPage.test.tsx
+- frontend/src/pages/HistoricalPlayerDetailPage.tsx
+- frontend/src/pages/HistoricalPlayerDetailPage.test.tsx
+- backend HistoricalPlayerCatalog* e relativi test
+- backend HistoricalPlayerDetail* e relativi test
+- FANTAFOOT-FINAL-STATE.txt
+- FANTAFOOT-FULL-AUDIT.txt
+- FANTAFOOT-TARGETED-AUDIT.txt
+- project-audit-current.txt
+- project-file-list.txt
+
+UNEXPECTED: nessuno.
+
+Il report e i sidecar in logs sono esclusi dall'inventario Git del progetto.
+Nessun file migration risulta modificato o creato.
+
+============================================================
+10. DISTINZIONE DELLE EVIDENZE
+============================================================
+
+STATICO:
+- endpoint, metodi, request/response, regole budget/ruolo;
+- natura non persistita della Recommended Lineup;
+- routing frontend, auth component e matcher Spring Security.
+
+TEST AUTOMATICI:
+- creazione rosa e operazioni Squad in ambiente isolato;
+- budget, duplicati, role limits e concorrenza;
+- lineup completa e incompleta, scorer e security;
+- regressione owner/other-user/admin per Squad Analysis;
+- 119 test frontend e 634 test backend complessivi.
+
+HTTP RUNTIME DEV:
+- health, login Basic, league configuration e lettura rosa;
+- ciclo reversibile add/duplicate/role-limit/update/remove;
+- analysis attiva/per ID;
+- lineup completa 3-4-3;
+- 401 anonimo e 404 cross-owner.
+
+BROWSER DOM REALE:
+- login, /squad, flusso Players -> Squad e /lineup;
+- budget/contatori, formazione, titolari, panchina e reasoning;
+- zero errori console e zero warning hydration.
+
+============================================================
+M04 FINAL SUMMARY
+============================================================
+
+BRANCH_OK=YES
+HEAD_UNCHANGED=YES
+
+BACKEND_HEALTH_OK=YES
+AUTH_RUNTIME_OK=YES
+
+SQUAD_CONTRACT_OK=YES
+SQUAD_OWNERSHIP_OK=YES
+SQUAD_READ_OK=YES
+SQUAD_CREATE_OK=NOT_REQUIRED
+SQUAD_ADD_PLAYER_OK=YES
+SQUAD_PRICE_UPDATE_OK=YES
+SQUAD_REMOVE_PLAYER_OK=YES
+SQUAD_BUDGET_OK=YES
+SQUAD_ROLE_CONSTRAINTS_OK=YES
+SQUAD_INVALID_OPERATION_REJECTED=YES
+SQUAD_ANALYSIS_OK=YES
+
+LINEUP_CONTRACT_OK=YES
+LINEUP_AUTH_OK=YES
+LINEUP_OWNERSHIP_OK=YES
+LINEUP_RUNTIME_OK=YES
+LINEUP_RUNTIME_COMPLETE_E2E=YES
+LINEUP_COMPLETE_FLOW_TESTED_INTEGRATION=YES
+LINEUP_INCOMPLETE_STATE_OK=YES
+LINEUP_FORMATION_OK=YES
+LINEUP_STARTERS_OK=YES
+LINEUP_BENCH_OK=YES
+LINEUP_REASONING_OK=YES
+
+FRONTEND_SQUAD_BROWSER_E2E=YES
+FRONTEND_LINEUP_BROWSER_E2E=YES
+BROWSER_CONSOLE_ERRORS=NO
+
+PRETTIER_EXIT=0
+TYPECHECK_EXIT=0
+LINT_EXIT=0
+SQUAD_TARGETED_TEST_EXIT=0
+LINEUP_TARGETED_TEST_EXIT=0
+FULL_FRONTEND_EXIT=0
+BUILD_EXIT=0
+
+BACKEND_COMPILE_EXIT=0
+BACKEND_SQUAD_TEST_EXIT=0
+BACKEND_LINEUP_TEST_EXIT=0
+BACKEND_SECURITY_TEST_EXIT=0
+BACKEND_FULL_SUITE_EXIT=0
+
+TARGETED_HTML_WARNING=NO
+FULL_SUITE_HTML_WARNING=NO
+
+TEMP_SQUAD_CREATED=NO
+TEMP_DATA_CLEANUP_OK=YES
+
+DATABASE_SCHEMA_MUTATIONS=NONE
+MIGRATIONS_CREATED=NONE
+
+UNEXPECTED_GIT_DIFFS=0
+
+COMMIT_CREATED=NO
+PUSH_EXECUTED=NO
+DEPLOY_EXECUTED=NO
+ORACLE_CONTACTED=NO
+
+M04_STATUS=CLOSED_GREEN
+ALL_GREEN=YES
+
+LOG_FILE=C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\logs\M04-squad-lineup-e2e-certification.txt

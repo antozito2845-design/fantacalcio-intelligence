@@ -1,0 +1,62 @@
+﻿
+==============================================================================
+M08.4 ORACLE PRODUCTION DEPLOY + AUTOMATIC ROLLBACK
+==============================================================================
+REMOTE_STAGE=/home/ubuntu/m08-staging-20260902-140814
+REMOTE_BACKUP=/home/ubuntu/m08-backup-20260902-140814
+EXPECTED_JAR_SHA256=e054af992d66d3fdd24d2006126b3b55daedf194e0dc6ea40673d28fabd3cd16
+EXPECTED_FRONTEND_ZIP_SHA256=170b3831bd9c2144c2d2cbfff79288f07e4c52459d51c04fe26cf7d6806738e5
+
+==============================================================================
+1. PREDEPLOY SAFETY
+==============================================================================
+BACKEND_ACTIVE_BEFORE=active
+NGINX_ACTIVE_BEFORE=active
+{"groups":["liveness","readiness"],"status":"UP"}
+PREDEPLOY_BACKEND_HEALTH=OK
+STAGED_BACKEND_FOUND=YES
+STAGED_FRONTEND_FOUND=YES
+BACKUP_BACKEND_FOUND=YES
+BACKUP_FRONTEND_FOUND=YES
+UNZIP_AVAILABLE=YES
+STAGED_JAR_SHA256=e054af992d66d3fdd24d2006126b3b55daedf194e0dc6ea40673d28fabd3cd16
+STAGED_FRONTEND_ZIP_SHA256=170b3831bd9c2144c2d2cbfff79288f07e4c52459d51c04fe26cf7d6806738e5
+STAGED_JAR_HASH_MATCH=YES
+STAGED_FRONTEND_HASH_MATCH=YES
+
+FLYWAY_BEFORE_BEGIN
+LATEST_VERSION=69
+SUCCESS_COUNT=70
+FAILED_COUNT=0
+FLYWAY_BEFORE_END
+
+==============================================================================
+2. PREPARE NEW RELEASE
+==============================================================================
+PREPARED_BACKEND_SHA256=e054af992d66d3fdd24d2006126b3b55daedf194e0dc6ea40673d28fabd3cd16
+DEPLOY_FAILURE=FRONTEND_UNZIP_FAILED
+
+=== AUTOMATIC ROLLBACK BEGIN ===
+ROLLBACK_BACKEND_BEGIN
+ROLLBACK_BACKEND_OK=YES
+ROLLBACK_FRONTEND_FROM_BACKUP_BEGIN
+ROLLBACK_FRONTEND_FROM_BACKUP_OK=YES
+ROLLBACK_BACKEND_HEALTH_OK=YES
+{"groups":["liveness","readiness"],"status":"UP"}ROLLBACK_EXECUTED=YES
+=== AUTOMATIC ROLLBACK END ===
+M08_DEPLOY_STATUS=ROLLED_BACK
+
+STDERR_BEGIN
+warning:  /home/ubuntu/m08-staging-20260902-140814/frontend.zip appears to use backslashes as path separators
+STDERR_END
+
+==============================================================================
+M08.4 LOCAL SUMMARY
+==============================================================================
+SSH_EXIT=20
+SSH_STDERR_EMPTY=NO
+REMOTE_STAGE=/home/ubuntu/m08-staging-20260902-140814
+REMOTE_BACKUP=/home/ubuntu/m08-backup-20260902-140814
+COMMIT_CREATED=NO
+PUSH_EXECUTED=NO
+LOG_FILE=C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\logs\M08-oracle-production-deploy.txt

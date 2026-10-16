@@ -1,0 +1,664 @@
+external_id,name,club,historical_role,appearances,starts,minutes_played,average_rating,fantasy_average,goals,assists,penalties_taken,penalties_scored,penalties_missed,yellow_cards,red_cards,own_goals,goals_conceded,clean_sheets,saves,penalties_saved,expected_goals,expected_assists,source_url
+FANTACALCIO-3,Radunovic,Cagliari,P,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cagliari/radunovic/3/2025-26/statistico
+FANTACALCIO-4,Sportiello,Atalanta,P,1,,,5.5,4.5,0,0,0,0,0,0,0,,1,,,0,,,https://www.fantacalcio.it/serie-a/squadre/atalanta/sportiello/4/2025-26/statistico
+FANTACALCIO-22,De Roon,Atalanta,C,34,,,5.99,6.01,1,2,0,0,0,6,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/atalanta/de-roon/22/2025-26/statistico
+FANTACALCIO-27,Grassi,Cremonese,C,28,,,5.93,5.84,0,0,0,0,0,3,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cremonese/grassi/27/2025-26/statistico
+FANTACALCIO-49,Masina,Torino,D,5,,,5.6,5.8,0,1,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/torino/masina/49/2025-26/statistico
+FANTACALCIO-133,Skorupski,Bologna,P,18,,,6.11,5.19,0,0,0,0,0,1,1,,15,,,0,,,https://www.fantacalcio.it/serie-a/squadre/bologna/skorupski/133/2025-26/statistico
+FANTACALCIO-140,Hysaj,Lazio,D,3,,,5.67,5.67,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lazio/hysaj/140/2025-26/statistico
+FANTACALCIO-152,Zielinski,Inter,C,31,,,6.5,7.03,6,2,1,1,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/inter/zielinski/152/2025-26/statistico
+FANTACALCIO-158,Lezzerini,Fiorentina,P,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/fiorentina/lezzerini/158/2025-26/statistico
+FANTACALCIO-181,Vecino,Lazio,C,12,,,5.92,5.96,0,1,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lazio/vecino/181/2025-26/statistico
+FANTACALCIO-184,Bernardeschi,Bologna,C,25,,,6.2,6.7,4,2,1,1,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/bologna/bernardeschi/184/2025-26/statistico
+FANTACALCIO-188,Leali,Genoa,P,22,,,6.20,4.89,0,0,0,0,0,2,1,,27,,,0,,,https://www.fantacalcio.it/serie-a/squadre/genoa/leali/188/2025-26/statistico
+FANTACALCIO-216,Donnarumma An.,Torino,P,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/torino/donnarumma-an/216/2025-26/statistico
+FANTACALCIO-218,Perin,Juventus,P,9,,,6.11,5.11,0,0,0,0,0,0,0,,9,,,0,,,https://www.fantacalcio.it/serie-a/squadre/juventus/perin/218/2025-26/statistico
+FANTACALCIO-219,Sommariva,Genoa,P,2,,,5.75,3.75,0,0,0,0,0,0,0,,4,,,0,,,https://www.fantacalcio.it/serie-a/squadre/genoa/sommariva/219/2025-26/statistico
+FANTACALCIO-247,Pavoletti,Cagliari,A,7,,,5.93,6.29,1,0,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cagliari/pavoletti/247/2025-26/statistico
+FANTACALCIO-252,Biraghi,Torino,D,10,,,5.9,5.9,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/torino/biraghi/252/2025-26/statistico
+FANTACALCIO-254,Dimarco,Inter,D,35,,,6.66,7.7,7,17,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/inter/dimarco/254/2025-26/statistico
+FANTACALCIO-256,Juan Jesus,Napoli,D,22,,,5.73,5.5,0,0,0,0,0,8,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/napoli/juan-jesus/256/2025-26/statistico
+FANTACALCIO-294,Rugani,Fiorentina,D,8,,,5.75,5.62,0,0,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/fiorentina/rugani/294/2025-26/statistico
+FANTACALCIO-309,Dybala,Roma,A,22,,,6.16,6.61,2,7,1,0,1,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/roma/dybala/309/2025-26/statistico
+FANTACALCIO-313,Morata,Como,A,20,,,5.58,5.32,0,0,1,0,1,2,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/como/morata/313/2025-26/statistico
+FANTACALCIO-322,De Vrij,Inter,D,9,,,6.11,6.06,0,0,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/inter/de-vrij/322/2025-26/statistico
+FANTACALCIO-327,Patric,Lazio,D,11,,,5.86,5.77,0,0,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lazio/patric/327/2025-26/statistico
+FANTACALCIO-333,Cataldi,Lazio,C,27,,,5.94,6.28,3,3,2,2,0,6,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lazio/cataldi/333/2025-26/statistico
+FANTACALCIO-388,Albiol,Pisa,D,8,,,5.94,6.0,0,1,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/pisa/albiol/388/2025-26/statistico
+FANTACALCIO-393,Luperto,Cremonese,D,34,,,5.88,5.94,1,1,0,0,0,4,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cremonese/luperto/393/2025-26/statistico
+FANTACALCIO-418,Goldaniga,Como,D,1,,,6.0,6.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/como/goldaniga/418/2025-26/statistico
+FANTACALCIO-441,Belotti,Cagliari,A,4,,,6.12,7.62,2,0,1,1,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cagliari/belotti/441/2025-26/statistico
+FANTACALCIO-449,Vazquez,Cremonese,C,13,,,6.0,6.38,1,2,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cremonese/vazquez/449/2025-26/statistico
+FANTACALCIO-460,Romagnoli,Lazio,D,32,,,6.12,6.02,0,0,0,0,0,5,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lazio/romagnoli/460/2025-26/statistico
+FANTACALCIO-479,Sanabria,Cremonese,A,24,,,5.69,5.81,1,1,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cremonese/sanabria/479/2025-26/statistico
+FANTACALCIO-487,De Silvestri,Bologna,D,10,,,5.9,5.8,0,0,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/bologna/de-silvestri/487/2025-26/statistico
+FANTACALCIO-505,Bonazzoli,Cremonese,A,35,,,6.19,7.04,10,2,3,3,0,4,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cremonese/bonazzoli/505/2025-26/statistico
+FANTACALCIO-511,Perilli,Verona,P,3,,,6.0,3.67,0,0,0,0,0,0,0,,7,,,0,,,https://www.fantacalcio.it/serie-a/squadre/verona/perilli/511/2025-26/statistico
+FANTACALCIO-513,Acerbi,Inter,D,17,,,6.12,6.03,0,0,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/inter/acerbi/513/2025-26/statistico
+FANTACALCIO-530,Pellegrini Lo.,Roma,C,24,,,6.0,6.54,4,2,2,2,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/roma/pellegrini-lo/530/2025-26/statistico
+FANTACALCIO-531,Berardi,Sassuolo,A,26,,,6.23,7.12,8,4,3,2,1,2,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/sassuolo/berardi/531/2025-26/statistico
+FANTACALCIO-536,Politano,Napoli,C,34,,,5.99,6.25,2,5,0,0,0,4,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/napoli/politano/536/2025-26/statistico
+FANTACALCIO-543,Padelli,Udinese,P,2,,,6.5,5.5,0,0,0,0,0,0,0,,2,,,0,,,https://www.fantacalcio.it/serie-a/squadre/udinese/padelli/543/2025-26/statistico
+FANTACALCIO-554,Zappacosta,Atalanta,D,35,,,5.94,6.19,3,1,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/atalanta/zappacosta/554/2025-26/statistico
+FANTACALCIO-572,Meret,Napoli,P,11,,,6.23,5.18,0,1,0,0,0,1,0,,12,,,0,,,https://www.fantacalcio.it/serie-a/squadre/napoli/meret/572/2025-26/statistico
+FANTACALCIO-574,Scuffet,Pisa,P,7,,,6.21,4.07,0,0,0,0,0,0,0,,15,,,0,,,https://www.fantacalcio.it/serie-a/squadre/pisa/scuffet/574/2025-26/statistico
+FANTACALCIO-608,Zapata D.,Torino,A,24,,,5.81,6.10,3,1,1,0,1,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/torino/zapata-d/608/2025-26/statistico
+FANTACALCIO-610,Gollini,Roma,P,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/roma/gollini/610/2025-26/statistico
+FANTACALCIO-612,Bianchetti,Cremonese,D,27,,,5.81,5.78,0,1,0,0,0,4,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cremonese/bianchetti/612/2025-26/statistico
+FANTACALCIO-632,Zaccagni,Lazio,C,26,,,5.96,6.04,3,0,1,0,1,6,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lazio/zaccagni/632/2025-26/statistico
+FANTACALCIO-647,Dzeko,Fiorentina,A,9,,,5.83,5.78,0,0,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/fiorentina/dzeko/647/2025-26/statistico
+FANTACALCIO-697,Cuadrado,Pisa,D,16,,,6.0,6.09,1,0,1,1,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/pisa/cuadrado/697/2025-26/statistico
+FANTACALCIO-761,Audero,Cremonese,P,34,,,6.07,4.78,0,0,0,0,0,0,0,,50,,,2,,,https://www.fantacalcio.it/serie-a/squadre/cremonese/audero/761/2025-26/statistico
+FANTACALCIO-770,Pezzella Giu.,Cremonese,D,31,,,5.79,5.66,0,1,0,0,0,8,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cremonese/pezzella-giu/770/2025-26/statistico
+FANTACALCIO-779,Cristante,Roma,C,37,,,6.09,6.20,2,1,0,0,0,6,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/roma/cristante/779/2025-26/statistico
+FANTACALCIO-785,Immobile,Bologna,A,6,,,5.58,5.5,0,0,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/bologna/immobile/785/2025-26/statistico
+FANTACALCIO-787,Djimsiti,Atalanta,D,33,,,5.86,5.80,0,0,0,0,0,4,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/atalanta/djimsiti/787/2025-26/statistico
+FANTACALCIO-788,Freuler,Bologna,C,29,,,5.98,6.0,1,2,0,0,0,5,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/bologna/freuler/788/2025-26/statistico
+FANTACALCIO-791,Sabelli,Genoa,D,13,,,5.77,5.62,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/genoa/sabelli/791/2025-26/statistico
+FANTACALCIO-795,El Shaarawy,Roma,C,18,,,6.06,6.25,1,2,0,0,0,4,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/roma/el-shaarawy/795/2025-26/statistico
+FANTACALCIO-801,Gagliardini,Verona,C,29,,,5.91,5.84,1,0,0,0,0,10,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/verona/gagliardini/801/2025-26/statistico
+FANTACALCIO-827,Locatelli,Juventus,C,36,,,6.39,6.32,1,2,1,0,1,9,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/juventus/locatelli/827/2025-26/statistico
+FANTACALCIO-1842,Pierini,Sassuolo,A,6,,,6.0,5.92,0,0,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/sassuolo/pierini/1842/2025-26/statistico
+FANTACALCIO-1852,Spinazzola,Napoli,D,30,,,6.05,6.43,3,3,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/napoli/spinazzola/1852/2025-26/statistico
+FANTACALCIO-1870,Barella,Inter,C,34,,,6.29,6.72,3,9,0,0,0,7,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/inter/barella/1870/2025-26/statistico
+FANTACALCIO-1871,Deiola,Cagliari,C,20,,,5.95,5.92,0,1,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cagliari/deiola/1871/2025-26/statistico
+FANTACALCIO-1891,Ceccherini,Cremonese,D,8,,,5.44,5.38,0,1,0,0,0,1,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cremonese/ceccherini/1891/2025-26/statistico
+FANTACALCIO-1926,Di Gennaro,Inter,P,1,,,6.0,5.0,0,0,0,0,0,0,0,,1,,,0,,,https://www.fantacalcio.it/serie-a/squadre/inter/di-gennaro/1926/2025-26/statistico
+FANTACALCIO-1930,Pinsoglio,Juventus,P,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/juventus/pinsoglio/1930/2025-26/statistico
+FANTACALCIO-1933,Mandragora,Fiorentina,C,34,,,6.03,6.60,7,2,1,1,0,7,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/fiorentina/mandragora/1933/2025-26/statistico
+FANTACALCIO-1976,Mazzitelli,Cagliari,C,15,,,6.03,6.5,2,2,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cagliari/mazzitelli/1976/2025-26/statistico
+FANTACALCIO-2006,Lirola,Verona,D,5,,,5.5,5.4,0,0,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/verona/lirola/2006/2025-26/statistico
+FANTACALCIO-2012,Milik,Juventus,A,2,,,6.0,6.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/juventus/milik/2012/2025-26/statistico
+FANTACALCIO-2038,Pinamonti,Sassuolo,A,35,,,5.84,6.56,9,3,1,0,1,2,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/sassuolo/pinamonti/2038/2025-26/statistico
+FANTACALCIO-2061,Simeone,Torino,A,32,,,6.23,7.25,11,0,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/torino/simeone/2061/2025-26/statistico
+FANTACALCIO-2076,Rog,Cagliari,C,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cagliari/rog/2076/2025-26/statistico
+FANTACALCIO-2077,Pasalic,Atalanta,C,33,,,5.94,6.26,3,3,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/atalanta/pasalic/2077/2025-26/statistico
+FANTACALCIO-2097,Kean,Fiorentina,A,26,,,5.85,6.73,8,1,2,2,0,4,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/fiorentina/kean/2097/2025-26/statistico
+FANTACALCIO-2117,Kastanos,Verona,C,2,,,6.0,6.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/verona/kastanos/2117/2025-26/statistico
+FANTACALCIO-2120,Bastoni,Inter,D,28,,,6.20,6.34,1,4,0,0,0,6,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/inter/bastoni/2120/2025-26/statistico
+FANTACALCIO-2127,Satalino,Sassuolo,P,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/sassuolo/satalino/2127/2025-26/statistico
+FANTACALCIO-2134,Falcone,Lecce,P,38,,,6.49,5.30,0,0,0,0,0,2,0,,50,,,2,,,https://www.fantacalcio.it/serie-a/squadre/lecce/falcone/2134/2025-26/statistico
+FANTACALCIO-2137,Scamacca,Atalanta,A,23,,,6.20,7.5,10,1,2,2,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/atalanta/scamacca/2137/2025-26/statistico
+FANTACALCIO-2155,Cutrone,Parma,A,15,,,5.6,5.8,1,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/parma/cutrone/2155/2025-26/statistico
+FANTACALCIO-2160,Gosens,Fiorentina,D,26,,,5.92,6.27,3,1,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/fiorentina/gosens/2160/2025-26/statistico
+FANTACALCIO-2167,Orsolini,Bologna,C,33,,,6.09,6.82,10,1,6,4,2,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/bologna/orsolini/2167/2025-26/statistico
+FANTACALCIO-2170,Milinkovic-Savic V.,Napoli,P,27,,,6.09,5.54,0,0,0,0,0,0,0,,24,,,3,,,https://www.fantacalcio.it/serie-a/squadre/napoli/milinkovic-savic-v/2170/2025-26/statistico
+FANTACALCIO-2188,Marusic,Lazio,D,33,,,5.80,5.91,1,2,0,0,0,1,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lazio/marusic/2188/2025-26/statistico
+FANTACALCIO-2194,Calhanoglu,Inter,C,22,,,6.41,7.52,9,4,5,4,1,7,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/inter/calhanoglu/2194/2025-26/statistico
+FANTACALCIO-2211,Silvestri,Cremonese,P,4,,,6.5,4.75,0,0,0,0,0,0,0,,7,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cremonese/silvestri/2211/2025-26/statistico
+FANTACALCIO-2263,Lazzari,Lazio,D,18,,,5.72,5.67,0,0,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lazio/lazzari/2263/2025-26/statistico
+FANTACALCIO-2271,Nicolas,Pisa,P,6,,,5.83,3.5,0,0,0,0,0,0,0,,14,,,0,,,https://www.fantacalcio.it/serie-a/squadre/pisa/nicolas/2271/2025-26/statistico
+FANTACALCIO-2273,Caracciolo A.,Pisa,D,35,,,5.74,5.71,2,0,0,0,0,10,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/pisa/caracciolo-a/2273/2025-26/statistico
+FANTACALCIO-2274,Valoti,Cremonese,C,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cremonese/valoti/2274/2025-26/statistico
+FANTACALCIO-2279,Romagna,Sassuolo,D,5,,,5.8,5.8,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/sassuolo/romagna/2279/2025-26/statistico
+FANTACALCIO-2296,Mancini,Roma,D,36,,,6.38,6.64,4,2,0,0,0,9,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/roma/mancini/2296/2025-26/statistico
+FANTACALCIO-2297,Rossi F.,Atalanta,P,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/atalanta/rossi-f/2297/2025-26/statistico
+FANTACALCIO-2334,Leris,Pisa,C,32,,,5.83,6.08,2,3,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/pisa/leris/2334/2025-26/statistico
+FANTACALCIO-2369,Thauvin,Udinese,A,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/udinese/thauvin/2369/2025-26/statistico
+FANTACALCIO-2379,Rabiot,Milan,C,29,,,6.19,6.84,6,4,0,0,0,4,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/milan/rabiot/2379/2025-26/statistico
+FANTACALCIO-2401,Fruchtl,Lecce,P,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lecce/fruchtl/2401/2025-26/statistico
+FANTACALCIO-2423,Pulisic,Milan,C,29,,,6.12,6.98,8,4,1,0,1,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/milan/pulisic/2423/2025-26/statistico
+FANTACALCIO-2428,Sommer,Inter,P,33,,,5.83,4.92,0,0,0,0,0,0,0,,30,,,0,,,https://www.fantacalcio.it/serie-a/squadre/inter/sommer/2428/2025-26/statistico
+FANTACALCIO-2475,Sanchez,Udinese,A,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/udinese/sanchez/2475/2025-26/statistico
+FANTACALCIO-2489,Pedro,Lazio,A,24,,,6.06,6.69,5,2,2,2,0,4,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lazio/pedro/2489/2025-26/statistico
+FANTACALCIO-2499,Vardy,Cremonese,A,29,,,5.72,6.40,7,1,0,0,0,5,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cremonese/vardy/2499/2025-26/statistico
+FANTACALCIO-2517,De Bruyne,Napoli,C,18,,,6.39,7.31,5,2,3,3,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/napoli/de-bruyne/2517/2025-26/statistico
+FANTACALCIO-2521,De Gea,Fiorentina,P,37,,,6.19,4.95,0,0,0,0,0,0,0,,49,,,1,,,https://www.fantacalcio.it/serie-a/squadre/fiorentina/de-gea/2521/2025-26/statistico
+FANTACALCIO-2525,Darmian,Inter,D,6,,,5.83,5.83,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/inter/darmian/2525/2025-26/statistico
+FANTACALCIO-2528,Matic,Sassuolo,C,34,,,6.0,6.0,1,1,0,0,0,6,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/sassuolo/matic/2528/2025-26/statistico
+FANTACALCIO-2529,Mkhitaryan,Inter,C,30,,,6.08,6.43,4,1,0,0,0,5,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/inter/mkhitaryan/2529/2025-26/statistico
+FANTACALCIO-2531,Lukaku,Napoli,A,2,,,6.5,7.75,1,0,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/napoli/lukaku/2531/2025-26/statistico
+FANTACALCIO-2553,Alli,Como,C,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/como/alli/2553/2025-26/statistico
+FANTACALCIO-2593,Martin,Genoa,D,29,,,5.91,6.05,1,5,1,0,1,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/genoa/martin/2593/2025-26/statistico
+FANTACALCIO-2606,Modric,Milan,C,33,,,6.47,6.68,2,3,0,0,0,4,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/milan/modric/2606/2025-26/statistico
+FANTACALCIO-2640,Kolasinac,Atalanta,D,17,,,5.85,5.76,0,0,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/atalanta/kolasinac/2640/2025-26/statistico
+FANTACALCIO-2653,Lykogiannis,Bologna,D,10,,,5.9,5.85,0,1,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/bologna/lykogiannis/2653/2025-26/statistico
+FANTACALCIO-2670,Bailey,Roma,C,6,,,5.58,5.58,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/roma/bailey/2670/2025-26/statistico
+FANTACALCIO-2678,Fullkrug,Milan,A,19,,,5.76,5.76,1,0,1,0,1,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/milan/fullkrug/2678/2025-26/statistico
+FANTACALCIO-2722,Ravaglia F.,Bologna,P,17,,,6.15,4.32,0,0,0,0,0,4,0,,29,,,0,,,https://www.fantacalcio.it/serie-a/squadre/bologna/ravaglia-f/2722/2025-26/statistico
+FANTACALCIO-2724,Buongiorno,Napoli,D,33,,,5.92,5.91,0,1,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/napoli/buongiorno/2724/2025-26/statistico
+FANTACALCIO-2728,Pellegrini Lu.,Lazio,D,24,,,5.73,5.69,1,0,0,0,0,8,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lazio/pellegrini-lu/2728/2025-26/statistico
+FANTACALCIO-2745,Calabresi,Pisa,D,26,,,5.73,5.58,0,0,0,0,0,8,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/pisa/calabresi/2745/2025-26/statistico
+FANTACALCIO-2762,Kouamè,Fiorentina,A,1,,,6.0,6.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/fiorentina/kouamè/2762/2025-26/statistico
+FANTACALCIO-2764,Martinez L.,Inter,A,30,,,6.48,8.32,17,6,0,0,0,4,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/inter/martinez-l/2764/2025-26/statistico
+FANTACALCIO-2765,Odgaard,Bologna,C,22,,,5.80,6.5,5,1,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/bologna/odgaard/2765/2025-26/statistico
+FANTACALCIO-2766,Zaniolo,Udinese,C,31,,,6.32,6.84,5,5,0,0,0,8,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/udinese/zaniolo/2766/2025-26/statistico
+FANTACALCIO-2788,Bremer,Juventus,D,26,,,6.29,6.77,4,3,0,0,0,5,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/juventus/bremer/2788/2025-26/statistico
+FANTACALCIO-2809,Vigorito,Como,P,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/como/vigorito/2809/2025-26/statistico
+FANTACALCIO-2814,Provedel,Lazio,P,27,,,6.33,5.43,0,0,0,0,0,1,0,,27,,,1,,,https://www.fantacalcio.it/serie-a/squadre/lazio/provedel/2814/2025-26/statistico
+FANTACALCIO-2815,Terracciano,Milan,P,2,,,6.0,6.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/milan/terracciano/2815/2025-26/statistico
+FANTACALCIO-2816,Di Lorenzo,Napoli,D,26,,,6.10,6.35,2,1,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/napoli/di-lorenzo/2816/2025-26/statistico
+FANTACALCIO-2832,Boga,Juventus,A,13,,,6.08,7.04,4,1,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/juventus/boga/2832/2025-26/statistico
+FANTACALCIO-2839,Sottil,Lecce,C,21,,,5.83,6.05,1,2,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lecce/sottil/2839/2025-26/statistico
+FANTACALCIO-2841,Vlahovic,Juventus,A,18,,,6.08,7.25,7,0,1,1,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/juventus/vlahovic/2841/2025-26/statistico
+FANTACALCIO-2842,Zanimacchia,Cremonese,C,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cremonese/zanimacchia/2842/2025-26/statistico
+FANTACALCIO-2845,Contini,Napoli,P,1,,,6.0,6.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/napoli/contini/2845/2025-26/statistico
+FANTACALCIO-2847,Sernicola,Cremonese,D,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cremonese/sernicola/2847/2025-26/statistico
+FANTACALCIO-2848,Frattesi,Inter,C,15,,,5.77,5.77,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/inter/frattesi/2848/2025-26/statistico
+FANTACALCIO-2861,Semper,Pisa,P,25,,,6.12,4.44,0,0,0,0,0,0,0,,42,,,0,,,https://www.fantacalcio.it/serie-a/squadre/pisa/semper/2861/2025-26/statistico
+FANTACALCIO-4137,Diego Carlos,Como,D,25,,,6.32,6.28,1,0,0,0,0,8,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/como/diego-carlos/4137/2025-26/statistico
+FANTACALCIO-4159,Akanji,Inter,D,33,,,6.41,6.53,2,0,0,0,0,4,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/inter/akanji/4159/2025-26/statistico
+FANTACALCIO-4177,Pavard,Inter,D,1,,,6.0,6.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/inter/pavard/4177/2025-26/statistico
+FANTACALCIO-4179,Gonzalez N.,Juventus,A,1,,,6.0,6.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/juventus/gonzalez-n/4179/2025-26/statistico
+FANTACALCIO-4186,Guendouzi,Lazio,C,16,,,6.0,6.16,2,0,0,0,0,5,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lazio/guendouzi/4186/2025-26/statistico
+FANTACALCIO-4199,Loftus-Cheek,Milan,C,24,,,6.0,6.38,3,1,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/milan/loftus-cheek/4199/2025-26/statistico
+FANTACALCIO-4210,Mina,Cagliari,D,26,,,5.98,6.15,2,1,0,0,0,3,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cagliari/mina/4210/2025-26/statistico
+FANTACALCIO-4220,Zambo Anguissa,Napoli,C,18,,,6.11,6.81,4,1,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/napoli/zambo-anguissa/4220/2025-26/statistico
+FANTACALCIO-4236,Muric,Sassuolo,P,32,,,6.08,4.77,0,0,0,0,0,4,0,,43,,,1,,,https://www.fantacalcio.it/serie-a/squadre/sassuolo/muric/4236/2025-26/statistico
+FANTACALCIO-4263,Kabasele,Udinese,D,29,,,6.02,6.21,3,0,0,0,0,5,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/udinese/kabasele/4263/2025-26/statistico
+FANTACALCIO-4284,Sergi Roberto,Como,C,14,,,5.96,5.86,0,0,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/como/sergi-roberto/4284/2025-26/statistico
+FANTACALCIO-4287,Lobotka,Napoli,C,31,,,6.11,6.16,1,0,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/napoli/lobotka/4287/2025-26/statistico
+FANTACALCIO-4312,Maignan,Milan,P,37,,,6.36,5.53,0,0,0,0,0,4,0,,35,,,2,,,https://www.fantacalcio.it/serie-a/squadre/milan/maignan/4312/2025-26/statistico
+FANTACALCIO-4317,N'Dicka,Roma,D,31,,,6.18,6.42,3,1,0,0,0,5,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/roma/n-dicka/4317/2025-26/statistico
+FANTACALCIO-4349,Nicolussi Caviglia,Parma,C,23,,,5.72,5.85,0,4,0,0,0,4,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/parma/nicolussi-caviglia/4349/2025-26/statistico
+FANTACALCIO-4359,Piccoli,Fiorentina,A,27,,,5.83,6.30,4,1,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/fiorentina/piccoli/4359/2025-26/statistico
+FANTACALCIO-4360,Caprile,Cagliari,P,38,,,6.43,5.01,0,0,0,0,0,2,0,,53,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cagliari/caprile/4360/2025-26/statistico
+FANTACALCIO-4364,Gaetano,Cagliari,C,32,,,6.11,6.36,2,4,0,0,0,4,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cagliari/gaetano/4364/2025-26/statistico
+FANTACALCIO-4371,Raspadori,Atalanta,A,13,,,5.96,6.73,3,1,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/atalanta/raspadori/4371/2025-26/statistico
+FANTACALCIO-4374,Walukiewicz,Sassuolo,D,34,,,5.79,5.71,0,1,0,0,0,7,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/sassuolo/walukiewicz/4374/2025-26/statistico
+FANTACALCIO-4378,Ranieri L.,Fiorentina,D,31,,,5.90,5.84,1,0,0,0,0,8,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/fiorentina/ranieri-l/4378/2025-26/statistico
+FANTACALCIO-4385,Lazaro,Torino,D,30,,,5.68,5.68,0,2,0,0,0,4,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/torino/lazaro/4385/2025-26/statistico
+FANTACALCIO-4401,Gabbia,Milan,D,30,,,5.75,5.68,0,0,0,0,0,4,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/milan/gabbia/4401/2025-26/statistico
+FANTACALCIO-4404,Thorsby,Cremonese,C,22,,,5.84,6.20,3,1,0,0,0,4,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cremonese/thorsby/4404/2025-26/statistico
+FANTACALCIO-4409,Rrahmani,Napoli,D,21,,,6.31,6.52,2,0,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/napoli/rrahmani/4409/2025-26/statistico
+FANTACALCIO-4423,Hernani,Parma,C,3,,,5.67,5.67,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/parma/hernani/4423/2025-26/statistico
+FANTACALCIO-4427,Malinovskyi,Genoa,C,34,,,6.04,6.51,6,3,3,3,0,10,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/genoa/malinovskyi/4427/2025-26/statistico
+FANTACALCIO-4431,Carnesecchi,Atalanta,P,37,,,6.49,5.70,0,0,0,0,0,0,0,,35,,,2,,,https://www.fantacalcio.it/serie-a/squadre/atalanta/carnesecchi/4431/2025-26/statistico
+FANTACALCIO-4433,Zortea,Bologna,D,29,,,5.95,5.98,0,2,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/bologna/zortea/4433/2025-26/statistico
+FANTACALCIO-4436,Cambiaghi,Bologna,A,27,,,5.85,6.24,3,4,0,0,0,3,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/bologna/cambiaghi/4436/2025-26/statistico
+FANTACALCIO-4459,Rovella,Lazio,C,11,,,5.91,5.82,0,1,0,0,0,2,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lazio/rovella/4459/2025-26/statistico
+FANTACALCIO-4461,Zappa,Cagliari,D,27,,,5.91,5.98,0,3,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cagliari/zappa/4461/2025-26/statistico
+FANTACALCIO-4463,Esposito Se.,Cagliari,A,36,,,6.29,6.90,7,4,1,1,0,6,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cagliari/esposito-se/4463/2025-26/statistico
+FANTACALCIO-4465,Fagioli,Fiorentina,C,33,,,6.18,6.38,2,3,0,0,0,5,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/fiorentina/fagioli/4465/2025-26/statistico
+FANTACALCIO-4479,Elmas,Napoli,C,30,,,5.82,5.97,1,3,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/napoli/elmas/4479/2025-26/statistico
+FANTACALCIO-4486,Strefezza,Parma,C,14,,,6.25,6.71,2,2,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/parma/strefezza/4486/2025-26/statistico
+FANTACALCIO-4495,Kumbulla,Roma,D,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/roma/kumbulla/4495/2025-26/statistico
+FANTACALCIO-4502,Gallo,Lecce,D,37,,,5.96,6.0,0,3,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lecce/gallo/4502/2025-26/statistico
+FANTACALCIO-4510,Leao,Milan,A,28,,,5.79,6.77,9,3,2,2,0,5,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/milan/leao/4510/2025-26/statistico
+FANTACALCIO-4518,Russo A.,Sassuolo,P,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/sassuolo/russo-a/4518/2025-26/statistico
+FANTACALCIO-4657,Celik,Roma,D,33,,,6.09,6.18,1,2,0,0,0,2,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/roma/celik/4657/2025-26/statistico
+FANTACALCIO-4662,Weah,Juventus,C,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/juventus/weah/4662/2025-26/statistico
+FANTACALCIO-4665,Maripan,Torino,D,26,,,6.0,6.15,2,0,0,0,0,4,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/torino/maripan/4665/2025-26/statistico
+FANTACALCIO-4677,Cornet,Genoa,C,6,,,5.08,4.58,0,0,1,0,1,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/genoa/cornet/4677/2025-26/statistico
+FANTACALCIO-4686,Fofana Y.,Milan,C,33,,,5.79,6.0,2,3,0,0,0,4,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/milan/fofana-y/4686/2025-26/statistico
+FANTACALCIO-4711,Kostic,Juventus,C,11,,,6.18,7.05,3,1,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/juventus/kostic/4711/2025-26/statistico
+FANTACALCIO-4728,Nkunku,Milan,A,28,,,6.12,6.98,7,3,5,5,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/milan/nkunku/4728/2025-26/statistico
+FANTACALCIO-4730,Lookman,Atalanta,A,11,,,5.91,6.45,2,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/atalanta/lookman/4730/2025-26/statistico
+FANTACALCIO-4734,Miranda J.,Bologna,D,31,,,6.0,6.10,1,3,0,0,0,6,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/bologna/miranda-j/4734/2025-26/statistico
+FANTACALCIO-4751,Tomori,Milan,D,32,,,6.0,5.91,0,1,0,0,0,6,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/milan/tomori/4751/2025-26/statistico
+FANTACALCIO-4772,Angelino,Roma,D,7,,,5.86,5.71,0,0,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/roma/angelino/4772/2025-26/statistico
+FANTACALCIO-4777,McTominay,Napoli,C,33,,,6.30,7.17,10,2,1,0,1,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/napoli/mctominay/4777/2025-26/statistico
+FANTACALCIO-4807,Hermoso,Roma,D,27,,,6.20,6.44,3,2,0,0,0,9,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/roma/hermoso/4807/2025-26/statistico
+FANTACALCIO-4856,Chukwueze,Milan,C,1,,,6.0,6.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/milan/chukwueze/4856/2025-26/statistico
+FANTACALCIO-4867,Turati,Sassuolo,P,6,,,6.25,5.08,0,0,0,0,0,0,0,,7,,,0,,,https://www.fantacalcio.it/serie-a/squadre/sassuolo/turati/4867/2025-26/statistico
+FANTACALCIO-4870,Adopo,Cagliari,C,38,,,5.80,5.86,1,1,0,0,0,4,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cagliari/adopo/4870/2025-26/statistico
+FANTACALCIO-4871,Thuram,Inter,A,29,,,6.36,7.88,13,6,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/inter/thuram/4871/2025-26/statistico
+FANTACALCIO-4887,Bellanova,Atalanta,D,22,,,5.77,5.77,0,1,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/atalanta/bellanova/4887/2025-26/statistico
+FANTACALCIO-4890,Tameze,Torino,C,19,,,5.55,5.5,0,0,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/torino/tameze/4890/2025-26/statistico
+FANTACALCIO-4892,Saelemaekers,Milan,C,35,,,6.3,6.57,3,3,0,0,0,5,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/milan/saelemaekers/4892/2025-26/statistico
+FANTACALCIO-4896,Maldini,Lazio,C,18,,,6.03,6.39,2,1,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lazio/maldini/4896/2025-26/statistico
+FANTACALCIO-4904,Marì,Fiorentina,D,10,,,5.6,5.45,0,0,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/fiorentina/marì/4904/2025-26/statistico
+FANTACALCIO-4911,Douglas Luiz,Juventus,C,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/juventus/douglas-luiz/4911/2025-26/statistico
+FANTACALCIO-4923,Colombo,Genoa,A,37,,,5.86,6.35,7,1,2,1,1,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/genoa/colombo/4923/2025-26/statistico
+FANTACALCIO-4929,Ciocci,Cagliari,P,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cagliari/ciocci/4929/2025-26/statistico
+FANTACALCIO-4930,Ghion,Sassuolo,C,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/sassuolo/ghion/4930/2025-26/statistico
+FANTACALCIO-4947,Brescianini,Fiorentina,C,20,,,5.92,6.22,2,1,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/fiorentina/brescianini/4947/2025-26/statistico
+FANTACALCIO-4957,Montipò,Verona,P,35,,,6.14,4.89,0,1,0,0,0,0,0,,54,,,3,,,https://www.fantacalcio.it/serie-a/squadre/verona/montipò/4957/2025-26/statistico
+FANTACALCIO-4970,Messias,Genoa,C,19,,,6.13,6.63,3,1,1,1,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/genoa/messias/4970/2025-26/statistico
+FANTACALCIO-4973,McKennie,Juventus,C,34,,,6.18,6.72,5,6,0,0,0,5,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/juventus/mckennie/4973/2025-26/statistico
+FANTACALCIO-4976,Kalulu,Juventus,D,37,,,6.28,6.5,2,4,0,0,0,2,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/juventus/kalulu/4976/2025-26/statistico
+FANTACALCIO-4982,Erlic,Bologna,D,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/bologna/erlic/4982/2025-26/statistico
+FANTACALCIO-4994,Vojvoda,Como,D,27,,,5.85,6.07,2,1,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/como/vojvoda/4994/2025-26/statistico
+FANTACALCIO-5007,Ilic,Torino,C,8,,,5.69,5.56,0,0,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/torino/ilic/5007/2025-26/statistico
+FANTACALCIO-5010,Ismajli,Torino,D,24,,,6.02,6.0,0,2,0,0,0,5,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/torino/ismajli/5010/2025-26/statistico
+FANTACALCIO-5022,Pavlovic,Milan,D,34,,,6.37,6.75,5,0,0,0,0,4,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/milan/pavlovic/5022/2025-26/statistico
+FANTACALCIO-5036,Caqueret,Como,C,29,,,6.05,6.34,2,4,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/como/caqueret/5036/2025-26/statistico
+FANTACALCIO-5116,Martinez Jo.,Inter,P,5,,,6.0,5.2,0,0,0,0,0,0,0,,4,,,0,,,https://www.fantacalcio.it/serie-a/squadre/inter/martinez-jo/5116/2025-26/statistico
+FANTACALCIO-5119,Samardzic,Atalanta,C,23,,,5.93,6.26,2,2,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/atalanta/samardzic/5119/2025-26/statistico
+FANTACALCIO-5131,Gilmour,Napoli,C,14,,,6.04,6.21,1,0,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/napoli/gilmour/5131/2025-26/statistico
+FANTACALCIO-5135,Guaita,Parma,P,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/parma/guaita/5135/2025-26/statistico
+FANTACALCIO-5156,Nkounkou,Torino,D,8,,,5.88,5.88,0,1,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/torino/nkounkou/5156/2025-26/statistico
+FANTACALCIO-5168,Tsimikas,Roma,D,16,,,5.62,5.59,0,0,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/roma/tsimikas/5168/2025-26/statistico
+FANTACALCIO-5273,Estupinan,Milan,D,15,,,5.73,5.77,1,1,0,0,0,5,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/milan/estupinan/5273/2025-26/statistico
+FANTACALCIO-5286,Akpa Akpro,Verona,C,22,,,5.68,5.61,1,0,0,0,0,9,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/verona/akpa-akpro/5286/2025-26/statistico
+FANTACALCIO-5290,Estevez,Parma,C,25,,,5.9,5.9,0,1,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/parma/estevez/5290/2025-26/statistico
+FANTACALCIO-5295,Musah,Atalanta,C,17,,,6.0,6.15,1,0,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/atalanta/musah/5295/2025-26/statistico
+FANTACALCIO-5297,Luvumbo,Cagliari,A,10,,,5.75,5.75,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cagliari/luvumbo/5297/2025-26/statistico
+FANTACALCIO-5298,Pobega,Bologna,C,23,,,5.80,6.15,3,1,0,0,0,2,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/bologna/pobega/5298/2025-26/statistico
+FANTACALCIO-5301,Luis Henrique,Inter,C,27,,,5.87,6.04,1,2,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/inter/luis-henrique/5301/2025-26/statistico
+FANTACALCIO-5307,Valenti,Parma,D,27,,,5.85,5.72,0,0,0,0,0,7,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/parma/valenti/5307/2025-26/statistico
+FANTACALCIO-5318,Tramoni M.,Pisa,C,26,,,5.83,6.08,2,2,1,1,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/pisa/tramoni-m/5318/2025-26/statistico
+FANTACALCIO-5319,Sohm,Bologna,C,25,,,5.76,5.74,0,1,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/bologna/sohm/5319/2025-26/statistico
+FANTACALCIO-5320,Paleari,Torino,P,29,,,6.02,4.45,0,0,0,0,0,1,0,,45,,,0,,,https://www.fantacalcio.it/serie-a/squadre/torino/paleari/5320/2025-26/statistico
+FANTACALCIO-5324,Godfrey,Atalanta,D,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/atalanta/godfrey/5324/2025-26/statistico
+FANTACALCIO-5336,Nzola,Sassuolo,A,29,,,5.88,6.16,4,1,3,2,1,2,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/sassuolo/nzola/5336/2025-26/statistico
+FANTACALCIO-5338,Rinaldi,Parma,P,1,,,7.0,6.5,0,0,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/parma/rinaldi/5338/2025-26/statistico
+FANTACALCIO-5353,Balogh,Parma,D,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/parma/balogh/5353/2025-26/statistico
+FANTACALCIO-5393,Man,Parma,C,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/parma/man/5393/2025-26/statistico
+FANTACALCIO-5406,Di Pardo,Cagliari,D,1,,,5.5,5.5,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cagliari/di-pardo/5406/2025-26/statistico
+FANTACALCIO-5422,Zalewski,Atalanta,C,32,,,6.06,6.36,2,5,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/atalanta/zalewski/5422/2025-26/statistico
+FANTACALCIO-5427,Gutierrez,Napoli,D,24,,,5.90,6.06,1,1,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/napoli/gutierrez/5427/2025-26/statistico
+FANTACALCIO-5435,Moreno Alb.,Como,D,18,,,6.11,6.39,2,1,0,0,0,4,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/como/moreno-alb/5435/2025-26/statistico
+FANTACALCIO-5449,Parisi,Fiorentina,D,23,,,6.13,6.09,1,1,0,0,0,6,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/fiorentina/parisi/5449/2025-26/statistico
+FANTACALCIO-5453,Ricci S.,Milan,C,29,,,6.03,6.21,1,3,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/milan/ricci-s/5453/2025-26/statistico
+FANTACALCIO-5455,Moreo,Pisa,A,35,,,5.8,6.37,7,0,2,2,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/pisa/moreo/5455/2025-26/statistico
+FANTACALCIO-5457,Maleh,Cremonese,C,22,,,5.55,5.57,1,0,0,0,0,3,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cremonese/maleh/5457/2025-26/statistico
+FANTACALCIO-5471,Djuric,Cremonese,A,12,,,6.04,6.04,0,1,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cremonese/djuric/5471/2025-26/statistico
+FANTACALCIO-5481,Mazzocchi,Napoli,D,11,,,5.82,5.82,0,1,0,0,0,0,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/napoli/mazzocchi/5481/2025-26/statistico
+FANTACALCIO-5496,Johnsen,Cremonese,A,9,,,5.61,6.06,1,1,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cremonese/johnsen/5496/2025-26/statistico
+FANTACALCIO-5498,Casale,Bologna,D,10,,,5.55,5.55,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/bologna/casale/5498/2025-26/statistico
+FANTACALCIO-5500,Cancellieri,Lazio,A,29,,,5.91,6.26,4,1,0,0,0,6,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lazio/cancellieri/5500/2025-26/statistico
+FANTACALCIO-5504,Coulibaly L.,Lecce,C,33,,,6.05,6.29,3,1,0,0,0,4,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lecce/coulibaly-l/5504/2025-26/statistico
+FANTACALCIO-5506,Ekuban,Genoa,A,29,,,5.90,6.34,4,1,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/genoa/ekuban/5506/2025-26/statistico
+FANTACALCIO-5512,De Luca,Cremonese,A,1,,,7.0,10.0,1,0,1,1,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cremonese/de-luca/5512/2025-26/statistico
+FANTACALCIO-5513,Dumfries,Inter,D,20,,,5.9,6.35,3,1,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/inter/dumfries/5513/2025-26/statistico
+FANTACALCIO-5514,Vasquez,Genoa,D,36,,,6.15,6.21,1,0,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/genoa/vasquez/5514/2025-26/statistico
+FANTACALCIO-5515,Okereke,Cremonese,A,10,,,5.85,6.45,2,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cremonese/okereke/5515/2025-26/statistico
+FANTACALCIO-5516,Bianco,Fiorentina,C,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/fiorentina/bianco/5516/2025-26/statistico
+FANTACALCIO-5520,Cambiaso,Juventus,D,36,,,5.76,5.94,3,4,0,0,0,3,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/juventus/cambiaso/5520/2025-26/statistico
+FANTACALCIO-5526,Scalvini,Atalanta,D,24,,,5.98,6.35,3,1,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/atalanta/scalvini/5526/2025-26/statistico
+FANTACALCIO-5527,Zanoli,Udinese,D,19,,,6.0,6.24,1,2,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/udinese/zanoli/5527/2025-26/statistico
+FANTACALCIO-5532,Bradaric,Verona,D,29,,,5.79,5.83,0,2,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/verona/bradaric/5532/2025-26/statistico
+FANTACALCIO-5540,Niasse,Verona,C,17,,,5.79,5.82,0,1,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/verona/niasse/5540/2025-26/statistico
+FANTACALCIO-5544,David,Juventus,A,30,,,5.67,6.23,6,2,1,0,1,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/juventus/david/5544/2025-26/statistico
+FANTACALCIO-5555,Kamara H.,Udinese,D,26,,,6.06,6.04,0,2,0,0,0,5,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/udinese/kamara-h/5555/2025-26/statistico
+FANTACALCIO-5559,Da Cunha,Como,C,36,,,6.35,6.90,6,4,4,4,0,4,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/como/da-cunha/5559/2025-26/statistico
+FANTACALCIO-5561,Stengs,Pisa,C,1,,,5.5,5.5,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/pisa/stengs/5561/2025-26/statistico
+FANTACALCIO-5562,Thuram K.,Juventus,C,35,,,6.0,6.29,3,2,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/juventus/thuram-k/5562/2025-26/statistico
+FANTACALCIO-5564,Ndoye,Bologna,C,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/bologna/ndoye/5564/2025-26/statistico
+FANTACALCIO-5578,Kossounou,Atalanta,D,17,,,5.79,5.94,1,0,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/atalanta/kossounou/5578/2025-26/statistico
+FANTACALCIO-5585,Malen,Roma,A,18,,,6.75,9.0,14,2,4,3,1,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/roma/malen/5585/2025-26/statistico
+FANTACALCIO-5589,Konè M.,Roma,C,29,,,6.14,6.41,2,3,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/roma/konè-m/5589/2025-26/statistico
+FANTACALCIO-5603,Pongracic,Fiorentina,D,35,,,5.83,5.66,0,0,0,0,0,12,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/fiorentina/pongracic/5603/2025-26/statistico
+FANTACALCIO-5610,Vranckx,Sassuolo,C,15,,,5.8,5.73,0,0,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/sassuolo/vranckx/5610/2025-26/statistico
+FANTACALCIO-5620,Tavares N.,Lazio,D,20,,,5.9,5.78,0,0,0,0,0,5,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lazio/tavares-n/5620/2025-26/statistico
+FANTACALCIO-5637,Davis K.,Udinese,A,30,,,6.15,7.2,10,4,4,4,0,5,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/udinese/davis-k/5637/2025-26/statistico
+FANTACALCIO-5651,Harrison,Fiorentina,C,15,,,5.87,6.23,1,3,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/fiorentina/harrison/5651/2025-26/statistico
+FANTACALCIO-5672,Dia,Lazio,A,25,,,5.56,5.74,1,2,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lazio/dia/5672/2025-26/statistico
+FANTACALCIO-5674,Basic,Lazio,C,23,,,6.11,6.46,2,3,0,0,0,0,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lazio/basic/5674/2025-26/statistico
+FANTACALCIO-5678,Holm,Juventus,D,16,,,6.06,6.41,1,4,0,0,0,1,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/juventus/holm/5678/2025-26/statistico
+FANTACALCIO-5685,Koopmeiners,Juventus,C,31,,,5.73,5.65,0,0,0,0,0,5,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/juventus/koopmeiners/5685/2025-26/statistico
+FANTACALCIO-5687,Vlasic,Torino,C,37,,,5.82,6.46,8,3,5,5,0,7,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/torino/vlasic/5687/2025-26/statistico
+FANTACALCIO-5688,Harroui,Verona,C,18,,,5.81,5.89,1,0,1,1,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/verona/harroui/5688/2025-26/statistico
+FANTACALCIO-5701,Obert,Cagliari,D,34,,,6.13,6.07,0,3,0,0,0,8,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cagliari/obert/5701/2025-26/statistico
+FANTACALCIO-5718,Viti,Fiorentina,D,6,,,5.67,5.42,0,0,0,0,0,1,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/fiorentina/viti/5718/2025-26/statistico
+FANTACALCIO-5719,Asllani,Torino,C,15,,,5.73,5.43,0,0,1,0,1,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/torino/asllani/5719/2025-26/statistico
+FANTACALCIO-5734,Soulè,Roma,A,32,,,6.16,6.86,6,5,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/roma/soulè/5734/2025-26/statistico
+FANTACALCIO-5735,Volpato,Sassuolo,C,21,,,6.05,6.43,2,4,0,0,0,4,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/sassuolo/volpato/5735/2025-26/statistico
+FANTACALCIO-5739,De Winter,Milan,D,24,,,5.73,5.88,1,1,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/milan/de-winter/5739/2025-26/statistico
+FANTACALCIO-5750,Ostigard,Genoa,D,30,,,6.15,6.53,5,0,0,0,0,7,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/genoa/ostigard/5750/2025-26/statistico
+FANTACALCIO-5761,Zhegrova,Juventus,C,14,,,6.04,6.0,0,0,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/juventus/zhegrova/5761/2025-26/statistico
+FANTACALCIO-5784,Aebischer,Pisa,C,35,,,5.83,5.83,1,1,0,0,0,8,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/pisa/aebischer/5784/2025-26/statistico
+FANTACALCIO-5788,Sabiri,Fiorentina,C,1,,,6.0,6.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/fiorentina/sabiri/5788/2025-26/statistico
+FANTACALCIO-5791,Frendrup,Genoa,C,36,,,6.04,6.06,1,0,0,0,0,5,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/genoa/frendrup/5791/2025-26/statistico
+FANTACALCIO-5792,Ederson D.S.,Atalanta,C,30,,,6.28,6.47,2,1,1,1,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/atalanta/ederson-d-s/5792/2025-26/statistico
+FANTACALCIO-5800,Gudmundsson A.,Fiorentina,C,32,,,5.78,6.25,5,3,3,3,0,4,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/fiorentina/gudmundsson-a/5800/2025-26/statistico
+FANTACALCIO-5812,Terracciano F.,Cremonese,D,36,,,6.01,5.99,2,0,0,0,0,6,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cremonese/terracciano-f/5812/2025-26/statistico
+FANTACALCIO-5813,Miretti,Juventus,C,17,,,6.0,6.21,1,1,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/juventus/miretti/5813/2025-26/statistico
+FANTACALCIO-5820,Bertola,Udinese,D,25,,,5.92,5.9,0,1,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/udinese/bertola/5820/2025-26/statistico
+FANTACALCIO-5823,Baldanzi,Genoa,C,17,,,6.15,6.38,1,2,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/genoa/baldanzi/5823/2025-26/statistico
+FANTACALCIO-5824,Pafundi,Udinese,C,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/udinese/pafundi/5824/2025-26/statistico
+FANTACALCIO-5831,Gatti,Juventus,D,18,,,6.06,6.31,2,0,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/juventus/gatti/5831/2025-26/statistico
+FANTACALCIO-5833,Gila,Lazio,D,31,,,5.92,5.84,0,0,0,0,0,3,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lazio/gila/5833/2025-26/statistico
+FANTACALCIO-5835,Baschirotto,Cremonese,D,29,,,5.97,6.14,2,0,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cremonese/baschirotto/5835/2025-26/statistico
+FANTACALCIO-5840,Olivera,Napoli,D,24,,,5.81,5.75,0,0,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/napoli/olivera/5840/2025-26/statistico
+FANTACALCIO-5841,Svilar,Roma,P,38,,,6.30,5.49,0,0,0,0,0,0,0,,31,,,0,,,https://www.fantacalcio.it/serie-a/squadre/roma/svilar/5841/2025-26/statistico
+FANTACALCIO-5844,Thorstvedt,Sassuolo,C,31,,,6.24,6.58,4,3,0,0,0,9,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/sassuolo/thorstvedt/5844/2025-26/statistico
+FANTACALCIO-5845,Alvarez A.,Sassuolo,A,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/sassuolo/alvarez-a/5845/2025-26/statistico
+FANTACALCIO-5850,Lovric,Verona,C,11,,,5.77,5.77,0,1,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/verona/lovric/5850/2025-26/statistico
+FANTACALCIO-5851,Doig,Sassuolo,D,27,,,5.80,5.70,0,0,0,0,0,5,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/sassuolo/doig/5851/2025-26/statistico
+FANTACALCIO-5857,Pickel,Cremonese,C,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cremonese/pickel/5857/2025-26/statistico
+FANTACALCIO-5858,Ferguson,Bologna,C,25,,,5.86,5.84,1,0,0,0,0,5,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/bologna/ferguson/5858/2025-26/statistico
+FANTACALCIO-5860,Ravanelli,Cremonese,D,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cremonese/ravanelli/5860/2025-26/statistico
+FANTACALCIO-5862,Valeri,Parma,D,34,,,6.12,6.15,0,2,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/parma/valeri/5862/2025-26/statistico
+FANTACALCIO-5863,Castagnetti,Cremonese,C,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cremonese/castagnetti/5863/2025-26/statistico
+FANTACALCIO-5872,Helgason,Lecce,C,5,,,5.7,5.7,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lecce/helgason/5872/2025-26/statistico
+FANTACALCIO-5876,Di Gregorio,Juventus,P,30,,,6.03,5.28,0,0,0,0,0,1,0,,25,,,1,,,https://www.fantacalcio.it/serie-a/squadre/juventus/di-gregorio/5876/2025-26/statistico
+FANTACALCIO-5877,Carlos Augusto,Inter,D,29,,,6.05,6.09,1,1,0,0,0,6,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/inter/carlos-augusto/5877/2025-26/statistico
+FANTACALCIO-5885,Dodò,Fiorentina,D,36,,,6.22,6.26,1,2,0,0,0,7,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/fiorentina/dodò/5885/2025-26/statistico
+FANTACALCIO-5888,Casadei,Torino,C,32,,,5.94,6.42,6,0,0,0,0,5,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/torino/casadei/5888/2025-26/statistico
+FANTACALCIO-5891,Quagliata,Cremonese,D,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cremonese/quagliata/5891/2025-26/statistico
+FANTACALCIO-5899,Gigot,Lazio,D,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lazio/gigot/5899/2025-26/statistico
+FANTACALCIO-5918,Sulemana K.,Atalanta,A,22,,,5.89,6.11,2,1,0,0,0,4,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/atalanta/sulemana-k/5918/2025-26/statistico
+FANTACALCIO-5992,Bondo,Cremonese,C,27,,,5.81,5.72,0,0,0,0,0,5,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cremonese/bondo/5992/2025-26/statistico
+FANTACALCIO-5994,Ebosse,Torino,D,16,,,5.72,5.69,0,1,0,0,0,4,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/torino/ebosse/5994/2025-26/statistico
+FANTACALCIO-5995,De Ketelaere,Atalanta,A,31,,,6.10,6.48,3,5,0,0,0,4,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/atalanta/de-ketelaere/5995/2025-26/statistico
+FANTACALCIO-5998,Zerbin,Cremonese,C,30,,,5.75,5.78,0,2,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cremonese/zerbin/5998/2025-26/statistico
+FANTACALCIO-6001,Banda,Lecce,A,32,,,5.89,6.36,5,4,0,0,0,6,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lecce/banda/6001/2025-26/statistico
+FANTACALCIO-6005,Ilkhan,Torino,C,18,,,5.83,6.0,1,2,0,0,0,2,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/torino/ilkhan/6005/2025-26/statistico
+FANTACALCIO-6010,Fazzini,Fiorentina,C,15,,,5.73,5.67,0,0,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/fiorentina/fazzini/6010/2025-26/statistico
+FANTACALCIO-6013,Barbieri,Cremonese,D,27,,,5.87,5.76,0,1,0,0,0,8,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cremonese/barbieri/6013/2025-26/statistico
+FANTACALCIO-6015,Berisha M.,Lecce,C,13,,,6.27,6.96,2,3,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lecce/berisha-m/6015/2025-26/statistico
+FANTACALCIO-6020,Ellertsson,Genoa,C,35,,,5.73,5.8,1,1,0,0,0,1,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/genoa/ellertsson/6020/2025-26/statistico
+FANTACALCIO-6024,Sulemana I.,Cagliari,C,18,,,5.83,5.92,1,0,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cagliari/sulemana-i/6024/2025-26/statistico
+FANTACALCIO-6039,Cabal,Juventus,D,10,,,6.05,6.6,2,0,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/juventus/cabal/6039/2025-26/statistico
+FANTACALCIO-6041,Schuurs,Torino,D,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/torino/schuurs/6041/2025-26/statistico
+FANTACALCIO-6042,Lucumì,Bologna,D,28,,,5.93,5.95,1,0,0,0,0,5,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/bologna/lucumì/6042/2025-26/statistico
+FANTACALCIO-6046,Hien,Atalanta,D,28,,,6.0,5.95,1,0,0,0,0,5,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/atalanta/hien/6046/2025-26/statistico
+FANTACALCIO-6047,Ehizibue,Udinese,D,27,,,5.91,6.04,2,0,0,0,0,5,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/udinese/ehizibue/6047/2025-26/statistico
+FANTACALCIO-6052,Hojlund,Napoli,A,33,,,6.15,7.38,12,5,1,1,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/napoli/hojlund/6052/2025-26/statistico
+FANTACALCIO-6054,Moro N.,Bologna,C,28,,,6.02,6.21,2,0,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/bologna/moro-n/6054/2025-26/statistico
+FANTACALCIO-6055,Thiaw,Milan,D,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/milan/thiaw/6055/2025-26/statistico
+FANTACALCIO-6060,Laurientè,Sassuolo,A,37,,,6.01,6.77,7,9,0,0,0,4,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/sassuolo/laurientè/6060/2025-26/statistico
+FANTACALCIO-6066,Posch,Como,D,8,,,6.12,6.44,1,0,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/como/posch/6066/2025-26/statistico
+FANTACALCIO-6106,Carboni V.,Genoa,C,10,,,5.85,5.75,0,0,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/genoa/carboni-v/6106/2025-26/statistico
+FANTACALCIO-6112,Iling Junior,Pisa,C,4,,,5.75,5.75,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/pisa/iling-junior/6112/2025-26/statistico
+FANTACALCIO-6125,Vasquez D.,Roma,P,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/roma/vasquez-d/6125/2025-26/statistico
+FANTACALCIO-6145,Ngonge,Torino,A,17,,,5.76,5.94,1,1,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/torino/ngonge/6145/2025-26/statistico
+FANTACALCIO-6149,Carboni F.,Parma,D,3,,,5.83,5.83,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/parma/carboni-f/6149/2025-26/statistico
+FANTACALCIO-6151,Perrone,Como,C,36,,,6.35,6.60,3,4,0,0,0,8,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/como/perrone/6151/2025-26/statistico
+FANTACALCIO-6159,Sarr A.,Verona,A,32,,,5.81,5.78,0,0,0,0,0,0,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/verona/sarr-a/6159/2025-26/statistico
+FANTACALCIO-6164,Vitinha O.,Genoa,A,33,,,5.85,6.26,5,1,0,0,0,5,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/genoa/vitinha-o/6164/2025-26/statistico
+FANTACALCIO-6170,Gineitis,Torino,C,29,,,5.81,5.76,0,1,0,0,0,5,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/torino/gineitis/6170/2025-26/statistico
+FANTACALCIO-6184,Martinelli T.,Fiorentina,P,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/fiorentina/martinelli-t/6184/2025-26/statistico
+FANTACALCIO-6189,Missori,Sassuolo,D,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/sassuolo/missori/6189/2025-26/statistico
+FANTACALCIO-6190,Pisilli,Roma,C,23,,,6.09,6.46,2,4,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/roma/pisilli/6190/2025-26/statistico
+FANTACALCIO-6191,Belahyane,Lazio,C,11,,,5.59,5.64,0,2,0,0,0,1,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lazio/belahyane/6191/2025-26/statistico
+FANTACALCIO-6202,Beukema,Napoli,D,22,,,5.86,6.09,2,0,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/napoli/beukema/6202/2025-26/statistico
+FANTACALCIO-6205,Mulattieri,Sassuolo,A,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/sassuolo/mulattieri/6205/2025-26/statistico
+FANTACALCIO-6206,Fabbian,Fiorentina,C,24,,,5.85,6.08,2,0,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/fiorentina/fabbian/6206/2025-26/statistico
+FANTACALCIO-6207,Almqvist,Parma,A,12,,,5.83,5.92,0,1,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/parma/almqvist/6207/2025-26/statistico
+FANTACALCIO-6210,Popa,Torino,P,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/torino/popa/6210/2025-26/statistico
+FANTACALCIO-6211,Zemura,Udinese,D,16,,,5.75,5.66,0,0,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/udinese/zemura/6211/2025-26/statistico
+FANTACALCIO-6212,Zarraga,Udinese,C,14,,,5.82,5.79,0,0,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/udinese/zarraga/6212/2025-26/statistico
+FANTACALCIO-6213,Brenner,Udinese,A,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/udinese/brenner/6213/2025-26/statistico
+FANTACALCIO-6215,Lucca,Napoli,A,9,,,5.67,5.94,1,0,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/napoli/lucca/6215/2025-26/statistico
+FANTACALCIO-6217,Bisseck,Inter,D,23,,,6.24,6.67,3,2,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/inter/bisseck/6217/2025-26/statistico
+FANTACALCIO-6218,Oristanio,Parma,C,19,,,5.74,5.84,1,0,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/parma/oristanio/6218/2025-26/statistico
+FANTACALCIO-6219,Boloca,Sassuolo,C,2,,,5.5,5.5,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/sassuolo/boloca/6219/2025-26/statistico
+FANTACALCIO-6222,Rafia,Lecce,C,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lecce/rafia/6222/2025-26/statistico
+FANTACALCIO-6225,El Azzouzi,Bologna,C,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/bologna/el-azzouzi/6225/2025-26/statistico
+FANTACALCIO-6226,Castellanos,Lazio,A,11,,,6.0,6.73,2,3,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lazio/castellanos/6226/2025-26/statistico
+FANTACALCIO-6227,Okafor,Milan,A,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/milan/okafor/6227/2025-26/statistico
+FANTACALCIO-6229,Tourè E.,Atalanta,A,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/atalanta/tourè-e/6229/2025-26/statistico
+FANTACALCIO-6230,Dossena,Cagliari,D,11,,,5.95,5.82,0,1,0,0,0,5,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cagliari/dossena/6230/2025-26/statistico
+FANTACALCIO-6231,Azzi,Cremonese,D,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cremonese/azzi/6231/2025-26/statistico
+FANTACALCIO-6243,Borrelli,Cagliari,A,26,,,5.96,6.5,5,1,0,0,0,4,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cagliari/borrelli/6243/2025-26/statistico
+FANTACALCIO-6245,Vogliacco,Genoa,D,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/genoa/vogliacco/6245/2025-26/statistico
+FANTACALCIO-6246,Lipani,Sassuolo,C,23,,,5.80,5.78,0,1,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/sassuolo/lipani/6246/2025-26/statistico
+FANTACALCIO-6252,Folorunsho,Cagliari,C,27,,,5.93,6.09,2,0,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cagliari/folorunsho/6252/2025-26/statistico
+FANTACALCIO-6271,El Aynaoui,Roma,C,21,,,6.05,6.17,1,2,0,0,0,5,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/roma/el-aynaoui/6271/2025-26/statistico
+FANTACALCIO-6274,Diouf,Inter,C,13,,,6.08,6.27,1,0,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/inter/diouf/6274/2025-26/statistico
+FANTACALCIO-6294,Ndour,Fiorentina,C,31,,,5.79,6.05,3,0,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/fiorentina/ndour/6294/2025-26/statistico
+FANTACALCIO-6314,Openda,Juventus,A,17,,,5.76,5.94,1,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/juventus/openda/6314/2025-26/statistico
+FANTACALCIO-6351,Lamptey,Fiorentina,D,1,,,5.5,5.5,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/fiorentina/lamptey/6351/2025-26/statistico
+FANTACALCIO-6365,Ferguson E.,Roma,A,15,,,6.0,6.7,3,2,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/roma/ferguson-e/6365/2025-26/statistico
+FANTACALCIO-6380,Solomon,Fiorentina,A,14,,,6.04,6.5,2,1,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/fiorentina/solomon/6380/2025-26/statistico
+FANTACALCIO-6394,Ramadani,Lecce,C,37,,,5.92,5.86,1,0,0,0,0,10,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lecce/ramadani/6394/2025-26/statistico
+FANTACALCIO-6398,Isaksen,Lazio,C,28,,,5.86,6.43,5,1,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lazio/isaksen/6398/2025-26/statistico
+FANTACALCIO-6403,Christensen O.,Fiorentina,P,1,,,7.0,6.0,0,0,0,0,0,0,0,,1,,,0,,,https://www.fantacalcio.it/serie-a/squadre/fiorentina/christensen-o/6403/2025-26/statistico
+FANTACALCIO-6409,Beltran L.,Fiorentina,A,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/fiorentina/beltran-l/6409/2025-26/statistico
+FANTACALCIO-6410,Kaba,Lecce,C,11,,,5.59,5.55,0,0,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lecce/kaba/6410/2025-26/statistico
+FANTACALCIO-6411,Mateus Lusuardi,Pisa,D,3,,,5.33,5.17,0,0,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/pisa/mateus-lusuardi/6411/2025-26/statistico
+FANTACALCIO-6417,Furlanetto,Lazio,P,2,,,6.5,5.0,0,0,0,0,0,0,0,,3,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lazio/furlanetto/6417/2025-26/statistico
+FANTACALCIO-6424,Prati,Torino,C,33,,,5.79,5.79,1,0,0,0,0,6,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/torino/prati/6424/2025-26/statistico
+FANTACALCIO-6426,Pedersen,Torino,D,28,,,5.68,5.80,1,2,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/torino/pedersen/6426/2025-26/statistico
+FANTACALCIO-6431,Paz Y.,Sassuolo,D,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/sassuolo/paz-y/6431/2025-26/statistico
+FANTACALCIO-6434,Yildiz,Juventus,A,36,,,6.53,7.42,10,6,2,1,1,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/juventus/yildiz/6434/2025-26/statistico
+FANTACALCIO-6435,Krstovic,Atalanta,A,32,,,6.08,7.11,10,5,0,0,0,4,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/atalanta/krstovic/6435/2025-26/statistico
+FANTACALCIO-6439,Cheddira,Lecce,A,24,,,5.75,6.25,4,1,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lecce/cheddira/6439/2025-26/statistico
+FANTACALCIO-6444,Bonfanti,Pisa,D,9,,,5.5,5.44,0,0,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/pisa/bonfanti/6444/2025-26/statistico
+FANTACALCIO-6458,Serdar,Verona,C,19,,,5.79,6.03,2,0,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/verona/serdar/6458/2025-26/statistico
+FANTACALCIO-6459,Karlsson,Bologna,A,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/bologna/karlsson/6459/2025-26/statistico
+FANTACALCIO-6462,Okoye,Udinese,P,30,,,6.03,5.05,0,1,0,0,0,1,1,,32,,,1,,,https://www.fantacalcio.it/serie-a/squadre/udinese/okoye/6462/2025-26/statistico
+FANTACALCIO-6464,Wieteska,Cagliari,D,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cagliari/wieteska/6464/2025-26/statistico
+FANTACALCIO-6480,Tchatchoua,Verona,D,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/verona/tchatchoua/6480/2025-26/statistico
+FANTACALCIO-6481,Payero,Cremonese,C,25,,,5.74,5.7,1,0,0,0,0,8,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cremonese/payero/6481/2025-26/statistico
+FANTACALCIO-6482,Mandas,Lazio,P,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lazio/mandas/6482/2025-26/statistico
+FANTACALCIO-6485,Kristensen T.,Udinese,D,28,,,6.0,6.25,3,0,0,0,0,4,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/udinese/kristensen-t/6485/2025-26/statistico
+FANTACALCIO-6486,Suslov,Verona,C,10,,,5.7,5.55,0,0,0,0,0,1,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/verona/suslov/6486/2025-26/statistico
+FANTACALCIO-6495,Comuzzo,Fiorentina,D,25,,,5.72,5.72,1,0,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/fiorentina/comuzzo/6495/2025-26/statistico
+FANTACALCIO-6496,Bartesaghi,Milan,D,31,,,6.05,6.13,2,0,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/milan/bartesaghi/6496/2025-26/statistico
+FANTACALCIO-6505,Nava,Cremonese,P,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cremonese/nava/6505/2025-26/statistico
+FANTACALCIO-6506,Fini,Genoa,C,1,,,5.5,5.5,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/genoa/fini/6506/2025-26/statistico
+FANTACALCIO-6519,Camarda,Lecce,A,19,,,5.61,5.58,1,0,1,0,1,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lecce/camarda/6519/2025-26/statistico
+FANTACALCIO-6523,Samooja,Lecce,P,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lecce/samooja/6523/2025-26/statistico
+FANTACALCIO-6528,Sarmiento J.,Cremonese,C,5,,,6.1,6.1,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cremonese/sarmiento-j/6528/2025-26/statistico
+FANTACALCIO-6531,Jimenez A.,Milan,D,1,,,5.5,5.0,0,0,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/milan/jimenez-a/6531/2025-26/statistico
+FANTACALCIO-6533,Giannetti L.,Udinese,D,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/udinese/giannetti-l/6533/2025-26/statistico
+FANTACALCIO-6537,Goglichidze,Udinese,D,6,,,5.83,5.67,0,0,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/udinese/goglichidze/6537/2025-26/statistico
+FANTACALCIO-6538,Onana J.,Genoa,C,2,,,6.0,6.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/genoa/onana-j/6538/2025-26/statistico
+FANTACALCIO-6549,Pierotti,Lecce,C,37,,,5.66,5.72,1,1,0,0,0,4,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lecce/pierotti/6549/2025-26/statistico
+FANTACALCIO-6550,Garcia U.,Sassuolo,D,13,,,6.12,6.38,1,2,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/sassuolo/garcia-u/6550/2025-26/statistico
+FANTACALCIO-6551,Ilic M.,Bologna,D,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/bologna/ilic-m/6551/2025-26/statistico
+FANTACALCIO-6552,Orban G.,Verona,A,28,,,5.91,6.62,7,2,2,2,0,4,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/verona/orban-g/6552/2025-26/statistico
+FANTACALCIO-6555,Moumbagna,Cremonese,A,5,,,6.0,6.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cremonese/moumbagna/6555/2025-26/statistico
+FANTACALCIO-6556,Noslin,Lazio,A,22,,,6.07,6.57,4,2,0,0,0,4,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lazio/noslin/6556/2025-26/statistico
+FANTACALCIO-6572,Castro S.,Bologna,A,35,,,6.13,6.71,7,1,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/bologna/castro-s/6572/2025-26/statistico
+FANTACALCIO-6575,Zaragoza,Roma,C,3,,,6.17,6.33,0,1,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/roma/zaragoza/6575/2025-26/statistico
+FANTACALCIO-6593,Akinsanmiro,Pisa,C,24,,,5.75,5.75,0,1,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/pisa/akinsanmiro/6593/2025-26/statistico
+FANTACALCIO-6618,Cissè A.,Verona,C,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/verona/cissè-a/6618/2025-26/statistico
+FANTACALCIO-6628,Taremi,Inter,A,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/inter/taremi/6628/2025-26/statistico
+FANTACALCIO-6629,Dele-Bashiru,Lazio,C,22,,,5.80,5.93,1,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lazio/dele-bashiru/6629/2025-26/statistico
+FANTACALCIO-6630,Mosquera,Verona,A,14,,,5.86,5.96,0,2,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/verona/mosquera/6630/2025-26/statistico
+FANTACALCIO-6631,Ghilardi,Roma,D,21,,,5.93,5.90,0,0,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/roma/ghilardi/6631/2025-26/statistico
+FANTACALCIO-6632,Gaspar K.,Lecce,D,21,,,5.86,5.67,0,0,0,0,0,6,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lecce/gaspar-k/6632/2025-26/statistico
+FANTACALCIO-6633,Pierret,Lecce,C,1,,,6.0,6.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lecce/pierret/6633/2025-26/statistico
+FANTACALCIO-6634,Tete Morente,Lecce,C,15,,,5.47,5.47,0,1,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lecce/tete-morente/6634/2025-26/statistico
+FANTACALCIO-6635,Pizarro,Udinese,A,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/udinese/pizarro/6635/2025-26/statistico
+FANTACALCIO-6636,Veroli,Cagliari,D,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cagliari/veroli/6636/2025-26/statistico
+FANTACALCIO-6639,Frese,Verona,D,31,,,5.92,5.92,2,0,0,0,0,8,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/verona/frese/6639/2025-26/statistico
+FANTACALCIO-6640,Felici,Cagliari,C,11,,,5.91,6.41,2,1,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cagliari/felici/6640/2025-26/statistico
+FANTACALCIO-6641,Suzuki,Parma,P,20,,,6.18,4.9,0,0,0,0,0,1,0,,28,,,1,,,https://www.fantacalcio.it/serie-a/squadre/parma/suzuki/6641/2025-26/statistico
+FANTACALCIO-6642,Coco,Torino,D,35,,,5.89,5.96,1,1,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/torino/coco/6642/2025-26/statistico
+FANTACALCIO-6643,Dallinga,Bologna,A,18,,,5.86,6.19,2,1,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/bologna/dallinga/6643/2025-26/statistico
+FANTACALCIO-6644,Rocha Livramento,Verona,A,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/verona/rocha-livramento/6644/2025-26/statistico
+FANTACALCIO-6645,Marchwinski,Lecce,C,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lecce/marchwinski/6645/2025-26/statistico
+FANTACALCIO-6646,Adams C.,Torino,A,33,,,6.03,6.67,6,3,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/torino/adams-c/6646/2025-26/statistico
+FANTACALCIO-6650,Sherri,Cagliari,P,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cagliari/sherri/6650/2025-26/statistico
+FANTACALCIO-6653,Bravo,Udinese,A,5,,,6.1,6.6,1,0,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/udinese/bravo/6653/2025-26/statistico
+FANTACALCIO-6656,Braunoder,Como,C,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/como/braunoder/6656/2025-26/statistico
+FANTACALCIO-6657,Gabrielloni,Como,A,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/como/gabrielloni/6657/2025-26/statistico
+FANTACALCIO-6660,Marcandalli,Genoa,D,31,,,5.97,5.94,0,1,0,0,0,4,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/genoa/marcandalli/6660/2025-26/statistico
+FANTACALCIO-6662,Corvi,Parma,P,17,,,6.21,5.12,0,0,0,0,0,1,0,,18,,,0,,,https://www.fantacalcio.it/serie-a/squadre/parma/corvi/6662/2025-26/statistico
+FANTACALCIO-6663,Circati,Parma,D,31,,,6.08,6.08,1,0,0,0,0,6,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/parma/circati/6663/2025-26/statistico
+FANTACALCIO-6664,Delprato,Parma,D,35,,,6.07,6.17,2,0,0,0,0,5,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/parma/delprato/6664/2025-26/statistico
+FANTACALCIO-6665,Coulibaly W.,Sassuolo,D,19,,,5.82,5.76,0,0,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/sassuolo/coulibaly-w/6665/2025-26/statistico
+FANTACALCIO-6666,Bernabè,Parma,C,32,,,6.12,6.44,3,1,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/parma/bernabè/6666/2025-26/statistico
+FANTACALCIO-6667,Benedyczak,Parma,A,13,,,6.0,6.27,1,1,1,1,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/parma/benedyczak/6667/2025-26/statistico
+FANTACALCIO-6669,Bonny,Inter,A,28,,,6.11,6.77,5,4,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/inter/bonny/6669/2025-26/statistico
+FANTACALCIO-6672,Idzes,Sassuolo,D,35,,,6.0,5.97,0,0,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/sassuolo/idzes/6672/2025-26/statistico
+FANTACALCIO-6675,Dovbyk,Roma,A,12,,,6.12,6.96,3,1,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/roma/dovbyk/6675/2025-26/statistico
+FANTACALCIO-6676,Engelhardt,Como,C,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/como/engelhardt/6676/2025-26/statistico
+FANTACALCIO-6677,Adzic,Juventus,C,5,,,6.1,6.7,1,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/juventus/adzic/6677/2025-26/statistico
+FANTACALCIO-6678,Liberali,Milan,C,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/milan/liberali/6678/2025-26/statistico
+FANTACALCIO-6680,Karlstrom,Udinese,C,36,,,5.86,5.86,1,0,0,0,0,6,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/udinese/karlstrom/6680/2025-26/statistico
+FANTACALCIO-6684,Ekkelenkamp,Udinese,C,31,,,5.97,6.53,5,3,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/udinese/ekkelenkamp/6684/2025-26/statistico
+FANTACALCIO-6717,Konè I.,Sassuolo,C,35,,,6.2,6.64,6,0,0,0,0,3,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/sassuolo/konè-i/6717/2025-26/statistico
+FANTACALCIO-6722,Gronbaek,Genoa,C,3,,,5.67,5.5,0,0,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/genoa/gronbaek/6722/2025-26/statistico
+FANTACALCIO-6766,Kelly L.,Juventus,D,35,,,6.1,6.16,1,1,0,0,0,4,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/juventus/kelly-l/6766/2025-26/statistico
+FANTACALCIO-6802,Savona,Juventus,D,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/juventus/savona/6802/2025-26/statistico
+FANTACALCIO-6803,Rouhi,Juventus,D,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/juventus/rouhi/6803/2025-26/statistico
+FANTACALCIO-6804,Richardson,Fiorentina,C,2,,,5.75,5.75,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/fiorentina/richardson/6804/2025-26/statistico
+FANTACALCIO-6809,Marianucci,Torino,D,11,,,5.68,5.68,0,1,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/torino/marianucci/6809/2025-26/statistico
+FANTACALCIO-6813,Torriani,Milan,P,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/milan/torriani/6813/2025-26/statistico
+FANTACALCIO-6814,Norton-Cuffy,Genoa,D,27,,,6.02,6.19,2,1,0,0,0,3,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/genoa/norton-cuffy/6814/2025-26/statistico
+FANTACALCIO-6815,Fadera,Sassuolo,C,26,,,5.88,6.08,2,1,0,0,0,5,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/sassuolo/fadera/6815/2025-26/statistico
+FANTACALCIO-6821,Hainaut,Parma,D,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/parma/hainaut/6821/2025-26/statistico
+FANTACALCIO-6822,Ekhator,Genoa,A,28,,,6.02,6.29,3,0,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/genoa/ekhator/6822/2025-26/statistico
+FANTACALCIO-6826,Dembelè A.,Torino,D,1,,,5.0,5.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/torino/dembelè-a/6826/2025-26/statistico
+FANTACALCIO-6827,Njie,Torino,A,11,,,5.77,6.09,1,1,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/torino/njie/6827/2025-26/statistico
+FANTACALCIO-6831,Neres,Napoli,C,16,,,6.16,6.81,3,3,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/napoli/neres/6831/2025-26/statistico
+FANTACALCIO-6832,Palestra,Cagliari,D,37,,,6.28,6.43,1,4,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cagliari/palestra/6832/2025-26/statistico
+FANTACALCIO-6836,Meister,Pisa,A,27,,,5.48,5.67,2,0,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/pisa/meister/6836/2025-26/statistico
+FANTACALCIO-6842,Sava,Udinese,P,7,,,5.43,3.36,0,0,0,0,0,1,0,,14,,,0,,,https://www.fantacalcio.it/serie-a/squadre/udinese/sava/6842/2025-26/statistico
+FANTACALCIO-6844,Rowe,Bologna,C,28,,,6.04,6.43,3,3,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/bologna/rowe/6844/2025-26/statistico
+FANTACALCIO-6867,Valle,Como,D,27,,,6.13,6.30,1,3,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/como/valle/6867/2025-26/statistico
+FANTACALCIO-6869,Ramon,Como,D,32,,,6.09,6.08,2,0,0,0,0,11,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/como/ramon/6869/2025-26/statistico
+FANTACALCIO-6870,Faye,Cremonese,D,7,,,6.0,5.93,0,0,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cremonese/faye/6870/2025-26/statistico
+FANTACALCIO-6874,Palacios T.,Inter,D,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/inter/palacios-t/6874/2025-26/statistico
+FANTACALCIO-6875,Paz N.,Como,C,35,,,6.46,7.39,12,5,2,0,2,5,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/como/paz-n/6875/2025-26/statistico
+FANTACALCIO-6883,Jean,Lecce,D,6,,,6.08,6.0,0,0,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lecce/jean/6883/2025-26/statistico
+FANTACALCIO-6884,Conceicao,Juventus,C,31,,,6.16,6.56,3,5,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/juventus/conceicao/6884/2025-26/statistico
+FANTACALCIO-6885,Abdulhamid,Roma,D,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/roma/abdulhamid/6885/2025-26/statistico
+FANTACALCIO-6887,Leoni,Parma,D,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/parma/leoni/6887/2025-26/statistico
+FANTACALCIO-6889,Anjorin,Torino,C,12,,,5.83,5.79,0,0,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/torino/anjorin/6889/2025-26/statistico
+FANTACALCIO-6893,Kempf,Como,D,31,,,6.18,6.55,4,1,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/como/kempf/6893/2025-26/statistico
+FANTACALCIO-6894,Unai Nunez,Verona,D,17,,,5.74,5.47,0,0,0,0,0,5,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/verona/unai-nunez/6894/2025-26/statistico
+FANTACALCIO-6895,Dominguez B.,Bologna,A,14,,,5.89,6.07,0,3,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/bologna/dominguez-b/6895/2025-26/statistico
+FANTACALCIO-6896,Van Der Brempt,Como,D,15,,,5.93,5.93,0,1,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/como/van-der-brempt/6896/2025-26/statistico
+FANTACALCIO-6898,Keita M.,Parma,C,36,,,5.92,5.96,1,1,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/parma/keita-m/6898/2025-26/statistico
+FANTACALCIO-6900,Rui Modesto,Udinese,D,3,,,5.83,6.17,0,1,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/udinese/rui-modesto/6900/2025-26/statistico
+FANTACALCIO-6908,Atta,Udinese,C,32,,,6.42,6.94,5,3,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/udinese/atta/6908/2025-26/statistico
+FANTACALCIO-6916,Ahanor,Atalanta,D,21,,,5.81,5.71,0,0,0,0,0,2,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/atalanta/ahanor/6916/2025-26/statistico
+FANTACALCIO-6917,Masini,Genoa,C,23,,,5.87,5.80,0,1,0,0,0,5,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/genoa/masini/6917/2025-26/statistico
+FANTACALCIO-6925,Palma,Udinese,D,4,,,5.62,5.62,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/udinese/palma/6925/2025-26/statistico
+FANTACALCIO-6944,Jack,Como,D,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/como/jack/6944/2025-26/statistico
+FANTACALCIO-6956,Solet,Udinese,D,35,,,6.3,6.51,3,1,1,1,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/udinese/solet/6956/2025-26/statistico
+FANTACALCIO-6957,Valentini N.,Verona,D,19,,,5.76,5.55,0,0,0,0,0,6,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/verona/valentini-n/6957/2025-26/statistico
+FANTACALCIO-6965,Lovik,Parma,D,6,,,5.58,5.58,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/parma/lovik/6965/2025-26/statistico
+FANTACALCIO-6966,Butez,Como,P,38,,,6.08,5.38,0,1,0,0,0,3,0,,29,,,1,,,https://www.fantacalcio.it/serie-a/squadre/como/butez/6966/2025-26/statistico
+FANTACALCIO-6967,Diao,Como,A,16,,,5.91,6.28,2,1,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/como/diao/6967/2025-26/statistico
+FANTACALCIO-6977,Otoa,Genoa,D,10,,,5.65,5.4,0,0,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/genoa/otoa/6977/2025-26/statistico
+FANTACALCIO-6980,Venturino,Roma,C,8,,,5.94,5.94,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/roma/venturino/6980/2025-26/statistico
+FANTACALCIO-6981,Vaz,Roma,A,9,,,6.0,6.33,1,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/roma/vaz/6981/2025-26/statistico
+FANTACALCIO-6984,Ondrejka,Parma,C,16,,,5.69,5.62,0,0,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/parma/ondrejka/6984/2025-26/statistico
+FANTACALCIO-6985,Candè,Sassuolo,D,9,,,5.78,5.67,0,0,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/sassuolo/candè/6985/2025-26/statistico
+FANTACALCIO-6986,Rensch,Roma,D,18,,,6.11,6.47,1,4,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/roma/rensch/6986/2025-26/statistico
+FANTACALCIO-6989,Tiago Gabriel,Lecce,D,37,,,6.12,6.15,2,0,0,0,0,7,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lecce/tiago-gabriel/6989/2025-26/statistico
+FANTACALCIO-6990,Veiga D.,Lecce,D,36,,,6.0,5.88,0,0,0,0,0,9,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lecce/veiga-d/6990/2025-26/statistico
+FANTACALCIO-6991,Siegrist,Genoa,P,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/genoa/siegrist/6991/2025-26/statistico
+FANTACALCIO-6992,Oyegoke,Verona,D,10,,,5.6,5.5,0,0,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/verona/oyegoke/6992/2025-26/statistico
+FANTACALCIO-7001,N'Dri,Lecce,A,19,,,5.84,6.08,2,0,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lecce/n-dri/7001/2025-26/statistico
+FANTACALCIO-7008,Gimenez,Milan,A,16,,,5.62,5.62,0,1,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/milan/gimenez/7008/2025-26/statistico
+FANTACALCIO-7010,Al-Musrati,Verona,C,15,,,5.77,5.63,0,1,0,0,0,4,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/verona/al-musrati/7010/2025-26/statistico
+FANTACALCIO-7011,Slotsager,Verona,D,7,,,5.86,5.86,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/verona/slotsager/7011/2025-26/statistico
+FANTACALCIO-7012,Provstgaard,Lazio,D,23,,,5.93,5.87,0,0,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lazio/provstgaard/7012/2025-26/statistico
+FANTACALCIO-7014,Smolcic I.,Como,D,25,,,6.12,6.0,0,1,0,0,0,8,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/como/smolcic-i/7014/2025-26/statistico
+FANTACALCIO-7017,Douvikas,Como,A,36,,,6.19,7.39,14,1,1,1,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/como/douvikas/7017/2025-26/statistico
+FANTACALCIO-7018,Nelsson,Verona,D,38,,,5.74,5.63,0,0,0,0,0,4,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/verona/nelsson/7018/2025-26/statistico
+FANTACALCIO-7020,Salah-Eddine,Roma,D,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/roma/salah-eddine/7020/2025-26/statistico
+FANTACALCIO-7023,Pellegrino M.,Parma,A,37,,,5.78,6.45,9,0,1,1,0,5,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/parma/pellegrino-m/7023/2025-26/statistico
+FANTACALCIO-7025,Cuenca H.,Genoa,C,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/genoa/cuenca-h/7025/2025-26/statistico
+FANTACALCIO-7027,Azon,Como,A,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/como/azon/7027/2025-26/statistico
+FANTACALCIO-7028,Bernede,Verona,C,31,,,5.87,6.0,1,2,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/verona/bernede/7028/2025-26/statistico
+FANTACALCIO-7036,Bakola,Sassuolo,C,3,,,6.0,6.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/sassuolo/bakola/7036/2025-26/statistico
+FANTACALCIO-7042,Calligaris,Inter,P,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/inter/calligaris/7042/2025-26/statistico
+FANTACALCIO-7068,Vitik,Bologna,D,19,,,6.0,5.92,0,0,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/bologna/vitik/7068/2025-26/statistico
+FANTACALCIO-7069,Fortini,Fiorentina,D,13,,,5.88,5.88,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/fiorentina/fortini/7069/2025-26/statistico
+FANTACALCIO-7070,Sucic P.,Inter,C,28,,,5.95,6.14,2,2,0,0,0,5,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/inter/sucic-p/7070/2025-26/statistico
+FANTACALCIO-7071,Esposito F.P.,Inter,A,32,,,6.31,7.05,7,3,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/inter/esposito-f-p/7071/2025-26/statistico
+FANTACALCIO-7120,Lang,Napoli,A,14,,,5.82,6.11,1,2,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/napoli/lang/7120/2025-26/statistico
+FANTACALCIO-7125,Idrissi R.,Cagliari,D,20,,,5.98,6.2,2,0,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cagliari/idrissi-r/7125/2025-26/statistico
+FANTACALCIO-7126,Baturina,Como,C,26,,,6.35,7.15,6,3,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/como/baturina/7126/2025-26/statistico
+FANTACALCIO-7127,Addai,Como,A,12,,,5.96,6.54,3,0,0,0,0,4,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/como/addai/7127/2025-26/statistico
+FANTACALCIO-7128,Kuhn,Como,A,18,,,5.94,6.17,1,1,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/como/kuhn/7128/2025-26/statistico
+FANTACALCIO-7129,Rodriguez Je.,Como,A,30,,,6.17,6.55,2,8,0,0,0,3,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/como/rodriguez-je/7129/2025-26/statistico
+FANTACALCIO-7130,Folino,Cremonese,D,11,,,5.86,6.14,1,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cremonese/folino/7130/2025-26/statistico
+FANTACALCIO-7131,Floriani Mussolini,Cremonese,D,21,,,5.64,5.64,0,1,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cremonese/floriani-mussolini/7131/2025-26/statistico
+FANTACALCIO-7132,Collocolo,Cremonese,C,6,,,5.83,5.75,0,0,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cremonese/collocolo/7132/2025-26/statistico
+FANTACALCIO-7133,Vandeputte,Cremonese,C,31,,,6.11,6.32,1,5,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cremonese/vandeputte/7133/2025-26/statistico
+FANTACALCIO-7134,Nasti,Cremonese,A,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cremonese/nasti/7134/2025-26/statistico
+FANTACALCIO-7135,Stanciu,Genoa,C,4,,,5.5,4.75,0,0,1,0,1,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/genoa/stanciu/7135/2025-26/statistico
+FANTACALCIO-7136,Kouassi,Lecce,D,4,,,5.38,5.38,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lecce/kouassi/7136/2025-26/statistico
+FANTACALCIO-7138,Ordonez C.,Parma,C,22,,,5.61,5.64,1,0,0,0,0,3,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/parma/ordonez-c/7138/2025-26/statistico
+FANTACALCIO-7139,Canestrelli,Pisa,D,37,,,5.74,5.77,1,0,0,0,0,4,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/pisa/canestrelli/7139/2025-26/statistico
+FANTACALCIO-7140,Coppola F.,Pisa,D,5,,,5.1,4.9,0,0,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/pisa/coppola-f/7140/2025-26/statistico
+FANTACALCIO-7141,Rus,Pisa,D,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/pisa/rus/7141/2025-26/statistico
+FANTACALCIO-7142,Esteves T.,Pisa,D,1,,,6.0,6.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/pisa/esteves-t/7142/2025-26/statistico
+FANTACALCIO-7143,Angori,Pisa,D,35,,,5.81,5.84,0,2,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/pisa/angori/7143/2025-26/statistico
+FANTACALCIO-7145,Piccinini G.,Pisa,C,23,,,5.76,5.70,0,0,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/pisa/piccinini-g/7145/2025-26/statistico
+FANTACALCIO-7146,Tourè I.,Pisa,C,30,,,5.9,5.9,1,0,0,0,0,4,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/pisa/tourè-i/7146/2025-26/statistico
+FANTACALCIO-7147,Hojholt,Pisa,C,15,,,5.53,5.47,0,0,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/pisa/hojholt/7147/2025-26/statistico
+FANTACALCIO-7149,Marin M.,Pisa,C,22,,,5.55,5.39,0,0,0,0,0,7,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/pisa/marin-m/7149/2025-26/statistico
+FANTACALCIO-7150,Vural,Pisa,C,14,,,5.79,5.64,0,0,0,0,0,4,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/pisa/vural/7150/2025-26/statistico
+FANTACALCIO-7151,Arena,Pisa,C,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/pisa/arena/7151/2025-26/statistico
+FANTACALCIO-7152,Bonfanti N.,Pisa,A,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/pisa/bonfanti-n/7152/2025-26/statistico
+FANTACALCIO-7153,Lind,Pisa,A,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/pisa/lind/7153/2025-26/statistico
+FANTACALCIO-7154,Odenthal,Sassuolo,D,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/sassuolo/odenthal/7154/2025-26/statistico
+FANTACALCIO-7155,Muharemovic,Sassuolo,D,32,,,5.92,5.91,2,1,0,0,0,7,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/sassuolo/muharemovic/7155/2025-26/statistico
+FANTACALCIO-7156,Pieragnolo,Sassuolo,D,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/sassuolo/pieragnolo/7156/2025-26/statistico
+FANTACALCIO-7157,Iannoni,Sassuolo,C,7,,,5.93,6.29,1,0,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/sassuolo/iannoni/7157/2025-26/statistico
+FANTACALCIO-7158,Moro L.,Sassuolo,A,6,,,5.75,5.67,0,0,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/sassuolo/moro-l/7158/2025-26/statistico
+FANTACALCIO-7159,Skjellerup,Sassuolo,A,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/sassuolo/skjellerup/7159/2025-26/statistico
+FANTACALCIO-7161,Bayo V.,Udinese,A,12,,,5.79,5.88,0,1,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/udinese/bayo-v/7161/2025-26/statistico
+FANTACALCIO-7162,Giovane,Napoli,A,31,,,5.85,6.31,3,6,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/napoli/giovane/7162/2025-26/statistico
+FANTACALCIO-7164,Perez M.,Lecce,D,1,,,5.5,5.5,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lecce/perez-m/7164/2025-26/statistico
+FANTACALCIO-7165,Liteta,Cagliari,C,4,,,5.75,5.75,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cagliari/liteta/7165/2025-26/statistico
+FANTACALCIO-7169,Zelezny,Roma,P,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/roma/zelezny/7169/2025-26/statistico
+FANTACALCIO-7170,Mbambi,Pisa,D,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/pisa/mbambi/7170/2025-26/statistico
+FANTACALCIO-7171,Buffon L.,Pisa,A,1,,,6.0,6.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/pisa/buffon-l/7171/2025-26/statistico
+FANTACALCIO-7172,Pessina Mas.,Bologna,P,4,,,6.12,5.62,0,0,0,0,0,0,0,,2,,,0,,,https://www.fantacalcio.it/serie-a/squadre/bologna/pessina-mas/7172/2025-26/statistico
+FANTACALCIO-7175,Joao Mario,Bologna,D,17,,,5.97,6.15,1,1,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/bologna/joao-mario/7175/2025-26/statistico
+FANTACALCIO-7177,Santiago,Verona,C,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/verona/santiago/7177/2025-26/statistico
+FANTACALCIO-7179,Israel,Torino,P,9,,,5.78,3.72,0,0,0,0,0,1,0,,18,,,0,,,https://www.fantacalcio.it/serie-a/squadre/torino/israel/7179/2025-26/statistico
+FANTACALCIO-7181,Wesley,Roma,D,30,,,6.08,6.43,5,0,0,0,0,5,2,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/roma/wesley/7181/2025-26/statistico
+FANTACALCIO-7182,Ndaba,Lecce,D,11,,,5.68,5.68,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lecce/ndaba/7182/2025-26/statistico
+FANTACALCIO-7183,Aboukhlal,Torino,A,12,,,5.58,5.42,0,0,0,0,0,4,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/torino/aboukhlal/7183/2025-26/statistico
+FANTACALCIO-7185,Nunziante,Udinese,P,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/udinese/nunziante/7185/2025-26/statistico
+FANTACALCIO-7196,Denoon,Pisa,D,2,,,5.75,5.5,0,0,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/pisa/denoon/7196/2025-26/statistico
+FANTACALCIO-7198,Piotrowski,Udinese,C,33,,,5.82,5.88,1,0,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/udinese/piotrowski/7198/2025-26/statistico
+FANTACALCIO-7199,Kilicsoy,Cagliari,A,18,,,6.03,6.69,4,0,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cagliari/kilicsoy/7199/2025-26/statistico
+FANTACALCIO-7202,Ndiaye,Parma,D,11,,,5.59,5.36,0,0,0,0,0,3,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/parma/ndiaye/7202/2025-26/statistico
+FANTACALCIO-7203,Jashari,Milan,C,13,,,5.69,5.77,0,1,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/milan/jashari/7203/2025-26/statistico
+FANTACALCIO-7208,Miller L.,Udinese,C,19,,,5.95,5.97,0,2,0,0,0,4,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/udinese/miller-l/7208/2025-26/statistico
+FANTACALCIO-7209,Sorensen O.,Parma,C,32,,,5.77,5.86,1,1,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/parma/sorensen-o/7209/2025-26/statistico
+FANTACALCIO-7211,Athekame,Milan,D,20,,,5.88,6.2,2,2,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/milan/athekame/7211/2025-26/statistico
+FANTACALCIO-7212,Heggem,Bologna,D,25,,,5.92,5.88,0,0,0,0,0,0,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/bologna/heggem/7212/2025-26/statistico
+FANTACALCIO-7213,Frigan,Parma,A,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/parma/frigan/7213/2025-26/statistico
+FANTACALCIO-7219,Bernasconi,Atalanta,D,22,,,6.09,6.16,0,3,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/atalanta/bernasconi/7219/2025-26/statistico
+FANTACALCIO-7220,Belghali,Verona,D,26,,,6.12,6.23,2,0,0,0,0,6,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/verona/belghali/7220/2025-26/statistico
+FANTACALCIO-7222,Cham,Verona,D,4,,,5.38,5.38,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/verona/cham/7222/2025-26/statistico
+FANTACALCIO-7223,Vergara,Napoli,C,10,,,6.1,6.3,1,0,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/napoli/vergara/7223/2025-26/statistico
+FANTACALCIO-7235,Troilo,Parma,D,21,,,5.81,5.74,1,0,0,0,0,5,2,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/parma/troilo/7235/2025-26/statistico
+FANTACALCIO-7236,Toniolo,Verona,P,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/verona/toniolo/7236/2025-26/statistico
+FANTACALCIO-7238,Kouadio,Fiorentina,D,1,,,6.0,6.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/fiorentina/kouadio/7238/2025-26/statistico
+FANTACALCIO-7239,Braschi,Fiorentina,A,2,,,5.75,5.75,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/fiorentina/braschi/7239/2025-26/statistico
+FANTACALCIO-7240,Siebert,Lecce,D,19,,,5.92,6.0,1,0,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lecce/siebert/7240/2025-26/statistico
+FANTACALCIO-7246,Sala A.,Lecce,C,6,,,5.67,5.83,0,1,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lecce/sala-a/7246/2025-26/statistico
+FANTACALCIO-7248,Gorter,Lecce,C,1,,,6.0,6.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lecce/gorter/7248/2025-26/statistico
+FANTACALCIO-7249,Buksa,Udinese,A,22,,,5.89,6.23,3,0,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/udinese/buksa/7249/2025-26/statistico
+FANTACALCIO-7252,Stulic,Lecce,A,33,,,5.64,5.98,4,0,1,1,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lecce/stulic/7252/2025-26/statistico
+FANTACALCIO-7253,Bella-Kotchap,Verona,D,18,,,5.97,5.89,0,0,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/verona/bella-kotchap/7253/2025-26/statistico
+FANTACALCIO-7254,Lorran,Pisa,C,8,,,6.0,6.38,1,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/pisa/lorran/7254/2025-26/statistico
+FANTACALCIO-7255,Britschgi,Parma,D,28,,,5.68,5.62,0,2,0,0,0,5,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/parma/britschgi/7255/2025-26/statistico
+FANTACALCIO-7260,Ziolkowski,Roma,D,9,,,5.94,5.78,0,0,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/roma/ziolkowski/7260/2025-26/statistico
+FANTACALCIO-7261,Cavlina,Como,P,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/como/cavlina/7261/2025-26/statistico
+FANTACALCIO-7262,Balentien,Milan,A,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/milan/balentien/7262/2025-26/statistico
+FANTACALCIO-7264,Ambrosino,Napoli,A,1,,,6.0,6.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/napoli/ambrosino/7264/2025-26/statistico
+FANTACALCIO-7268,Rodriguez Ju.,Cagliari,D,16,,,5.81,5.91,1,0,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cagliari/rodriguez-ju/7268/2025-26/statistico
+FANTACALCIO-7271,Odogu,Milan,D,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/milan/odogu/7271/2025-26/statistico
+FANTACALCIO-7272,Gueye,Udinese,A,15,,,5.83,5.97,1,0,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/udinese/gueye/7272/2025-26/statistico
+FANTACALCIO-7274,Zè Pedro,Cagliari,D,22,,,5.77,5.68,0,1,0,0,0,6,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cagliari/zè-pedro/7274/2025-26/statistico
+FANTACALCIO-7276,Cremaschi,Parma,C,3,,,5.67,5.67,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/parma/cremaschi/7276/2025-26/statistico
+FANTACALCIO-7277,Arena A.,Roma,A,1,,,6.0,6.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/roma/arena-a/7277/2025-26/statistico
+FANTACALCIO-7285,Ferrante,Napoli,P,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/napoli/ferrante/7285/2025-26/statistico
+FANTACALCIO-7301,Tornqvist,Como,P,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/como/tornqvist/7301/2025-26/statistico
+FANTACALCIO-7309,Isaac,Verona,A,2,,,6.0,6.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/verona/isaac/7309/2025-26/statistico
+FANTACALCIO-7312,Arizala,Udinese,D,7,,,5.86,5.86,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/udinese/arizala/7312/2025-26/statistico
+FANTACALCIO-7313,Ratkov,Lazio,A,8,,,5.62,5.62,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lazio/ratkov/7313/2025-26/statistico
+FANTACALCIO-7314,Taylor K.,Lazio,C,17,,,6.03,6.53,3,2,0,0,0,5,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lazio/taylor-k/7314/2025-26/statistico
+FANTACALCIO-7316,Durosinmi,Pisa,A,10,,,5.55,5.85,1,1,0,0,0,1,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/pisa/durosinmi/7316/2025-26/statistico
+FANTACALCIO-7317,Trepy,Cagliari,A,4,,,5.88,5.88,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cagliari/trepy/7317/2025-26/statistico
+FANTACALCIO-7318,Gandelman,Lecce,C,17,,,5.79,6.21,2,1,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lecce/gandelman/7318/2025-26/statistico
+FANTACALCIO-7319,Fofana Sa.,Lecce,C,2,,,5.5,5.5,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lecce/fofana-sa/7319/2025-26/statistico
+FANTACALCIO-7322,Ngom,Lecce,C,13,,,5.69,5.65,0,0,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lecce/ngom/7322/2025-26/statistico
+FANTACALCIO-7325,Bozhinov,Pisa,D,8,,,5.31,5.12,0,0,0,0,0,1,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/pisa/bozhinov/7325/2025-26/statistico
+FANTACALCIO-7326,Helland,Bologna,D,6,,,6.0,5.83,0,0,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/bologna/helland/7326/2025-26/statistico
+FANTACALCIO-7329,Obrador,Torino,D,16,,,5.88,6.22,1,3,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/torino/obrador/7329/2025-26/statistico
+FANTACALCIO-7331,Loyola,Pisa,C,11,,,5.59,5.77,1,0,0,0,0,0,1,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/pisa/loyola/7331/2025-26/statistico
+FANTACALCIO-7332,Bijlow,Genoa,P,16,,,6.03,4.75,0,0,0,0,0,1,0,,20,,,0,,,https://www.fantacalcio.it/serie-a/squadre/genoa/bijlow/7332/2025-26/statistico
+FANTACALCIO-7335,Zatterstrom,Genoa,D,2,,,6.0,6.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/genoa/zatterstrom/7335/2025-26/statistico
+FANTACALCIO-7336,Tchoca,Torino,D,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/torino/tchoca/7336/2025-26/statistico
+FANTACALCIO-7337,Motta,Lazio,P,9,,,5.83,5.0,0,0,0,0,0,1,0,,10,,,1,,,https://www.fantacalcio.it/serie-a/squadre/lazio/motta/7337/2025-26/statistico
+FANTACALCIO-7338,Albarracin,Cagliari,A,2,,,6.0,6.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cagliari/albarracin/7338/2025-26/statistico
+FANTACALCIO-7341,Amorim,Genoa,C,9,,,5.78,5.72,0,0,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/genoa/amorim/7341/2025-26/statistico
+FANTACALCIO-7342,Elphege,Parma,A,9,,,6.06,6.83,2,1,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/parma/elphege/7342/2025-26/statistico
+FANTACALCIO-7344,Stojilkovic,Pisa,A,13,,,5.35,5.35,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/pisa/stojilkovic/7344/2025-26/statistico
+FANTACALCIO-7345,Przyborek,Lazio,C,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lazio/przyborek/7345/2025-26/statistico
+FANTACALCIO-7346,Raterink,Cagliari,D,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cagliari/raterink/7346/2025-26/statistico
+FANTACALCIO-7347,Bowie,Verona,A,14,,,5.79,6.61,4,0,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/verona/bowie/7347/2025-26/statistico
+FANTACALCIO-7349,Kulenovic,Torino,A,7,,,5.57,5.64,0,1,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/torino/kulenovic/7349/2025-26/statistico
+FANTACALCIO-7351,Santos A.,Napoli,C,14,,,6.29,7.11,4,0,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/napoli/santos-a/7351/2025-26/statistico
+FANTACALCIO-7352,Edmundsson,Verona,D,15,,,5.97,5.73,0,0,0,0,0,3,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/verona/edmundsson/7352/2025-26/statistico
+FANTACALCIO-7353,Pedro Felipe,Sassuolo,D,2,,,5.75,6.25,0,1,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/sassuolo/pedro-felipe/7353/2025-26/statistico
+FANTACALCIO-7356,Mlacic,Udinese,D,6,,,5.83,5.67,0,0,0,0,0,2,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/udinese/mlacic/7356/2025-26/statistico
+FANTACALCIO-7357,Lahdo,Como,C,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/como/lahdo/7357/2025-26/statistico
+FANTACALCIO-7363,Siviero,Torino,P,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/torino/siviero/7363/2025-26/statistico
+FANTACALCIO-7368,Vermesan,Verona,A,1,,,6.0,6.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/verona/vermesan/7368/2025-26/statistico
+FANTACALCIO-7374,Mendy P.,Cagliari,A,8,,,5.94,6.62,2,0,0,0,0,1,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/cagliari/mendy-p/7374/2025-26/statistico
+FANTACALCIO-7377,Balbo,Fiorentina,D,6,,,6.0,6.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/fiorentina/balbo/7377/2025-26/statistico
+FANTACALCIO-7381,Mikolajewski,Parma,A,1,,,5.5,5.5,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/parma/mikolajewski/7381/2025-26/statistico
+FANTACALCIO-7382,Pannozzo,Lazio,P,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lazio/pannozzo/7382/2025-26/statistico
+FANTACALCIO-7383,Giacomone,Lazio,P,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/lazio/giacomone/7383/2025-26/statistico
+FANTACALCIO-7388,Mosconi,Inter,A,0,,,0.0,0.0,0,0,0,0,0,0,0,,0,,,0,,,https://www.fantacalcio.it/serie-a/squadre/inter/mosconi/7388/2025-26/statistico

@@ -1,0 +1,414 @@
+﻿
+
+=== TEST CatalogReadinessServiceTest ===
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] -----------------< it.fantacalciointelligence:backend >-----------------
+[INFO] Building backend 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.5.0:resources (default-resources) @ backend ---
+[INFO] Copying 3 resources from src\main\resources to target\classes
+[INFO] Copying 70 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.15.0:compile (default-compile) @ backend ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- resources:3.5.0:testResources (default-testResources) @ backend ---
+[INFO] Copying 2 resources from src\test\resources to target\test-classes
+[INFO] 
+[INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ backend ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- surefire:3.5.6:test (default-test) @ backend ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running it.fantacalciointelligence.backend.catalog.readiness.CatalogReadinessServiceTest
+16:21:42.935 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [it.fantacalciointelligence.backend.catalog.readiness.CatalogReadinessServiceTest]: CatalogReadinessServiceTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+16:21:43.217 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration it.fantacalciointelligence.backend.BackendApplication for test class it.fantacalciointelligence.backend.catalog.readiness.CatalogReadinessServiceTest
+16:21:43.338 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [it.fantacalciointelligence.backend.catalog.readiness.CatalogReadinessServiceTest]: CatalogReadinessServiceTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+16:21:43.340 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration it.fantacalciointelligence.backend.BackendApplication for test class it.fantacalciointelligence.backend.catalog.readiness.CatalogReadinessServiceTest
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.1.0)
+
+2026-09-02T16:21:43.802+02:00  INFO 22084 --- [           main] i.f.b.c.r.CatalogReadinessServiceTest    : Starting CatalogReadinessServiceTest using Java 21.0.11 with PID 22084 (started by user in C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\backend)
+2026-09-02T16:21:43.805+02:00  INFO 22084 --- [           main] i.f.b.c.r.CatalogReadinessServiceTest    : No active profile set, falling back to 1 default profile: "default"
+2026-09-02T16:21:46.244+02:00  INFO 22084 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-09-02T16:21:46.382+02:00  INFO 22084 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 120 ms. Found 3 JPA repository interfaces.
+2026-09-02T16:21:47.690+02:00  INFO 22084 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-09-02T16:21:48.088+02:00  INFO 22084 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@39a865c1
+2026-09-02T16:21:48.091+02:00  INFO 22084 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-09-02T16:21:48.141+02:00  INFO 22084 --- [           main] org.flywaydb.core.FlywayExecutor         : Database: jdbc:postgresql://localhost:5432/fantacalcio_intelligence_test (PostgreSQL 17.10)
+2026-09-02T16:21:48.412+02:00  INFO 22084 --- [           main] o.f.core.internal.command.DbValidate     : Successfully validated 70 migrations (execution time 00:00.177s)
+2026-09-02T16:21:48.431+02:00  INFO 22084 --- [           main] o.f.core.internal.command.DbMigrate      : Current version of schema "public": 69
+2026-09-02T16:21:48.446+02:00  INFO 22084 --- [           main] o.f.core.internal.command.DbMigrate      : Schema "public" is up to date. No migration necessary.
+2026-09-02T16:21:48.871+02:00  INFO 22084 --- [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-09-02T16:21:48.977+02:00  INFO 22084 --- [           main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.4.1.Final
+2026-09-02T16:21:49.662+02:00  INFO 22084 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-09-02T16:21:49.825+02:00  INFO 22084 --- [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/fantacalcio_intelligence_test]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 17.10
+	Default catalog/schema: fantacalcio_intelligence_test/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-09-02T16:21:50.827+02:00  INFO 22084 --- [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-09-02T16:21:50.918+02:00  INFO 22084 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-09-02T16:21:51.477+02:00  INFO 22084 --- [           main] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-09-02T16:21:52.787+02:00  INFO 22084 --- [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name databaseUserDetailsService
+2026-09-02T16:21:54.203+02:00  INFO 22084 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 2 endpoints beneath base path '/actuator'
+2026-09-02T16:21:54.320+02:00  INFO 22084 --- [           main] i.f.b.c.r.CatalogReadinessServiceTest    : Started CatalogReadinessServiceTest in 10.904 seconds (process running for 12.906)
+mvnw.cmd : Mockito is currently 
+self-attaching to enable the 
+inline-mock-maker. This will no longer work 
+in future releases of the JDK. Please add 
+Mockito as an agent to your build as 
+described in Mockito's documentation: https:/
+/javadoc.io/doc/org.mockito/mockito-core/late
+st/org.mockito/org/mockito/Mockito.html#0.3
+In riga:8 car:5
++     & $mvn `
++     ~~~~~~~~
+    + CategoryInfo          : NotSpecified:  
+   (Mockito is curr...ockito.html#0.3:Strin  
+  g) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandE 
+   rror
+ 
+WARNING: A Java agent has been loaded 
+dynamically (C:\Users\user\.m2\repository\net
+\bytebuddy\byte-buddy-agent\1.18.10\byte-budd
+y-agent-1.18.10.jar)
+WARNING: If a serviceability tool is in use, 
+please run with 
+-XX:+EnableDynamicAgentLoading to hide this 
+warning
+WARNING: If a serviceability tool is not in 
+use, please run with 
+-Djdk.instrument.traceUsage for more 
+information
+WARNING: Dynamic loading of agents will be 
+disallowed by default in a future release
+OpenJDK 64-Bit Server VM warning: Sharing is 
+only supported for boot loader classes 
+because bootstrap classpath has been appended
+[ERROR] Tests run: 15, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 13.33 s <<< FAILURE! -- in it.fantacalciointelligence.backend.catalog.readiness.CatalogReadinessServiceTest
+[ERROR] it.fantacalciointelligence.backend.catalog.readiness.CatalogReadinessServiceTest.openReviewBlocksCatalog -- Time elapsed: 0.065 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: 
+
+expected: "BLOCKED"
+ but was: "READY"
+	at it.fantacalciointelligence.backend.catalog.readiness.CatalogReadinessServiceTest.assertBlockedWith(CatalogReadinessServiceTest.java:279)
+	at it.fantacalciointelligence.backend.catalog.readiness.CatalogReadinessServiceTest.openReviewBlocksCatalog(CatalogReadinessServiceTest.java:97)
+
+[INFO] 
+[INFO] Results:
+[INFO] 
+[ERROR] Failures: 
+[ERROR]   CatalogReadinessServiceTest.openReviewBlocksCatalog:97->assertBlockedWith:279 
+expected: "BLOCKED"
+ but was: "READY"
+[INFO] 
+[ERROR] Tests run: 15, Failures: 1, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  18.288 s
+[INFO] Finished at: 2026-09-02T16:21:56+02:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:3.5.6:test (default-test) on project backend: There are test failures.
+[ERROR] 
+[ERROR] See C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\backend\target\surefire-reports for the individual test results.
+[ERROR] See dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and [date].dumpstream.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
+CatalogReadinessServiceTest_EXIT=1
+
+=== TEST PlayerReconciliationServiceTest ===
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] -----------------< it.fantacalciointelligence:backend >-----------------
+[INFO] Building backend 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.5.0:resources (default-resources) @ backend ---
+[INFO] Copying 3 resources from src\main\resources to target\classes
+[INFO] Copying 70 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.15.0:compile (default-compile) @ backend ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- resources:3.5.0:testResources (default-testResources) @ backend ---
+[INFO] Copying 2 resources from src\test\resources to target\test-classes
+[INFO] 
+[INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ backend ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- surefire:3.5.6:test (default-test) @ backend ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running it.fantacalciointelligence.backend.reconciliation.PlayerReconciliationServiceTest
+16:22:08.888 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [it.fantacalciointelligence.backend.reconciliation.PlayerReconciliationServiceTest]: PlayerReconciliationServiceTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+16:22:09.167 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration it.fantacalciointelligence.backend.BackendApplication for test class it.fantacalciointelligence.backend.reconciliation.PlayerReconciliationServiceTest
+16:22:09.326 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [it.fantacalciointelligence.backend.reconciliation.PlayerReconciliationServiceTest]: PlayerReconciliationServiceTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+16:22:09.328 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration it.fantacalciointelligence.backend.BackendApplication for test class it.fantacalciointelligence.backend.reconciliation.PlayerReconciliationServiceTest
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.1.0)
+
+2026-09-02T16:22:09.880+02:00  INFO 13524 --- [           main] i.f.b.r.PlayerReconciliationServiceTest  : Starting PlayerReconciliationServiceTest using Java 21.0.11 with PID 13524 (started by user in C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\backend)
+2026-09-02T16:22:09.882+02:00  INFO 13524 --- [           main] i.f.b.r.PlayerReconciliationServiceTest  : No active profile set, falling back to 1 default profile: "default"
+2026-09-02T16:22:12.247+02:00  INFO 13524 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-09-02T16:22:12.432+02:00  INFO 13524 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 169 ms. Found 3 JPA repository interfaces.
+2026-09-02T16:22:13.775+02:00  INFO 13524 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-09-02T16:22:14.248+02:00  INFO 13524 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@d6d683e
+2026-09-02T16:22:14.250+02:00  INFO 13524 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-09-02T16:22:14.288+02:00  INFO 13524 --- [           main] org.flywaydb.core.FlywayExecutor         : Database: jdbc:postgresql://localhost:5432/fantacalcio_intelligence_test (PostgreSQL 17.10)
+2026-09-02T16:22:14.575+02:00  INFO 13524 --- [           main] o.f.core.internal.command.DbValidate     : Successfully validated 70 migrations (execution time 00:00.184s)
+2026-09-02T16:22:14.607+02:00  INFO 13524 --- [           main] o.f.core.internal.command.DbMigrate      : Current version of schema "public": 69
+2026-09-02T16:22:14.607+02:00  INFO 13524 --- [           main] o.f.core.internal.command.DbMigrate      : Schema "public" is up to date. No migration necessary.
+2026-09-02T16:22:14.909+02:00  INFO 13524 --- [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-09-02T16:22:15.037+02:00  INFO 13524 --- [           main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.4.1.Final
+2026-09-02T16:22:15.795+02:00  INFO 13524 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-09-02T16:22:15.919+02:00  INFO 13524 --- [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/fantacalcio_intelligence_test]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 17.10
+	Default catalog/schema: fantacalcio_intelligence_test/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-09-02T16:22:16.979+02:00  INFO 13524 --- [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-09-02T16:22:17.063+02:00  INFO 13524 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-09-02T16:22:17.662+02:00  INFO 13524 --- [           main] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-09-02T16:22:18.955+02:00  INFO 13524 --- [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name databaseUserDetailsService
+2026-09-02T16:22:20.541+02:00  INFO 13524 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 2 endpoints beneath base path '/actuator'
+2026-09-02T16:22:20.668+02:00  INFO 13524 --- [           main] i.f.b.r.PlayerReconciliationServiceTest  : Started PlayerReconciliationServiceTest in 11.259 seconds (process running for 13.247)
+mvnw.cmd : Mockito is currently 
+self-attaching to enable the 
+inline-mock-maker. This will no longer work 
+in future releases of the JDK. Please add 
+Mockito as an agent to your build as 
+described in Mockito's documentation: https:/
+/javadoc.io/doc/org.mockito/mockito-core/late
+st/org.mockito/org/mockito/Mockito.html#0.3
+In riga:8 car:5
++     & $mvn `
++     ~~~~~~~~
+    + CategoryInfo          : NotSpecified:  
+   (Mockito is curr...ockito.html#0.3:Strin  
+  g) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandE 
+   rror
+ 
+OpenJDK 64-Bit Server VM warning: Sharing is 
+only supported for boot loader classes 
+because bootstrap classpath has been appended
+WARNING: A Java agent has been loaded 
+dynamically (C:\Users\user\.m2\repository\net
+\bytebuddy\byte-buddy-agent\1.18.10\byte-budd
+y-agent-1.18.10.jar)
+WARNING: If a serviceability tool is in use, 
+please run with 
+-XX:+EnableDynamicAgentLoading to hide this 
+warning
+WARNING: If a serviceability tool is not in 
+use, please run with 
+-Djdk.instrument.traceUsage for more 
+information
+WARNING: Dynamic loading of agents will be 
+disallowed by default in a future release
+[ERROR] it.fantacalciointelligence.backend.reconciliation.PlayerReconciliationServiceTest.shouldPreferNewerOfficialTransferOverOlderFantacalcioSnapshot -- Time elapsed: 0.060 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: 
+
+expected: "Bologna"
+ but was: "Roma"
+	at it.fantacalciointelligence.backend.reconciliation.PlayerReconciliationServiceTest.shouldPreferNewerOfficialTransferOverOlderFantacalcioSnapshot(PlayerReconciliationServiceTest.java:398)
+
+[INFO] 
+[INFO] Results:
+[INFO] 
+[ERROR] Failures: 
+[ERROR]   PlayerReconciliationServiceTest.shouldPreferNewerOfficialTransferOverOlderFantacalcioSnapshot:398 
+expected: "Bologna"
+ but was: "Roma"
+[INFO] 
+[ERROR] Tests run: 7, Failures: 1, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  19.074 s
+[INFO] Finished at: 2026-09-02T16:22:22+02:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:3.5.6:test (default-test) on project backend: There are test failures.
+[ERROR] 
+[ERROR] See C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\backend\target\surefire-reports for the individual test results.
+[ERROR] See dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and [date].dumpstream.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
+PlayerReconciliationServiceTest_EXIT=1
+
+=== TEST DataRefreshServiceTest ===
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] -----------------< it.fantacalciointelligence:backend >-----------------
+[INFO] Building backend 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.5.0:resources (default-resources) @ backend ---
+[INFO] Copying 3 resources from src\main\resources to target\classes
+[INFO] Copying 70 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.15.0:compile (default-compile) @ backend ---
+[INFO] --- resources:3.5.0:testResources (default-testResources) @ backend ---
+[INFO] Copying 2 resources from src\test\resources to target\test-classes
+[INFO] 
+[INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ backend ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- surefire:3.5.6:test (default-test) @ backend ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running it.fantacalciointelligence.backend.refresh.DataRefreshServiceTest
+16:22:35.623 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [it.fantacalciointelligence.backend.refresh.DataRefreshServiceTest]: DataRefreshServiceTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+16:22:35.904 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration it.fantacalciointelligence.backend.BackendApplication for test class it.fantacalciointelligence.backend.refresh.DataRefreshServiceTest
+16:22:36.036 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [it.fantacalciointelligence.backend.refresh.DataRefreshServiceTest]: DataRefreshServiceTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+16:22:36.040 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration it.fantacalciointelligence.backend.BackendApplication for test class it.fantacalciointelligence.backend.refresh.DataRefreshServiceTest
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.1.0)
+
+2026-09-02T16:22:36.540+02:00  INFO 4324 --- [           main] i.f.b.refresh.DataRefreshServiceTest     : Starting DataRefreshServiceTest using Java 21.0.11 with PID 4324 (started by user in C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\backend)
+2026-09-02T16:22:36.542+02:00  INFO 4324 --- [           main] i.f.b.refresh.DataRefreshServiceTest     : No active profile set, falling back to 1 default profile: "default"
+2026-09-02T16:22:39.035+02:00  INFO 4324 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-09-02T16:22:39.191+02:00  INFO 4324 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 137 ms. Found 3 JPA repository interfaces.
+mvnw.cmd : Mockito is currently 
+self-attaching to enable the 
+inline-mock-maker. This will no longer work 
+in future releases of the JDK. Please add 
+Mockito as an agent to your build as 
+described in Mockito's documentation: https:/
+/javadoc.io/doc/org.mockito/mockito-core/late
+st/org.mockito/org/mockito/Mockito.html#0.3
+In riga:8 car:5
++     & $mvn `
++     ~~~~~~~~
+    + CategoryInfo          : NotSpecified:  
+   (Mockito is curr...ockito.html#0.3:Strin  
+  g) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandE 
+   rror
+ 
+WARNING: A Java agent has been loaded 
+dynamically (C:\Users\user\.m2\repository\net
+\bytebuddy\byte-buddy-agent\1.18.10\byte-budd
+y-agent-1.18.10.jar)
+WARNING: If a serviceability tool is in use, 
+please run with 
+-XX:+EnableDynamicAgentLoading to hide this 
+warning
+WARNING: If a serviceability tool is not in 
+use, please run with 
+-Djdk.instrument.traceUsage for more 
+information
+WARNING: Dynamic loading of agents will be 
+disallowed by default in a future release
+OpenJDK 64-Bit Server VM warning: Sharing is 
+only supported for boot loader classes 
+because bootstrap classpath has been appended
+2026-09-02T16:22:41.963+02:00  INFO 4324 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-09-02T16:22:42.513+02:00  INFO 4324 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@7c8f803d
+2026-09-02T16:22:42.517+02:00  INFO 4324 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-09-02T16:22:42.580+02:00  INFO 4324 --- [           main] org.flywaydb.core.FlywayExecutor         : Database: jdbc:postgresql://localhost:5432/fantacalcio_intelligence_test (PostgreSQL 17.10)
+2026-09-02T16:22:43.001+02:00  INFO 4324 --- [           main] o.f.core.internal.command.DbValidate     : Successfully validated 70 migrations (execution time 00:00.263s)
+2026-09-02T16:22:43.049+02:00  INFO 4324 --- [           main] o.f.core.internal.command.DbMigrate      : Current version of schema "public": 69
+2026-09-02T16:22:43.073+02:00  INFO 4324 --- [           main] o.f.core.internal.command.DbMigrate      : Schema "public" is up to date. No migration necessary.
+2026-09-02T16:22:43.596+02:00  INFO 4324 --- [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-09-02T16:22:43.775+02:00  INFO 4324 --- [           main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.4.1.Final
+2026-09-02T16:22:44.483+02:00  INFO 4324 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-09-02T16:22:44.751+02:00  INFO 4324 --- [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/fantacalcio_intelligence_test]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 17.10
+	Default catalog/schema: fantacalcio_intelligence_test/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-09-02T16:22:46.081+02:00  INFO 4324 --- [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-09-02T16:22:46.175+02:00  INFO 4324 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-09-02T16:22:46.806+02:00  INFO 4324 --- [           main] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-09-02T16:22:48.310+02:00  INFO 4324 --- [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name databaseUserDetailsService
+2026-09-02T16:22:49.908+02:00  INFO 4324 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 2 endpoints beneath base path '/actuator'
+2026-09-02T16:22:50.053+02:00  INFO 4324 --- [           main] i.f.b.refresh.DataRefreshServiceTest     : Started DataRefreshServiceTest in 13.925 seconds (process running for 15.917)
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 16.34 s -- in it.fantacalciointelligence.backend.refresh.DataRefreshServiceTest
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  21.614 s
+[INFO] Finished at: 2026-09-02T16:22:52+02:00
+[INFO] ------------------------------------------------------------------------
+DataRefreshServiceTest_EXIT=0
+
+STATUS=BLOCKED_TEST
+LOG_FILE=C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\logs\M10.3C-certification.txt

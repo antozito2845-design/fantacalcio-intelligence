@@ -1,0 +1,384 @@
+D02.30 — VALUTAZIONE API-FOOTBALL/API-SPORTS PER STATISTICHE PORTIERI
+Data analisi: 2026-08-27
+Branch: arena/01a043d3-fantacalcio-intelligence
+
+STATO DEL BLOCCO
+Solo analisi e progettazione. Non sono stati creati account, richieste API, downloader,
+adapter eseguibili o script di rete. Non sono state eseguite INSERT, UPDATE, DELETE,
+TRUNCATE, migration, import, refresh, chiamate a produzione o modifiche al database.
+Nessuna chiave, credenziale, token o URL con credenziali è presente nel repository.
+
+DECISIONE PRELIMINARE
+API-Football/API-Sports è tecnicamente promettente per 5 delle 6 metriche richieste:
+presenze, minuti, gol subiti, parate e rigori parati. La documentazione ufficiale consultata
+non conferma però un campo player-level per i clean sheet nel payload `/players` o
+`/fixtures/players`; espone invece clean sheet a livello squadra e statistiche goalkeeper
+come `goals.conceded`, `goals.saves` e `penalty.saved`. Non è consentito derivare il clean
+sheet da risultato squadra/minuti in questo blocco.
+
+Inoltre il piano gratuito è utile per un prototipo controllato, ma non è automaticamente
+una licenza per pubblicare dati in un prodotto fantasy: i Terms API-Sports richiedono di
+verificare autorizzazioni/licenze dei titolari dei diritti e dichiarano che la frequenza e
+la disponibilità dei dati non sono garantite. La fonte è quindi APPROVATA SOLO PER UN
+DRY-RUN LOCALE FUTURO, subordinato a verifica coverage con una chiave fornita localmente
+e autorizzazione d’uso; NON è ancora approvata come fonte primaria completa di produzione.
+
+1. FONTI UFFICIALI ANALIZZATE
+
+- Home/pricing: https://www.api-football.com/
+- Pricing: https://www.api-football.com/pricing
+- Documentazione V3: https://www.api-football.com/documentation-v3
+- Coverage: https://www.api-football.com/coverage
+- Terms of Service: https://www.api-football.com/terms
+- Guida API-Football/API-Sports: https://www.api-football.com/news/post/how-to-get-started-with-api-football-the-complete-beginners-guide
+- Rate limit: https://www.api-football.com/news/post/how-ratelimit-works
+- Ricerca ID: https://www.api-football.com/news/post/how-to-find-ids
+
+La coverage pubblica elenca Serie A tra le competizioni, ma la copertura effettiva è
+season-specific e la documentazione prescrive di leggere dal risultato `/leagues` le
+flag di coverage. Senza una API key non è stata fatta la richiesta autenticata e non si
+può certificare qui che ogni dato goalkeeper sia abilitato per le stagioni desiderate.
+
+2. PIANO FREE, QUOTA E USABILITÀ
+
+Dalla pagina ufficiale e dalla documentazione pubblica risultano:
+- Free: 100 richieste/giorno.
+- Free: 10 richieste/minuto.
+- Gli endpoint sono disponibili sul free tier, ma le stagioni/dati disponibili nel free
+  tier sono limitati e possono cambiare.
+- `/status` consente di leggere piano, richieste correnti e limite giornaliero; la chiamata
+  di status è documentata come non conteggiata nella quota.
+- Sul dashboard API-Football, raggiunta la quota, il servizio si sospende per il resto del
+  giorno; su RapidAPI valgono regole di quota/overage differenti. Il piano di questo
+  progetto dovrebbe usare un solo canale, preferibilmente quello diretto, dopo verifica
+  contrattuale.
+- Il reset della quota dipende dal canale: i Terms distinguono reset a mezzanotte UTC
+  sul dashboard e ciclo di 24 ore su RapidAPI; non va assunto un comportamento unico.
+- Le immagini/CDN non sono rilevanti per questo import e non devono essere usate per
+  aggirare la quota o creare traffico aggiuntivo.
+
+Stima di budget, senza chiamare l’API:
+- `/players?league=...&season=...` restituisce pagine da 20 giocatori secondo la guida;
+  il costo per un campionato/stagione è `ceil(risultati_totali / 20)` più bootstrap.
+- Un full refresh di due stagioni è entro 100 richieste solo se il numero effettivo di
+  pagine e i retry restano sotto quota. Va misurato dal campo `paging.total`, non stimato
+  a priori.
+- Recuperare individualmente 58 portieri per due stagioni richiederebbe già circa 116
+  richieste, prima di metadata e retry: non è adatto al free tier.
+- Un aggiornamento di una giornata con `/fixtures/players` richiederebbe normalmente una
+  chiamata per fixture; una giornata di Serie A ha circa 10 fixture, quindi il budget
+  giornaliero sarebbe compatibile in linea teorica, ma solo dopo aver verificato il numero
+  effettivo di fixture e senza polling aggressivo.
+- Il piano sicuro deve centralizzare le chiamate backend, usare cache/checksum, una sola
+  acquisizione post-giornata e nessuna chiamata dal browser. 100 richieste/giorno sono
+  potenzialmente sufficienti per un dry-run o per un refresh mirato, ma non certificano
+  da sole una pipeline completa di storico + corrente.
+
+3. ENDPOINT CANDIDATI E PARAMETRI
+
+Base documentata: `https://v3.football.api-sports.io`.
+L’autenticazione documentata usa l’header `x-apisports-key`; nessun valore reale è stato
+usato o inserito nel repository.
+
+3.1 Bootstrap coverage
+
+`GET /status`
+- Nessun parametro.
+- Legge stato piano/quota; non dovrebbe essere usato per statistiche.
+
+`GET /leagues?country=Italy&name=Serie%20A`
+- Parametri documentati: country, name, id, season, current.
+- Risolve il league id e le stagioni disponibili.
+
+`GET /leagues?id=135&season=2025`
+- `135` è il league id candidato comunemente associato alla Serie A V3, ma deve essere
+  confermato dalla risposta `/leagues` con la chiave dell’utente.
+- `2025` è il candidato per stagione applicativa `2025/2026`; `2026` per `2026/2027`.
+  La conversione deve essere verificata leggendo `seasons[].year`, non hardcodata senza
+  risposta.
+- La risposta deve essere controllata per `coverage.players` e per la disponibilità della
+  stagione, non solo per il nome della lega.
+
+3.2 Statistiche aggregate stagione
+
+`GET /players?league=135&season=2025&page=1`
+`GET /players?league=135&season=2026&page=1`
+- `league` + `season` + `page` sono i parametri per il catalogo della competizione.
+- La risposta è paginata; il codice deve seguire `paging.current`/`paging.total` con un
+  limite massimo e un rate limiter.
+- Ogni elemento può avere più blocchi `statistics[]` per squadra/competizione; la guida
+  avverte che un trasferimento può produrre due squadre nella stessa stagione.
+- Il blocco goalkeeper rilevante è `statistics[].games`, `statistics[].goals` e
+  `statistics[].penalty`.
+
+`GET /players?id=<apiFootballPlayerId>&season=2025`
+- È il percorso mirato dopo che un ID provider è già mappato.
+- Non va usato come scansione iniziale di tutti i portieri sul free tier.
+- Le statistiche possono essere raggruppate per competizione/squadra; l’adapter deve
+  decidere esplicitamente se importare solo Serie A o tutte le competizioni.
+
+3.3 Statistiche per fixture/giornata
+
+`GET /fixtures/rounds?league=135&season=2025`
+- Elenca i round; i valori di round devono essere letti dalla risposta.
+
+`GET /fixtures?league=135&season=2025&round=<round>&status=FT`
+- Recupera fixture e stato; il filtro `status=FT` deve essere usato solo dopo aver
+  verificato i valori ammessi e la semantica della competizione.
+
+`GET /fixtures/players?fixture=<fixtureId>`
+`GET /fixtures/players?fixture=<fixtureId>&team=<teamId>`
+- La documentazione mostra statistiche player per una fixture e consiglia una chiamata
+  giornaliera a partita conclusa, non polling continuo fuori dalle partite.
+- Per il goalkeeper il payload documentato contiene `games.minutes`, `goals.conceded`,
+  `goals.saves` e `penalty.saved`.
+- Non è stato trovato un campo player-level `clean_sheets`/`cleanSheets` nel payload
+  documentato dell’endpoint. La statistica `Goalkeeper Saves` in
+  `/fixtures/statistics` è team-level e non sostituisce il player save count.
+
+4. COPERTURA DELLE METRICHE
+
+| Metrica | `/players` | `/fixtures/players` | Stato |
+|---|---|---|---|
+| Presenze | `games.appearences` | `games.minutes`/lineup context | CONFERMATA per stagione; spelling provider da normalizzare |
+| Minuti | `games.minutes` | `games.minutes` | CONFERMATA |
+| Gol subiti | `goals.conceded` | `goals.conceded` | CONFERMATA |
+| Parate | `goals.saves` | `goals.saves` | CONFERMATA |
+| Rigori parati | `penalty.saved` | `penalty.saved` | CONFERMATA nel payload documentato |
+| Clean sheet | non confermata come campo player | non confermata come campo player | NON CONFERMATA; non derivare |
+
+Per clean sheet la risposta corretta, finché il provider non conferma un campo diretto,
+è `NOT_AVAILABLE`/NULL. Non usare:
+- clean sheet della squadra come clean sheet del singolo portiere;
+- risultato finale + minuti come derivazione automatica;
+- `Save%`, `GA90`, `SoTA` o altre percentuali per ricostruire conteggi;
+- dati di un altro provider senza dichiarare fonte e policy.
+
+Il provider documenta inoltre `goals.total`, `goals.assists` e vari dati di gioco. Per un
+portiere questi campi non devono diventare metriche principali dell’applicazione.
+
+5. FEASIBILITY PER LE STAGIONI RICHIESTE
+
+2025/2026:
+- Tecnicamente plausibile via `/players?league=135&season=2025&page=N` se la risposta
+  `/leagues` conferma la stagione e `coverage.players=true`.
+- Le cinque metriche confermate possono essere acquisite in forma aggregata per stagione.
+- Clean sheet resta non disponibile senza un campo player-level esplicito o una fonte
+  secondaria autorizzata.
+- La copertura storica e la retention del free tier devono essere verificate con una
+  chiamata reale autorizzata; non sono state assunte.
+
+2026/2027:
+- Tecnicamente plausibile via `season=2026` solo se la stagione è presente e coperta.
+- La stagione corrente può avere dati parziali; l’assenza non significa zero.
+- L’endpoint `/fixtures/players` è più adatto a snapshot post-giornata delle cinque
+  metriche confermate, ma non risolve il gap clean sheet.
+- Aggiornamento e correzioni del provider non sono garantiti dai Terms; serve una policy
+  stale/freshness nel sistema.
+
+Verdetto: API-Football è FEASIBLE-PARTIAL per un dry-run locale delle cinque metriche,
+ma NON FEASIBLE-COMPLETE come unica fonte per tutti i sei requisiti finché clean sheet
+non è confermato a livello giocatore. Il piano free può bastare per un test controllato,
+non è sufficiente per dichiarare già garantiti storico, aggiornamenti e diritti di
+pubblicazione.
+
+6. TERMINI, LICENZA E RISCHI D’USO
+
+I Terms API-Sports analizzati dichiarano, tra l’altro:
+- account individuali e divieto di account multipli per aumentare il free limit;
+- dati ottenuti da partner, divieto di rivendita;
+- assenza di una licenza automatica per usare e pubblicare i dati nelle proprie app;
+- possibile necessità di autorizzazioni/licenze di leghe, federazioni o titolari dei
+  diritti, soprattutto per prodotti fantasy, broadcast, betting o distribuzione massiva;
+- disponibilità e aggiornamento dei dati non garantiti;
+- sospensioni/blocchi in caso di pattern eccessivi o violazione dei limiti.
+
+Non è quindi sufficiente dire “API gratuita”: prima di produzione servono conferma scritta
+sull’uso del feed nel prodotto e verifica dei diritti Serie A/Italia. L’account dovrà essere
+creato dall’utente o dall’organizzazione responsabile, non da questo agente e non a nome
+dell’utente in chat.
+
+7. ADAPTER BACKEND PROPOSTO
+
+Nessuna implementazione è stata aggiunta ora. Disegno minimo:
+
+Configurazione backend-only:
+- `app.api-football.enabled=false` come default sicuro;
+- `app.api-football.base-url=https://v3.football.api-sports.io` senza credenziali;
+- `API_FOOTBALL_KEY`/nome equivalente letto solo da environment o secret manager locale;
+- startup fail-closed se enabled=true e la key manca;
+- mai esporre la key a frontend, log, errori, URL, query string o DTO;
+- timeout, max response bytes, user-agent identificabile e logging solo di endpoint,
+  status, request id interno e quota residua non sensibile.
+
+Client:
+- chiamate GET server-side a `/status`, `/leagues`, `/players`, `/fixtures/rounds`,
+  `/fixtures` e `/fixtures/players`;
+- parser strict per numeri/null/strutture; `appearences` normalizzato in `appearances`;
+- rate limiter globale 10/min o più prudente, budget giornaliero configurabile e circuit
+  breaker su 401/403/429/5xx;
+- retry solo su timeout/5xx con backoff; nessun retry automatico su 401, 403, 404,
+  coverage false o schema invalido;
+- cache per reference data e checksum per pagina/fixture.
+
+DTO normalizzato proposto:
+- providerPlayerId, providerTeamId, providerLeagueId, providerSeason;
+- playerName/providerPosition solo come evidenza, non come chiave unica;
+- appearances, minutesPlayed, goalsConceded, saves, penaltiesSaved;
+- cleanSheets = NULL con stato `NOT_AVAILABLE` finché il provider non conferma il campo;
+- source=`API_FOOTBALL`, sourceExternalId=providerPlayerId;
+- sourceUrl/origin endpoint, observedAt UTC, provider payload checksum, import batch,
+  match method/confidence e coverage status.
+
+8. MATCHING API-FOOTBALL ID -> CATALOGO INTERNO
+
+Il provider dichiara che i player ID sono unici e persistono tra squadre; questo li rende
+la chiave preferita dopo il primo link verificato. Nel repository però:
+- `player_source_mappings` ha un allow-list di source storica che non include ancora
+  API_FOOTBALL;
+- `player_statistical_source_links` è vincolata da V41 a source FBREF;
+- non si deve riusare nessuna tabella con una source sbagliata né inserire mapping ora.
+
+Procedura futura:
+1. bootstrap roster API-Football per league/season e conserva providerPlayerId,
+   providerTeamId, providerName, birth date e provider position.
+2. Match deterministico tramite mapping già certificato, se esistente.
+3. In assenza di mapping, richiedi almeno nome completo normalizzato + data di nascita
+   compatibile + club/league coerente; il club è un segnale di supporto, non prova unica.
+4. Nome abbreviato, solo cognome, omonimia, club discordante o più candidati -> REVIEW.
+5. Provider position Goalkeeper e ruolo interno P devono essere coerenti; divergenza ->
+   REVIEW, non correzione automatica del ruolo fantasy.
+6. Scrivi un report con MATCHED/HIGH, REVIEW/MEDIUM-LOW, UNMATCHED e COLLISION.
+7. Nessuna associazione basata solo sul nome; nessuna creazione di player interno.
+
+9. DRY-RUN LOCALE FUTURO, SENZA DATABASE
+
+Non è stato aggiunto uno script eseguibile con API calls in questo blocco. Quando l’utente
+avrà una key ottenuta autonomamente e avrà approvato i Terms/licenze:
+
+1. impostare la key solo nella sessione locale o secret store, senza file versionati;
+2. eseguire `/status` e `/leagues` per verificare quota, league id, stagione e coverage;
+3. usare un comando esplicito `--dry-run`, league/season allow-list e output temporaneo;
+4. scaricare pagine `/players` con rate limiter, budget massimo e checkpoint locale;
+5. opzionalmente acquisire fixture post-giornata e `/fixtures/players` solo per fixture FT;
+6. validare schema, interi non negativi, NULL/zero, season/league, posizione e duplicati;
+7. applicare matching senza scrivere mapping;
+8. produrre soltanto file/report temporanei: normalized, matched, review, unmatched,
+   invalid, duplicate, conflict, coverage e quota residua;
+9. verificare che non esistano connessioni JDBC/psql, query SQL o chiamate frontend;
+10. eliminare l’output non necessario senza inserirlo nel repository o nel DB.
+
+Il dry-run deve interrompersi su 401/403/429, coverage insufficiente, schema cambiato,
+checksum incoerente o collisione identità. Non deve tentare di bypassare protezioni,
+ruotare account/key o aumentare il traffico.
+
+10. IMPORT IDEMPOTENTE FUTURO
+
+Chiave logica proposta: `player_id + season_id + source + sourceExternalId` dopo
+aggregazione verificata delle eventuali righe per squadra. A livello staging provider va
+conservata anche la squadra API-Football perché il provider documenta trasferimenti nella
+stessa stagione.
+
+Regole:
+- stesso key + stesso checksum -> SKIPPED_UNCHANGED;
+- stesso key + nuovi valori noti -> nuovo batch e aggiornamento tracciato;
+- valore entrante NULL -> non cancellare un valore già certificato, warning PRESERVE;
+- due valori noti discordanti -> CONFLICT/REVIEW, nessuna scelta automatica;
+- external id collegato a più player -> REJECT/REVIEW;
+- source/season/league differenti -> record separati o blocco, mai fusione silenziosa;
+- zero numerico esplicito -> zero reale;
+- blank, null, provider omission o coverage false -> NULL/NOT_AVAILABLE;
+- storico precedente non viene cancellato.
+
+La tabella attuale `player_season_statistics` ha unique key
+`(player_id, season_id, source)` e non include sourceExternalId. Prima dell’import reale
+serve decidere se:
+- mantenere una sola riga aggregata per player/season/source e usare staging/batch per
+  l’external ID;
+- oppure aggiungere una nuova chiave/tabella con migration separata.
+
+Il servizio Java attuale importa già molti campi e usa ON CONFLICT, ma non è sufficiente
+per dichiarare questa nuova policy API-Football senza adeguamento e test.
+
+11. FRESHNESS E POST-GIORNATA
+
+Flusso raccomandato dopo una giornata:
+- attendere fixture finali e finestra per correzioni provider;
+- leggere round/fixture una volta, filtrare solo fixture con stato concluso;
+- recuperare `/fixtures/players` per fixture/team necessari oppure un full `/players`
+  snapshot giornaliero;
+- registrare observedAt UTC, quota, response checksum e provider status;
+- confrontare con l’ultimo snapshot, preservare NULL e conflitti;
+- aggiornare solo record verificati, senza cancellare stagioni storiche;
+- pubblicare nel dettaglio solo i valori con coverage e mapping validi;
+- mostrare `Dato non disponibile` per cleanSheets finché non esiste campo diretto
+  confermato;
+- eseguire controlli di cardinalità, duplicati, monotonicità plausibile e batch.
+
+La frequenza documentata è indicativa e non una SLA. Un job quotidiano post-giornata è
+più compatibile con il free tier di un polling live; il polling live non rientra in questo
+progetto.
+
+12. TEST PRIMA DI QUALSIASI IMPORT
+
+Contratto/parser:
+- coverage Serie A e season mapping 2025/2026 -> 2025, 2026/2027 -> 2026 verificati
+  dalla risposta, non da costanti cieche;
+- shape nested `games`, `goals`, `penalty` e gestione spelling `appearences`;
+- numeri, zero, null, omissioni e valori non numerici;
+- distinzione clean sheet non disponibile da zero;
+- paginazione, limite massimo richieste e checkpoint;
+- 401/403/404/429/5xx e schema invalido;
+- retry/backoff e nessuna retry su errori permanenti;
+- checksum e output deterministico.
+
+Matching:
+- provider ID già linkato;
+- nome completo + DOB + club coerenti;
+- nome abbreviato/solo cognome -> REVIEW;
+- omonimia, external ID collision e ruolo P discordante -> REVIEW/REJECT;
+- trasferimento multi-team nella stessa stagione.
+
+Persistence/API, in blocco autorizzato:
+- idempotenza stessa key/checksum;
+- NULL non cancella noto e zero non diventa NULL;
+- conflitto non sovrascritto;
+- source/season isolation;
+- provenance completa;
+- endpoint dettaglio e storico senza goals/assists come metriche principali P.
+
+13. DECISIONI RICHIESTE DA TE PRIMA DEL DRY-RUN
+
+1. Confermare che API-Football/API-Sports può essere usata nel prodotto secondo i Terms e
+   le licenze dei diritti Serie A, oppure ottenere una conferma/licenza dal provider e dai
+   titolari competenti.
+2. Accettare che il piano free è FEASIBLE-PARTIAL: non è confermata la metrica clean sheet
+   player-level e non sono garantiti storico/coverage/retention senza chiamata autenticata.
+3. Fornire in futuro la API key solo localmente, fuori chat e fuori repository, assumendosi
+   la titolarità dell’account; l’agente non deve registrare account né ricevere/stampare la
+   key.
+4. Approvare il dry-run locale senza DB con un budget massimo giornaliero esplicito.
+5. Decidere se per API_FOOTBALL serve una nuova tabella/link source e una nuova migration,
+   dato che le chiavi/source attuali sono FBREF-specifiche o non includono external ID.
+6. Decidere se clean sheet deve restare `NOT_AVAILABLE` con API-Football oppure se occorre
+   un secondo provider autorizzato per quella sola metrica.
+
+FILE CONSULTATI NEL REPOSITORY
+- `scripts/fbref/fbref_build_dataset.py`
+- `scripts/fbref/fbref_match_catalog.py`
+- `scripts/fbref/test_fbref_pipeline.py`
+- `backend/src/main/java/.../player/PlayerDetailService.java`
+- `backend/src/main/java/.../player/PlayerSeasonStatisticsResponse.java`
+- `backend/src/main/java/.../statistics/importer/PlayerStatisticsImportService.java`
+- `backend/src/main/resources/db/migration/V2__create_core_football_schema.sql`
+- `backend/src/main/resources/db/migration/V39__complete_historical_player_statistics.sql`
+- `backend/src/main/resources/db/migration/V40__add_fbref_statistics_source.sql`
+- `backend/src/main/resources/db/migration/V41__support_fbref_multiclub_and_safe_links.sql`
+- `D02-27-goalkeeper-statistics-diagnosis-report.txt`
+
+CONCLUSIONE
+Nessun accesso API e nessun import è autorizzato o eseguito. La decisione tecnica precisa
+è: procedere eventualmente con un dry-run backend-only sulle cinque metriche confermate,
+ma bloccare la pretesa di copertura completa finché API-Football non conferma un campo
+clean sheet per giocatore e non vengono chiariti diritti d’uso, coverage delle stagioni e
+chiave di persistenza.

@@ -1,0 +1,15 @@
+F04-F06 FILE INVENTORY BEFORE
+Date: 2026-08-22
+
+Frontend baseline: F01 PASS, F02/F03 CERTIFIED, F03.1 visually approved.
+Existing integration foundation:
+- src/api/client/httpClient.ts and tests
+- src/api/contracts/apiError.ts
+- src/api/errors/AppError.ts
+- src/app/providers/queryClient.ts
+- src/app/providers/AppProviders.tsx
+- src/app/router/AppRouter.tsx
+- src/pages/DesignSystemPage.tsx
+- src/layouts/AppShell.tsx
+
+Backend baseline: dirty state already present and user-owned. Backend source is read-only for this macroblock.

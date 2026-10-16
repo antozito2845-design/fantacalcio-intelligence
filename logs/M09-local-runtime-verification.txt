@@ -1,0 +1,17 @@
+﻿
+======================================================================
+M09.0 LOCAL RUNTIME VERIFICATION
+======================================================================
+BRANCH=stabilization/m01-local-green
+HEAD=a40557e4132189fbb7aa02e869cf126072e03945
+BACKEND_HTTP=200
+BACKEND_STATUS=UP
+FRONTEND_HTTP=200
+HISTORY_HTTP=200
+PLAYERS_HTTP=200
+SEASONS_HTTP=200
+
+MANUAL_BROWSER_CHECK_REQUIRED=YES
+CHECK_URL=http://127.0.0.1:5173
+VERIFY_PAGES=Dashboard,Players,PlayerDetail,HistoricalPlayers,HistoricalDetail,Squad,Lineup,LiveAuction
+LOG_FILE=C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\logs\M09-local-runtime-verification.txt

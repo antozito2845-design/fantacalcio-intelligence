@@ -1,0 +1,17 @@
+{
+  "acquired_at_utc": "2026-08-11T14:15:14Z",
+  "club_review_rows": 0,
+  "clubs": 183,
+  "reference_sha256": {
+    "clubs.csv.gz": "a6736d4fd85a1e30a86c70fc6ec88b7dbd2d13eefcc486ab8264409f6b2e27c8",
+    "competitions.csv.gz": "226968a488ade41f96ae54b9d2acf5a35a92350c678b9365586d15827e789773",
+    "players.csv.gz": "1457768f75cb27adb38b2227b9c8facc53174a626cbe1e18f9019b5647fa8d3c"
+  },
+  "source": "TRANSFERMARKT",
+  "source_dataset": "https://github.com/dcaribou/transfermarkt-datasets",
+  "source_license": "CC0-1.0",
+  "source_pages": "public Transfermarkt detailed performance pages",
+  "statistics_rows": 980,
+  "target_players": 242,
+  "unknown_country_rows": 0
+}

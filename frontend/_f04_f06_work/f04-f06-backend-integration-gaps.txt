@@ -1,0 +1,28 @@
+F04-F06 BACKEND INTEGRATION GAPS
+Date: 2026-08-22
+
+GAP 1 — No dedicated identity/login endpoint
+Endpoint: authentication model generally; workaround GET /api/v1/squads then admin readiness.
+Impact: username is the only client-known identity and refresh loses the in-memory session by design.
+Suggested minimum future fix: read-only /api/v1/me returning username and authorities.
+Severity: LOW. Does not block Basic-auth foundation.
+
+GAP 2 — No exposed correlation/request id observed
+Endpoint: all.
+Impact: client cannot display a backend request id for support diagnostics.
+Suggested minimum future fix: expose a safe correlation header through CORS.
+Severity: LOW.
+
+GAP 3 — No direct aggregate for several original F03 KPI concepts
+Endpoint: dashboard aggregation absent.
+Impact: budget available, roster value and predicted points cannot be shown truthfully.
+Resolution: removed demo numbers and used only real catalog/system metrics.
+Severity: INFORMATIONAL.
+
+GAP 4 — Scouting arrivals empty in current dev dataset
+Endpoint: GET /api/v1/scouting/arrivals?season=2026/2027.
+Impact: widget renders a truthful empty state.
+Severity: INFORMATIONAL.
+
+BLOCKING_GAPS=0
+BACKEND_FIX_REQUIRED=False

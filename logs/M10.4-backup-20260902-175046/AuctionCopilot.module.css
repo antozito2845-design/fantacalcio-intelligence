@@ -1,0 +1,273 @@
+.controls {
+  display: grid;
+  grid-template-columns: minmax(220px, 2fr) repeat(2, minmax(150px, 1fr));
+  gap: 1rem;
+  align-items: end;
+}
+
+.controls label,
+.bidInput {
+  display: grid;
+  gap: 0.45rem;
+  font-weight: 700;
+}
+
+.controls input,
+.controls select,
+.bidInput input {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid var(--border, #d7dce3);
+  border-radius: 0.75rem;
+  background: var(--surface, #fff);
+  color: inherit;
+  font: inherit;
+}
+
+.budgetStrip,
+.metrics,
+.roleBudgetGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.budgetStrip {
+  margin: 0 0 1rem;
+}
+
+.budgetStrip > div,
+.metrics > div,
+.roleBudgetGrid article {
+  display: grid;
+  gap: 0.2rem;
+  padding: 0.9rem;
+  border: 1px solid var(--border, #d7dce3);
+  border-radius: 0.9rem;
+  background: var(--surface, #fff);
+}
+
+.budgetStrip span,
+.metrics span,
+.roleBudgetGrid span,
+.roleBudgetGrid small {
+  opacity: 0.72;
+  font-size: 0.82rem;
+}
+
+.sectionTitle {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 1rem;
+}
+
+.playerGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(225px, 1fr));
+  gap: 0.7rem;
+}
+
+.playerCard {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-areas:
+    'identity score'
+    'tier price';
+  gap: 0.45rem 0.75rem;
+  text-align: left;
+  padding: 0.85rem;
+  border: 1px solid var(--border, #d7dce3);
+  border-radius: 0.85rem;
+  background: var(--surface, #fff);
+  color: inherit;
+  cursor: pointer;
+}
+
+.playerCard:hover,
+.playerCard:focus-visible,
+.playerCardActive {
+  border-color: currentColor;
+  transform: translateY(-1px);
+}
+
+.playerIdentity {
+  grid-area: identity;
+  display: grid;
+  min-width: 0;
+}
+
+.playerIdentity strong,
+.playerIdentity small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.scoreBadge {
+  grid-area: score;
+  font-size: 1.15rem;
+  font-weight: 900;
+}
+
+.tierBadge {
+  grid-area: tier;
+  font-weight: 800;
+}
+
+.playerCard > span:last-child {
+  grid-area: price;
+  text-align: right;
+  font-weight: 800;
+}
+
+.copilotGrid,
+.twoColumns {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(280px, 1fr);
+  gap: 1rem;
+}
+
+.twoColumns {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.focusCard,
+.decisionCard {
+  min-width: 0;
+}
+
+.metrics {
+  margin-top: 1rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.explanation {
+  margin-top: 1rem;
+  padding: 0.85rem;
+  border-radius: 0.75rem;
+  background: rgb(127 127 127 / 8%);
+}
+
+.decisionCard {
+  display: grid;
+  align-content: start;
+  gap: 1rem;
+}
+
+.decision {
+  padding: 1rem;
+  border: 2px solid currentColor;
+  border-radius: 0.9rem;
+}
+
+.decision strong {
+  display: block;
+  font-size: 1.6rem;
+}
+
+.decision p {
+  margin-bottom: 0;
+}
+
+.decisionCOMPRA {
+  background: rgb(32 160 80 / 10%);
+}
+
+.decisionRILANCIA {
+  background: rgb(46 113 200 / 10%);
+}
+
+.decisionASPETTA {
+  background: rgb(220 160 35 / 12%);
+}
+
+.decisionSTOP {
+  background: rgb(210 55 55 / 10%);
+}
+
+.decisionDetails {
+  display: grid;
+  gap: 0;
+  margin: 0;
+}
+
+.decisionDetails div {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  padding: 0.65rem 0;
+  border-bottom: 1px solid var(--border, #d7dce3);
+}
+
+.decisionDetails dt {
+  opacity: 0.72;
+}
+
+.decisionDetails dd {
+  margin: 0;
+  text-align: right;
+  font-weight: 700;
+}
+
+.alternatives {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.alternatives button {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid var(--border, #d7dce3);
+  border-radius: 0.8rem;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.alternatives button span:first-child {
+  display: grid;
+}
+
+.note {
+  font-size: 0.92rem;
+}
+
+.note p {
+  margin-bottom: 0;
+}
+
+@media (max-width: 900px) {
+  .controls,
+  .copilotGrid,
+  .twoColumns {
+    grid-template-columns: 1fr;
+  }
+
+  .budgetStrip,
+  .metrics,
+  .roleBudgetGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .budgetStrip,
+  .metrics,
+  .roleBudgetGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .sectionTitle {
+    flex-direction: column;
+  }
+
+  .playerGrid {
+    grid-template-columns: 1fr;
+  }
+}

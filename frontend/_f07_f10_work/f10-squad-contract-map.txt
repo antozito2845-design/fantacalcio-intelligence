@@ -1,0 +1,8 @@
+F10 SQUAD CONTRACT MAP — 2026-08-22
+
+GET /api/v1/squad — authenticated; active squad for principal/admin. Response SquadResponse{id,name,season,budgets,totalPlayers,maximumPlayers,roles map,players[]}.
+POST /api/v1/squad/players — authenticated owner/admin. Body {playerId,purchasePrice>=1}; response updated SquadResponse.
+DELETE /api/v1/squad/players/{playerId} — authenticated owner/admin; response updated SquadResponse.
+GET /api/v1/squads?season=current; POST /squads; GET /squads/{squadId}; POST/DELETE nested player resources provide multi-squad management with ownership.
+GET /api/v1/squad-analysis?fromMatchday=1&toMatchday=5 and /squad-analysis/squads/{id} — authenticated by fallback security; response includes constraint validity, completeness, role coverage, calendar players, pairings and real warnings.
+Errors: 400 validation, 401, 403, 404, 409 duplicate/role/budget constraint, 429, 5xx. Frontend invalidates squad and analysis after mutations.

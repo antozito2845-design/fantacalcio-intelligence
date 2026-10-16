@@ -1,0 +1,28 @@
+
+FANTACALCIO INTELLIGENCE
+FINAL IDENTITY CERTIFICATION
+Season 2026/2027
+
+TOTAL RECORDS:                 497
+VISIBLE:                       495
+HIDDEN:                        2
+AI ELIGIBLE:                   495
+
+SAFE HIGH / ALIAS HIGH:        495
+INACTIVE VERIFIED:             2
+REVIEW:                        0
+UNMATCHED:                     0
+
+DOB CONFLICT RESOLVED:         11
+VISIBLE NOT HIGH:              0
+TM-ID COLLISIONS:              0
+
+FINAL IDENTITY GATE:           PASS
+
+Policy:
+- Fantacalcio source DOB is preserved.
+- Canonical DOB may differ only with explicit third-source resolution.
+- Hidden players remain preserved and are never deleted.
+- Russo = LOAN_OUT / HIDDEN / AI NO.
+- Satalino = FREE_AGENT / HIDDEN / AI NO.
+- Happonen = ACTIVE_LISTED_YOUTH / VISIBLE / AI YES / TM 1018026.

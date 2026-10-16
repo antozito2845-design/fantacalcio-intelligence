@@ -1,0 +1,162 @@
+FANTACALCIO INTELLIGENCE
+F01 - FRONTEND PREFLIGHT & BACKEND CONTRACT DISCOVERY
+Data: 2026-08-22
+
+1. SCOPO E VINCOLI
+
+Audit svolto su:
+C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\frontend
+
+Backend osservato esclusivamente in lettura:
+C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\backend
+
+Non sono stati avviati server, installati package, eseguiti commit/push o cancellati file.
+
+2. STATO FRONTEND
+
+La directory frontend esisteva ed era completamente vuota all'inizio di F01.
+Non erano presenti scaffold, codice applicativo, asset, configurazioni, lockfile,
+package manifest, file ambiente o materiale legacy. Non esiste pertanto costo di
+migrazione ne materiale frontend da preservare.
+
+Classificazione: EMPTY.
+
+3. TOOLCHAIN
+
+- node --version: v22.21.0
+- npm --version: NOT_FOUND (launcher trovato ma non operativo)
+- npx --version: NOT_FOUND (launcher trovato ma non operativo)
+- git --version: git version 2.20.1.windows.1
+
+Diagnosi npm/npx:
+Entrambi i launcher tentano di caricare file mancanti sotto
+C:\Users\user\AppData\Roaming\npm\node_modules\npm\bin\
+e terminano con MODULE_NOT_FOUND. Node e operativo, ma npm/npx devono essere
+ripristinati e riverificati prima dello scaffold F02. Nessuna riparazione o
+installazione e stata eseguita in F01.
+
+4. CONFIGURAZIONI FRONTEND RICERCATE
+
+Non trovati: package.json, package-lock.json, pnpm-lock.yaml, yarn.lock,
+angular.json, vite.config.*, next.config.*, tsconfig*, eslint*, prettier*, src,
+public, app, pages, README*, .env*, .gitignore.
+
+5. GIT PREFLIGHT
+
+Branch rilevato: master.
+Il worktree conteneva numerose modifiche e file untracked preesistenti, concentrati
+nel backend, data, scripts e report di certificazione. Tra questi e presente
+backend\b72-final-backend-certification.txt. Non risultavano file frontend.
+
+Le modifiche preesistenti sono state riconosciute come proprieta dell'utente e non
+sono state pulite, ripristinate, aggiunte all'indice o alterate. Nessun reset,
+checkout, clean, commit o push e stato eseguito.
+
+6. BACKEND CONTRACT DISCOVERY (READ-ONLY)
+
+Base API:
+- Contratto applicativo principale: /api/v1
+- Porta locale predefinita: 8080
+- Base URL locale diretta: http://localhost:8080/api/v1
+- Actuator espone health/info; /actuator non deve alimentare la UI utente.
+
+Security model:
+- Spring Security, session policy STATELESS.
+- Autenticazione HTTP Basic.
+- CSRF disabilitato.
+- Rate limiting applicato prima del filtro Basic Authentication.
+- /api/v1/admin/** richiede ROLE_ADMIN.
+- Mutazioni import/reconciliation/availability/league selezionate richiedono admin.
+- Mutazioni squad richiedono utente autenticato.
+- Le sessioni asta richiedono autenticazione e controllo OWNER/ADMIN a livello service.
+- Letture/use API principali (system status, seasons, clubs, players, auction,
+  league, fixtures, pairings, lineups, scouting) sono pubbliche.
+- Ogni route non esplicitamente pubblica richiede autenticazione.
+
+CORS:
+- Configurazione centralizzata e limitata a /api/**.
+- Wildcard vietata; credentials consentite.
+- Metodi: GET, POST, PUT, PATCH, DELETE, OPTIONS.
+- Header ammessi: Authorization, Content-Type, Accept, Cache-Control.
+- Header esposto: Location.
+- Profilo dev consente http://localhost:4200 e http://localhost:5173.
+- Produzione richiede CORS_ALLOWED_ORIGINS esplicito.
+
+ApiErrorResponse:
+- timestamp: Instant
+- status: int
+- error: String
+- message: String
+- path: String
+
+Il controller advice produce esplicitamente 400, 404, 409 e 500. Il formato di
+401/403 generato dalla security chain non risulta garantito dallo stesso advice e
+va verificato in F02/F03. Non emerge un mapping applicativo 422 dedicato.
+
+Mappa API ad alto livello:
+- Catalogo: players, player detail, clubs, seasons, availability.
+- Player intelligence: intelligence, intelligence profile, development, evaluations.
+- Auction Intelligence: prices, rankings, intelligence rankings, strategy,
+  squad strategy, live strategy.
+- Live Auction: decisioni e session state con ownership.
+- Squad: squad, squads, management, construction e analysis.
+- Lineup: recommended lineup.
+- Calendar/Matchup: fixtures, fixture windows/matchups, club strength, pairings.
+- Scouting/Market: scouting, arrivals, pending/listone-new, transfers.
+- League: configuration.
+- Operations/Admin: imports, reconciliation, freshness, refresh, automation,
+  ingestion, identity enrichment, provisioning e catalog readiness.
+
+OpenAPI/Swagger:
+- Nessuna dipendenza springdoc e nessun file/configurazione OpenAPI o Swagger rilevato.
+- Per F02 i tipi API dovranno inizialmente essere modellati e validati dal contratto
+  Java/JSON reale; e opportuno pianificare una fonte contrattuale automatizzabile in
+  futuro senza modificare il backend in questo blocco.
+
+7. GAP E RISCHI PER F02+
+
+ALTO
+- npm e npx non operativi: blocco immediato allo scaffold finche la toolchain non e
+  ripristinata e certificata.
+- HTTP Basic non offre login/logout/token refresh applicativi. Conservare credenziali
+  nel browser e delicato: mai localStorage/sessionStorage; preferire memoria volatile
+  e valutare, prima della produzione, un BFF o un'evoluzione auth autorizzata.
+
+MEDIO
+- Nessun OpenAPI: rischio drift tra DTO Java e tipi TypeScript.
+- 401/403 potrebbero non rispettare ApiErrorResponse; serve una verifica contrattuale.
+- 422 non e distinto: il frontend deve supportarlo in modo difensivo, senza assumere
+  che venga oggi emesso.
+- CORS produzione dipende da configurazione deployment esatta.
+- Rate limit predefinito 60 richieste/minuto: polling e refetch aggressivi possono
+  produrre 429; Retry-After/formato risposta vanno verificati.
+- Le letture pubbliche convivono con mutazioni protette: routing e capability UI
+  devono distinguere anonymous/user/admin, evitando autorizzazione solo cosmetica.
+
+BASSO/MEDIO
+- Alcuni DTO data-intensive possono richiedere adapter/view model dedicati; va
+  verificato feature per feature, senza trasferire forme API grezze nei componenti.
+- Git 2.20.1 e datato, pur non bloccando F01.
+- Node 22 e valido come linea moderna, ma in F02 va fissata una versione supportata
+  dalla toolchain scelta e riproducibile in CI.
+
+8. VERDETTO PREFLIGHT
+
+L'audit e la discovery sono completi. Il repository e sicuro per preparare F02 dopo
+la riparazione controllata di npm/npx. Non e richiesta diagnosi del frontend, essendo
+vuoto; il gap toolchain e noto, circoscritto e documentato.
+
+F01_PREFLIGHT=PASS
+FRONTEND_EXISTING_STATE=EMPTY
+NODE=v22.21.0
+NPM=NOT_FOUND
+CURRENT_FRAMEWORK=NONE
+RECOMMENDED_FRAMEWORK=React + TypeScript + Vite
+TYPESCRIPT=NO
+BACKEND_MODIFIED=False
+FILES_DELETED=0
+GIT_COMMIT=NO
+GIT_PUSH=NO
+ARCHITECTURE_DECISION=PASS
+PROJECT_STATE=SAFE
+NEXT=F02_PROJECT_FOUNDATION

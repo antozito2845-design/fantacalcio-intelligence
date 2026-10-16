@@ -1,0 +1,820 @@
+﻿===== FANTAFOOT FINAL STATE CHECK =====
+DATE=2026-08-28T00:59:47.4045868+02:00
+
+=== GIT ===
+## arena/01a043d3-fantacalcio-intelligence...origin/arena/01a043d3-fantacalcio-intelligence ?? FANTAFOOT-FULL-AUDIT.txt ?? FANTAFOOT-TARGETED-AUDIT.txt ?? project-audit-current.txt ?? project-file-list.txt
+a40557e (HEAD -> arena/01a043d3-fantacalcio-intelligence, origin/arena/01a043d3-fantacalcio-intelligence) docs(data): evaluate free automated goalkeeper sources
+* arena/01a043d3-fantacalcio-intelligence a40557e [origin/arena/01a043d3-fantacalcio-intelligence] docs(data): evaluate free automated goalkeeper sources   arena/d02-25-real-lineup                4db14f4 [origin/arena/d02-25-real-lineup] fix(lineup): harden ownership and error states   backup-prima-correzione                 c245829 chore: import current project baseline   main                                    4546eac [origin/main] Merge pull request #1 from alpionsobellini15-web/arena/d02-25-real-lineup
+
+=== PROJECT ROOT ===
+
+Mode   Length   Name                               
+----   ------   ----                               
+d--h--          .git                               
+d-----          .pnpm-store                        
+d-----          .venv                              
+d-----          ai-service                         
+d-----          backend                            
+d-----          data                               
+d-----          database                           
+d-----          documentation                      
+d-----          frontend                           
+d-----          infrastructure                     
+d-----          scripts                            
+-a---- 4476     .gitignore                         
+-a---- 18539    B63_TRANSFERMARKT_HANDOFF_202608...
+-a---- 10527    blocco-46-identity-enrichment-fi...
+-a---- 13764    blocco-47-final-report.txt         
+-a---- 15961    BLOCCO-55-REPORT.txt               
+-a---- 6493     BLOCCO-56-REPORT.txt               
+-a---- 9671     BLOCCO-57-REPORT.txt               
+-a---- 18315    BLOCCO-58-REPORT.txt               
+-a---- 15134    BLOCCO-59-REPORT.txt               
+-a---- 13215    D02-18-functional-recovery-repor...
+-a---- 5671     D02-19-production-deploy-report.txt
+-a---- 4259     D02-20-frontend-403-diagnosis-re...
+-a---- 2094     D02-21-corrected-production-depl...
+-a---- 10620    D02-22-chrome-dns-diagnosis.txt    
+-a---- 6241     D02-23-real-squad-management-rep...
+-a---- 2743     D02-24-real-squad-production-dep...
+-a---- 2402     D02-25-lineup-crash-fix-report.txt 
+-a---- 17303    D02-25-real-lineup-report.txt      
+-a---- 73060    D02-25-review-package.txt          
+-a---- 2633     D02-26-navigation-sidebar-contin...
+-a---- 15772    D02-27-goalkeeper-statistics-dia...
+-a---- 3163     D02-28-goalkeeper-statistics-imp...
+-a---- 17730    D02-29-fbref-goalkeeper-data-pre...
+-a---- 21512    D02-30-api-football-goalkeeper-d...
+-a---- 6095     D02-31-fbref-goalkeeper-offline-...
+-a---- 16140    D02-32-free-automated-goalkeeper...
+-a---- 349      d02-5-build-report.txt             
+-a---- 2166     d02-5-local-artifact-audit.txt     
+-a---- 157      d02-5-upload-report.txt            
+-a---- 3694362  FANTAFOOT-FULL-AUDIT.txt           
+-a---- 20435865 FANTAFOOT-TARGETED-AUDIT.txt       
+-a---- 39465    FINAL_BACKEND_AUDIT_REPORT.txt     
+-a---- 12762    FINAL_BACKEND_CORRECTIVE_PASS_2_...
+-a---- 24853    FINAL_BACKEND_DB_FUNCTIONAL_CERT...
+-a---- 9202     FINAL_BACKEND_REMEDIATION_REPORT...
+-a---- 3824460  project-audit-current.txt          
+-a---- 396449   project-file-list.txt              
+-a---- 291      README.md                          
+
+
+
+
+=== IMPORTANT DIRECTORIES ===
+.pnpm-store
+.pnpm-store\v11
+.pnpm-store\v11\files
+.pnpm-store\v11\files\00
+.pnpm-store\v11\files\01
+.pnpm-store\v11\files\02
+.pnpm-store\v11\files\03
+.pnpm-store\v11\files\04
+.pnpm-store\v11\files\05
+.pnpm-store\v11\files\06
+.pnpm-store\v11\files\07
+.pnpm-store\v11\files\08
+.pnpm-store\v11\files\09
+.pnpm-store\v11\files\0a
+.pnpm-store\v11\files\0b
+.pnpm-store\v11\files\0c
+.pnpm-store\v11\files\0d
+.pnpm-store\v11\files\0e
+.pnpm-store\v11\files\0f
+.pnpm-store\v11\files\10
+.pnpm-store\v11\files\11
+.pnpm-store\v11\files\12
+.pnpm-store\v11\files\13
+.pnpm-store\v11\files\14
+.pnpm-store\v11\files\15
+.pnpm-store\v11\files\16
+.pnpm-store\v11\files\17
+.pnpm-store\v11\files\18
+.pnpm-store\v11\files\19
+.pnpm-store\v11\files\1a
+.pnpm-store\v11\files\1b
+.pnpm-store\v11\files\1c
+.pnpm-store\v11\files\1d
+.pnpm-store\v11\files\1e
+.pnpm-store\v11\files\1f
+.pnpm-store\v11\files\20
+.pnpm-store\v11\files\21
+.pnpm-store\v11\files\22
+.pnpm-store\v11\files\23
+.pnpm-store\v11\files\24
+.pnpm-store\v11\files\25
+.pnpm-store\v11\files\26
+.pnpm-store\v11\files\27
+.pnpm-store\v11\files\28
+.pnpm-store\v11\files\29
+.pnpm-store\v11\files\2a
+.pnpm-store\v11\files\2b
+.pnpm-store\v11\files\2c
+.pnpm-store\v11\files\2d
+.pnpm-store\v11\files\2e
+.pnpm-store\v11\files\2f
+.pnpm-store\v11\files\30
+.pnpm-store\v11\files\31
+.pnpm-store\v11\files\32
+.pnpm-store\v11\files\33
+.pnpm-store\v11\files\34
+.pnpm-store\v11\files\35
+.pnpm-store\v11\files\36
+.pnpm-store\v11\files\37
+.pnpm-store\v11\files\38
+.pnpm-store\v11\files\39
+.pnpm-store\v11\files\3a
+.pnpm-store\v11\files\3b
+.pnpm-store\v11\files\3c
+.pnpm-store\v11\files\3d
+.pnpm-store\v11\files\3e
+.pnpm-store\v11\files\3f
+.pnpm-store\v11\files\40
+.pnpm-store\v11\files\41
+.pnpm-store\v11\files\42
+.pnpm-store\v11\files\43
+.pnpm-store\v11\files\44
+.pnpm-store\v11\files\45
+.pnpm-store\v11\files\46
+.pnpm-store\v11\files\47
+.pnpm-store\v11\files\48
+.pnpm-store\v11\files\49
+.pnpm-store\v11\files\4a
+.pnpm-store\v11\files\4b
+.pnpm-store\v11\files\4c
+.pnpm-store\v11\files\4d
+.pnpm-store\v11\files\4e
+.pnpm-store\v11\files\4f
+.pnpm-store\v11\files\50
+.pnpm-store\v11\files\51
+.pnpm-store\v11\files\52
+.pnpm-store\v11\files\53
+.pnpm-store\v11\files\54
+.pnpm-store\v11\files\55
+.pnpm-store\v11\files\56
+.pnpm-store\v11\files\57
+.pnpm-store\v11\files\58
+.pnpm-store\v11\files\59
+.pnpm-store\v11\files\5a
+.pnpm-store\v11\files\5b
+.pnpm-store\v11\files\5c
+.pnpm-store\v11\files\5d
+.pnpm-store\v11\files\5e
+.pnpm-store\v11\files\5f
+.pnpm-store\v11\files\60
+.pnpm-store\v11\files\61
+.pnpm-store\v11\files\62
+.pnpm-store\v11\files\63
+.pnpm-store\v11\files\64
+.pnpm-store\v11\files\65
+.pnpm-store\v11\files\66
+.pnpm-store\v11\files\67
+.pnpm-store\v11\files\68
+.pnpm-store\v11\files\69
+.pnpm-store\v11\files\6a
+.pnpm-store\v11\files\6b
+.pnpm-store\v11\files\6c
+.pnpm-store\v11\files\6d
+.pnpm-store\v11\files\6e
+.pnpm-store\v11\files\6f
+.pnpm-store\v11\files\70
+.pnpm-store\v11\files\71
+.pnpm-store\v11\files\72
+.pnpm-store\v11\files\73
+.pnpm-store\v11\files\74
+.pnpm-store\v11\files\75
+.pnpm-store\v11\files\76
+.pnpm-store\v11\files\77
+.pnpm-store\v11\files\78
+.pnpm-store\v11\files\79
+.pnpm-store\v11\files\7a
+.pnpm-store\v11\files\7b
+.pnpm-store\v11\files\7c
+.pnpm-store\v11\files\7d
+.pnpm-store\v11\files\7e
+.pnpm-store\v11\files\7f
+.pnpm-store\v11\files\80
+.pnpm-store\v11\files\81
+.pnpm-store\v11\files\82
+.pnpm-store\v11\files\83
+.pnpm-store\v11\files\84
+.pnpm-store\v11\files\85
+.pnpm-store\v11\files\86
+.pnpm-store\v11\files\87
+.pnpm-store\v11\files\88
+.pnpm-store\v11\files\89
+.pnpm-store\v11\files\8a
+.pnpm-store\v11\files\8b
+.pnpm-store\v11\files\8c
+.pnpm-store\v11\files\8d
+.pnpm-store\v11\files\8e
+.pnpm-store\v11\files\8f
+.pnpm-store\v11\files\90
+.pnpm-store\v11\files\91
+.pnpm-store\v11\files\92
+.pnpm-store\v11\files\93
+.pnpm-store\v11\files\94
+.pnpm-store\v11\files\95
+.pnpm-store\v11\files\96
+.pnpm-store\v11\files\97
+.pnpm-store\v11\files\98
+.pnpm-store\v11\files\99
+.pnpm-store\v11\files\9a
+.pnpm-store\v11\files\9b
+.pnpm-store\v11\files\9c
+.pnpm-store\v11\files\9d
+.pnpm-store\v11\files\9e
+.pnpm-store\v11\files\9f
+.pnpm-store\v11\files\a0
+.pnpm-store\v11\files\a1
+.pnpm-store\v11\files\a2
+.pnpm-store\v11\files\a3
+.pnpm-store\v11\files\a4
+.pnpm-store\v11\files\a5
+.pnpm-store\v11\files\a6
+.pnpm-store\v11\files\a7
+.pnpm-store\v11\files\a8
+.pnpm-store\v11\files\a9
+.pnpm-store\v11\files\aa
+.pnpm-store\v11\files\ab
+.pnpm-store\v11\files\ac
+.pnpm-store\v11\files\ad
+.pnpm-store\v11\files\ae
+.pnpm-store\v11\files\af
+.pnpm-store\v11\files\b0
+.pnpm-store\v11\files\b1
+.pnpm-store\v11\files\b2
+.pnpm-store\v11\files\b3
+.pnpm-store\v11\files\b4
+.pnpm-store\v11\files\b5
+.pnpm-store\v11\files\b6
+.pnpm-store\v11\files\b7
+.pnpm-store\v11\files\b8
+.pnpm-store\v11\files\b9
+.pnpm-store\v11\files\ba
+.pnpm-store\v11\files\bb
+.pnpm-store\v11\files\bc
+.pnpm-store\v11\files\bd
+.pnpm-store\v11\files\be
+.pnpm-store\v11\files\bf
+.pnpm-store\v11\files\c0
+.pnpm-store\v11\files\c1
+.pnpm-store\v11\files\c2
+.pnpm-store\v11\files\c3
+.pnpm-store\v11\files\c4
+.pnpm-store\v11\files\c5
+.pnpm-store\v11\files\c6
+.pnpm-store\v11\files\c7
+.pnpm-store\v11\files\c8
+.pnpm-store\v11\files\c9
+.pnpm-store\v11\files\ca
+.pnpm-store\v11\files\cb
+.pnpm-store\v11\files\cc
+.pnpm-store\v11\files\cd
+.pnpm-store\v11\files\ce
+.pnpm-store\v11\files\cf
+.pnpm-store\v11\files\d0
+.pnpm-store\v11\files\d1
+.pnpm-store\v11\files\d2
+.pnpm-store\v11\files\d3
+.pnpm-store\v11\files\d4
+.pnpm-store\v11\files\d5
+.pnpm-store\v11\files\d6
+.pnpm-store\v11\files\d7
+.pnpm-store\v11\files\d8
+.pnpm-store\v11\files\d9
+.pnpm-store\v11\files\da
+.pnpm-store\v11\files\db
+.pnpm-store\v11\files\dc
+.pnpm-store\v11\files\dd
+.pnpm-store\v11\files\de
+.pnpm-store\v11\files\df
+.pnpm-store\v11\files\e0
+.pnpm-store\v11\files\e1
+.pnpm-store\v11\files\e2
+.pnpm-store\v11\files\e3
+.pnpm-store\v11\files\e4
+.pnpm-store\v11\files\e5
+.pnpm-store\v11\files\e6
+.pnpm-store\v11\files\e7
+.pnpm-store\v11\files\e8
+.pnpm-store\v11\files\e9
+.pnpm-store\v11\files\ea
+.pnpm-store\v11\files\eb
+.pnpm-store\v11\files\ec
+.pnpm-store\v11\files\ed
+.pnpm-store\v11\files\ee
+.pnpm-store\v11\files\ef
+.pnpm-store\v11\files\f0
+.pnpm-store\v11\files\f1
+.pnpm-store\v11\files\f2
+.pnpm-store\v11\files\f3
+.pnpm-store\v11\files\f4
+.pnpm-store\v11\files\f5
+.pnpm-store\v11\files\f6
+.pnpm-store\v11\files\f7
+.pnpm-store\v11\files\f8
+.pnpm-store\v11\files\f9
+.pnpm-store\v11\files\fa
+.pnpm-store\v11\files\fb
+.pnpm-store\v11\files\fc
+.pnpm-store\v11\files\fd
+.pnpm-store\v11\files\fe
+.pnpm-store\v11\files\ff
+.pnpm-store\v11\projects
+.pnpm-store\v11\projects\f970d513e320de76fd41e74f3df2692b
+.venv
+ai-service
+backend
+backend\.mvn
+backend\.mvn\wrapper
+backend\data
+backend\src
+backend\src\main
+backend\src\main\java
+backend\src\main\java\it
+backend\src\main\java\it\fantacalciointelligence
+backend\src\main\java\it\fantacalciointelligence\backend
+backend\src\main\java\it\fantacalciointelligence\backend\auction
+backend\src\main\java\it\fantacalciointelligence\backend\auctionlive
+backend\src\main\java\it\fantacalciointelligence\backend\auctionranking
+backend\src\main\java\it\fantacalciointelligence\backend\auctionstate
+backend\src\main\java\it\fantacalciointelligence\backend\auctionstrategy
+backend\src\main\java\it\fantacalciointelligence\backend\availability
+backend\src\main\java\it\fantacalciointelligence\backend\calendarintelligence
+backend\src\main\java\it\fantacalciointelligence\backend\catalog
+backend\src\main\java\it\fantacalciointelligence\backend\catalog\readiness
+backend\src\main\java\it\fantacalciointelligence\backend\club
+backend\src\main\java\it\fantacalciointelligence\backend\common
+backend\src\main\java\it\fantacalciointelligence\backend\config
+backend\src\main\java\it\fantacalciointelligence\backend\development
+backend\src\main\java\it\fantacalciointelligence\backend\evaluation
+backend\src\main\java\it\fantacalciointelligence\backend\fixture
+backend\src\main\java\it\fantacalciointelligence\backend\fixture\importer
+backend\src\main\java\it\fantacalciointelligence\backend\fixture\strength
+backend\src\main\java\it\fantacalciointelligence\backend\freshness
+backend\src\main\java\it\fantacalciointelligence\backend\identity
+backend\src\main\java\it\fantacalciointelligence\backend\identity\enrichment
+backend\src\main\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt
+backend\src\main\java\it\fantacalciointelligence\backend\importer
+backend\src\main\java\it\fantacalciointelligence\backend\importer\admin
+backend\src\main\java\it\fantacalciointelligence\backend\ingestion
+backend\src\main\java\it\fantacalciointelligence\backend\intelligence
+backend\src\main\java\it\fantacalciointelligence\backend\league
+backend\src\main\java\it\fantacalciointelligence\backend\lineup
+backend\src\main\java\it\fantacalciointelligence\backend\liveauction
+backend\src\main\java\it\fantacalciointelligence\backend\pairing
+backend\src\main\java\it\fantacalciointelligence\backend\player
+backend\src\main\java\it\fantacalciointelligence\backend\reconciliation
+backend\src\main\java\it\fantacalciointelligence\backend\reconciliation\identity
+backend\src\main\java\it\fantacalciointelligence\backend\reconciliation\preview
+backend\src\main\java\it\fantacalciointelligence\backend\reconciliation\review
+backend\src\main\java\it\fantacalciointelligence\backend\refresh
+backend\src\main\java\it\fantacalciointelligence\backend\scouting
+backend\src\main\java\it\fantacalciointelligence\backend\season
+backend\src\main\java\it\fantacalciointelligence\backend\squad
+backend\src\main\java\it\fantacalciointelligence\backend\squadanalysis
+backend\src\main\java\it\fantacalciointelligence\backend\squadconstruction
+backend\src\main\java\it\fantacalciointelligence\backend\statistics
+backend\src\main\java\it\fantacalciointelligence\backend\statistics\importer
+backend\src\main\java\it\fantacalciointelligence\backend\strategic
+backend\src\main\java\it\fantacalciointelligence\backend\strategicintelligence
+backend\src\main\java\it\fantacalciointelligence\backend\system
+backend\src\main\java\it\fantacalciointelligence\backend\transfer
+backend\src\main\java\it\fantacalciointelligence\backend\transfer\detection
+backend\src\main\resources
+backend\src\main\resources\db
+backend\src\main\resources\db\migration
+backend\src\main\resources\static
+backend\src\main\resources\templates
+backend\src\test
+backend\src\test\java
+backend\src\test\java\it
+backend\src\test\java\it\fantacalciointelligence
+backend\src\test\java\it\fantacalciointelligence\backend
+backend\src\test\java\it\fantacalciointelligence\backend\auction
+backend\src\test\java\it\fantacalciointelligence\backend\auctionlive
+backend\src\test\java\it\fantacalciointelligence\backend\auctionranking
+backend\src\test\java\it\fantacalciointelligence\backend\auctionstate
+backend\src\test\java\it\fantacalciointelligence\backend\auctionstrategy
+backend\src\test\java\it\fantacalciointelligence\backend\availability
+backend\src\test\java\it\fantacalciointelligence\backend\calendarintelligence
+backend\src\test\java\it\fantacalciointelligence\backend\catalog
+backend\src\test\java\it\fantacalciointelligence\backend\catalog\readiness
+backend\src\test\java\it\fantacalciointelligence\backend\common
+backend\src\test\java\it\fantacalciointelligence\backend\config
+backend\src\test\java\it\fantacalciointelligence\backend\development
+backend\src\test\java\it\fantacalciointelligence\backend\evaluation
+backend\src\test\java\it\fantacalciointelligence\backend\fixture
+backend\src\test\java\it\fantacalciointelligence\backend\fixture\importer
+backend\src\test\java\it\fantacalciointelligence\backend\fixture\strength
+backend\src\test\java\it\fantacalciointelligence\backend\freshness
+backend\src\test\java\it\fantacalciointelligence\backend\identity
+backend\src\test\java\it\fantacalciointelligence\backend\identity\enrichment
+backend\src\test\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt
+backend\src\test\java\it\fantacalciointelligence\backend\importer
+backend\src\test\java\it\fantacalciointelligence\backend\importer\admin
+backend\src\test\java\it\fantacalciointelligence\backend\ingestion
+backend\src\test\java\it\fantacalciointelligence\backend\intelligence
+backend\src\test\java\it\fantacalciointelligence\backend\lineup
+backend\src\test\java\it\fantacalciointelligence\backend\liveauction
+backend\src\test\java\it\fantacalciointelligence\backend\player
+backend\src\test\java\it\fantacalciointelligence\backend\reconciliation
+backend\src\test\java\it\fantacalciointelligence\backend\reconciliation\identity
+backend\src\test\java\it\fantacalciointelligence\backend\reconciliation\preview
+backend\src\test\java\it\fantacalciointelligence\backend\reconciliation\review
+backend\src\test\java\it\fantacalciointelligence\backend\refresh
+backend\src\test\java\it\fantacalciointelligence\backend\registration
+backend\src\test\java\it\fantacalciointelligence\backend\scouting
+backend\src\test\java\it\fantacalciointelligence\backend\season
+backend\src\test\java\it\fantacalciointelligence\backend\seasonclub
+backend\src\test\java\it\fantacalciointelligence\backend\squad
+backend\src\test\java\it\fantacalciointelligence\backend\squadanalysis
+backend\src\test\java\it\fantacalciointelligence\backend\squadconstruction
+backend\src\test\java\it\fantacalciointelligence\backend\statistics
+backend\src\test\java\it\fantacalciointelligence\backend\statistics\importer
+backend\src\test\java\it\fantacalciointelligence\backend\strategic
+backend\src\test\java\it\fantacalciointelligence\backend\strategicintelligence
+backend\src\test\java\it\fantacalciointelligence\backend\system
+backend\src\test\java\it\fantacalciointelligence\backend\transfer
+backend\src\test\java\it\fantacalciointelligence\backend\transfer\detection
+backend\src\test\java\it\fantacalciointelligence\backend\validation
+backend\src\test\resources
+backend\src\test\resources\db
+backend\target
+data
+data\fbref
+data\identity
+data\identity\comparison-2026-2027
+data\identity\fantacalcio-2026-2027
+data\identity\fantacalcio-2026-2027-test
+data\identity\transfermarkt-2026-2027
+data\statistics
+data\statistics\fantacalcio
+data\statistics\features
+data\statistics\international
+data\statistics\international\b66-no-history-recovery
+data\statistics\value-model
+database
+documentation
+frontend
+frontend\_f01_work
+frontend\_f02_work
+frontend\_f03_1_work
+frontend\_f03_work
+frontend\_f04_f06_work
+frontend\_f07_f10_work
+frontend\dist
+frontend\e2e
+frontend\node_modules
+frontend\public
+frontend\src
+frontend\src\api
+frontend\src\api\client
+frontend\src\api\contracts
+frontend\src\api\errors
+frontend\src\app
+frontend\src\app\bootstrap
+frontend\src\app\providers
+frontend\src\app\router
+frontend\src\assets
+frontend\src\auth
+frontend\src\components
+frontend\src\components\data-display
+frontend\src\components\feedback
+frontend\src\components\navigation
+frontend\src\components\ui
+frontend\src\domain
+frontend\src\features
+frontend\src\features\admin
+frontend\src\features\core
+frontend\src\features\intelligence
+frontend\src\hooks
+frontend\src\layouts
+frontend\src\observability
+frontend\src\pages
+frontend\src\state
+frontend\src\styles
+frontend\src\styles\tokens
+frontend\src\test
+frontend\src\utils
+infrastructure
+scripts
+scripts\fbref
+scripts\identity
+scripts\player-import
+scripts\player-import\input
+scripts\player-import\input\fantacalcio
+scripts\player-import\input\fantamarkt
+scripts\player-import\input\gazzetta
+scripts\player-import\logs
+scripts\player-import\logs\fantamarkt-raw
+scripts\player-import\output
+scripts\statistics
+scripts\statistics\__pycache__
+
+
+=== MAVEN ===
+backend/mvnw.cmd=YES
+backend/pom.xml=YES
+
+=== FRONTEND ===
+{
+  "name": "fantacalcio-intelligence-frontend",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "engines": {
+    "node": "22.x",
+    "npm": ">=10"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "lint": "eslint . --max-warnings 0",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "tsc -b --pretty false"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.101.4",
+    "lucide-react": "^1.33.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-router-dom": "^7.18.2",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.6",
+    "@types/node": "^26.2.0",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "@vitejs/plugin-react": "^6.1.0",
+    "eslint": "^9.39.5",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.4",
+    "globals": "^17.11.0",
+    "jsdom": "^29.0.0",
+    "msw": "^2.15.0",
+    "prettier": "^3.9.6",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.67.0",
+    "vite": "^8.2.2",
+    "vitest": "^4.1.11"
+  }
+}
+
+
+=== DOCUMENTATION ===
+BACKEND_PRODUCTION_RUNBOOK.md
+d01-production-deployment-preflight-report.txt
+fantasy-player-value-model-v1.md
+identity-enrichment.md
+player-performance-feature-model-v1.md
+production-deployment-runbook.md
+
+
+=== MIGRATIONS ===
+V1__create_system_information.sql
+V10__create_league_configuration.sql
+V11__create_fantasy_squad.sql
+V12__create_fixture_schema.sql
+V13__insert_fixture_test_data.sql
+V14__prepare_pairing_test_data.sql
+V15__create_player_availability.sql
+V16__insert_availability_test_data.sql
+V17__insert_complete_fantasy_squad_test_data.sql
+V18__add_max_substitutions_to_league_configuration.sql
+V19__strengthen_player_import_tracking.sql
+V2__create_core_football_schema.sql
+V20__create_player_market_values.sql
+V21__create_fixture_import_tracking.sql
+V22__remove_fixture_test_data.sql
+V23__create_data_refresh_runs.sql
+V24__add_player_availability_history.sql
+V25__create_player_statistics_import.sql
+V26__create_player_development_assessments.sql
+V27__create_foreign_player_scouting.sql
+V28__add_identity_transfer_provenance.sql
+V29__strengthen_reconciliation_v2_identity.sql
+V3__normalize_country_code_columns.sql
+V30__add_safe_abbreviation_identity_method.sql
+V31__add_normalized_identity_methods.sql
+V32__remove_lossy_final_token_identity_method.sql
+V33__add_verified_source_identity_links.sql
+V34__remove_legacy_synthetic_players.sql
+V35__add_catalog_quality_workflow.sql
+V36__add_data_freshness_monitoring.sql
+V37__fix_legacy_reconciliation_identity_constraint.sql
+V38__add_reconciliation_exclusion_workflow.sql
+V39__complete_historical_player_statistics.sql
+V4__insert_serie_a_2026_2027_clubs.sql
+V40__add_fbref_statistics_source.sql
+V41__support_fbref_multiclub_and_safe_links.sql
+V42__create_player_identity_enrichment.sql
+V43__extend_identity_profile_for_transfermarkt.sql
+V44__allow_fantacalcio_identity_provenance.sql
+V45__allow_uefa_identity_provenance.sql
+V46__allow_inactive_registration_status.sql
+V47__create_international_competition_statistics.sql
+V48__create_player_performance_feature_layer.sql
+V49__create_fantasy_player_value_model.sql
+V5__create_player_import_staging.sql
+V50__create_auction_price_model_v1.sql
+V51__create_strategic_data_enrichment.sql
+V52__create_auction_state_lifecycle.sql
+V53__harden_auction_session_ownership.sql
+V54__create_season_club_membership.sql
+V55__create_source_ingestion_runs.sql
+V56__harden_transfer_runtime_lifecycle.sql
+V57__add_users_and_squad_ownership.sql
+V58__scope_running_refresh_per_season.sql
+V59__remove_remaining_legacy_synthetic_data.sql
+V6__create_player_reconciliation.sql
+V60__enforce_single_current_season.sql
+V61__allow_fantacalcio_authoritative_reconciliation.sql
+V62__make_secondary_player_sources_non_blocking.sql
+V63__allow_unknown_destination_for_detected_serie_a_exits.sql
+V64__add_verified_identity_overrides.sql
+V65__make_b65_identity_enrichment_durable.sql
+V66__support_complete_operational_performance_population.sql
+V66_1__correct_transfermarkt_competition_classifications.sql
+V67__create_b67_auction_price_model.sql
+V68__create_production_automation_runs.sql
+V69__extend_production_automation_identity_enrichment.sql
+V7__create_player_detail_schema.sql
+V8__insert_player_detail_test_data.sql
+V9__create_auction_price_snapshots.sql
+
+
+=== REAL-DATA / TEST-DATA INDICATORS ===
+BLOCCO-56-REPORT.txt:100: aerial/header. Nessun dato DEV fake inserito. INSUFFICIENT_EVIDENCE e risultato atteso.
+BLOCCO-57-REPORT.txt:83: in memoria; nessuna query per pair/triple. Test Mockito verifica un solo fixture load.
+BLOCCO-57-REPORT.txt:118: Nessuna modifica DEV e nessuna fixture fake DEV. PostgreSQL TEST reale ha certificato
+BLOCCO-59-REPORT.txt:192: DEV non è stato modificato e non sono stati creati fake data persistenti.
+BLOCCO-59-REPORT.txt:264: - Warning Maven preesistenti: API deprecated e Mockito dynamic agent futuro;
+D02-18-functional-recovery-report.txt:111: - Nessun dato fake/fallback business introdotto in produzione: CONFERMATO.
+D02-23-real-squad-management-report.txt:24: LINEUP_INTEGRATION=LineupPage riconosce automaticamente la rosa current e passa il suo ID; sotto 11 giocatori non invoca il motore e mostra conteggio/invito a completare. Nessuna formazione fake. Dashboard applica la stessa cache e la stessa soglia.
+D02-23-real-squad-management-report.txt:27: FAKE_DATA_ADDED=NO
+D02-25-real-lineup-report.txt:216: nuovo (firme MockMvc/JSONPath) prima di qualunque altra mossa. 2) Verifica read-only DB test:
+D02-25-real-lineup-report.txt:222: rimozione dell'overload service 4-arg. 5) Nessun dato fake, fixture, statistica o rosa.
+D02-25-review-package.txt:380: +        // Test-seeded active squad with 23 players, owner 'legacy-owner'.
+D02-25-review-package.txt:395: +        mockMvc.perform(get("/api/v1/lineups/recommended")
+D02-25-review-package.txt:402: +        mockMvc.perform(get("/api/v1/lineups/recommended")
+D02-25-review-package.txt:410: +        mockMvc.perform(get("/api/v1/lineups/recommended")
+D02-25-review-package.txt:420: mockMvc.perform(post("/api/v1/squads")
+D02-25-review-package.txt:1409: nuovo (firme MockMvc/JSONPath) prima di qualunque altra mossa. 2) Verifica read-only DB test:
+D02-25-review-package.txt:1415: rimozione dell'overload service 4-arg. 5) Nessun dato fake, fixture, statistica o rosa.
+D02-25-review-package.txt:1455: nessun dato fake/fixture/giocatore/rosa/statistica creato.
+FANTAFOOT-FULL-AUDIT.txt:8500: 1|LEGA_SERIE_A|fixtures-test-import.csv|FAILED|rows=0
+FANTAFOOT-FULL-AUDIT.txt:8501: 2|LEGA_SERIE_A|fixtures-test-import.csv|COMPLETED|rows=2
+FANTAFOOT-FULL-AUDIT.txt:8504: 5|LEGA_SERIE_A|fixtures-test.csv|PROCESSING|rows=0
+FANTAFOOT-FULL-AUDIT.txt:8506: 7|LEGA_SERIE_A|fixtures-test.csv|PROCESSING|rows=0
+FANTAFOOT-FULL-AUDIT.txt:8542: The Flyway V1 seed inserts system_information.environment as the static value
+FANTAFOOT-FULL-AUDIT.txt:8543: "development". SystemStatusService previously read that persisted seed value and
+FANTAFOOT-FULL-AUDIT.txt:8545: prod profile. The database value therefore described migration-time seed data,
+FANTAFOOT-FULL-AUDIT.txt:8570: unchanged application name and version, but no longer reads the seeded environment
+FANTAFOOT-FULL-AUDIT.txt:8581: checksums and violate migration immutability. Setting its seed to "production" (or
+FANTAFOOT-FULL-AUDIT.txt:8623: environment are corrected to reflect the runtime profile instead of seed data.
+FANTAFOOT-FULL-AUDIT.txt:8632: still contain historical seed data, but System Status intentionally ignores it.
+FANTAFOOT-FULL-AUDIT.txt:57323: ('Andrea', 'Valenti', 'Andrea Valenti',
+FANTAFOOT-FULL-AUDIT.txt:57324: 'andrea valenti', '1997-03-14'::date,
+FANTAFOOT-FULL-AUDIT.txt:57327: ('Marco', 'Rinaldi', 'Marco Rinaldi',
+FANTAFOOT-FULL-AUDIT.txt:57328: 'marco rinaldi', '1994-11-02'::date,
+FANTAFOOT-FULL-AUDIT.txt:57454: ('andrea valenti', 'inter', 1),
+FANTAFOOT-FULL-AUDIT.txt:57455: ('marco rinaldi', 'napoli', 12),
+FANTAFOOT-FULL-AUDIT.txt:57530: ('andrea valenti', 'P', 'Portiere titolare'),
+FANTAFOOT-FULL-AUDIT.txt:57531: ('marco rinaldi', 'P', 'Portiere affidabile'),
+FANTAFOOT-FULL-AUDIT.txt:57610: ('andrea valenti', 5.35, 35, 35, 0, 0, 90, 78, 18, 84,
+FANTAFOOT-FULL-AUDIT.txt:57613: ('marco rinaldi', 5.20, 31, 30, 0, 0, 82, 70, 26, 76,
+FANTAFOOT-FULL-AUDIT.txt:57746: ('andrea valenti', 'P', 38),
+FANTAFOOT-FULL-AUDIT.txt:57747: ('marco rinaldi', 'P', 20),
+FANTAFOOT-FULL-AUDIT.txt:57824: ('andrea valenti', 'AVAILABLE', 98, 100, NULL, NULL::date),
+FANTAFOOT-FULL-AUDIT.txt:57825: ('marco rinaldi', 'PROBABLE', 82, 96, NULL, NULL::date),
+FANTAFOOT-FULL-AUDIT.txt:59527: 'andrea valenti',
+FANTAFOOT-FULL-AUDIT.txt:59528: 'marco rinaldi',
+FANTAFOOT-FULL-AUDIT.txt:60543: -- Insufficient evidence must never receive a fake price.
+FANTAFOOT-FULL-AUDIT.txt:60882: -- The current Serie A catalog was explicitly seeded for 2026/2027 in V4.
+FANTAFOOT-FULL-AUDIT.txt:62701: import static org.mockito.Mockito.mock;
+FANTAFOOT-FULL-AUDIT.txt:62702: import static org.mockito.Mockito.verify;
+FANTAFOOT-FULL-AUDIT.txt:62703: import static org.mockito.Mockito.when;
+FANTAFOOT-FULL-AUDIT.txt:63068: import static org.mockito.Mockito.mock;
+FANTAFOOT-FULL-AUDIT.txt:63069: import static org.mockito.Mockito.verify;
+FANTAFOOT-FULL-AUDIT.txt:63070: import static org.mockito.Mockito.when;
+FANTAFOOT-FULL-AUDIT.txt:64598: import static org.mockito.ArgumentMatchers.anyBoolean;
+FANTAFOOT-FULL-AUDIT.txt:64599: import static org.mockito.ArgumentMatchers.anyInt;
+FANTAFOOT-FULL-AUDIT.txt:64600: import static org.mockito.ArgumentMatchers.anyString;
+FANTAFOOT-FULL-AUDIT.txt:64601: import static org.mockito.Mockito.when;
+FANTAFOOT-FULL-AUDIT.txt:64612: import org.springframework.test.context.bean.override.mockito.MockitoBean;
+FANTAFOOT-FULL-AUDIT.txt:64633: @MockitoBean
+FANTAFOOT-FULL-AUDIT.txt:65211: import static org.mockito.ArgumentMatchers.anyBoolean;
+FANTAFOOT-FULL-AUDIT.txt:65212: import static org.mockito.ArgumentMatchers.anyInt;
+FANTAFOOT-FULL-AUDIT.txt:65213: import static org.mockito.ArgumentMatchers.anyString;
+FANTAFOOT-FULL-AUDIT.txt:65214: import static org.mockito.Mockito.when;
+FANTAFOOT-FULL-AUDIT.txt:65215: import static org.mockito.Mockito.times;
+FANTAFOOT-FULL-AUDIT.txt:65216: import static org.mockito.Mockito.verify;
+FANTAFOOT-FULL-AUDIT.txt:65228: import org.springframework.test.context.bean.override.mockito.MockitoBean;
+FANTAFOOT-FULL-AUDIT.txt:65244: @MockitoBean
+FANTAFOOT-FULL-AUDIT.txt:65839: import static org.mockito.ArgumentMatchers.any;
+FANTAFOOT-FULL-AUDIT.txt:65840: import static org.mockito.Mockito.verify;
+FANTAFOOT-FULL-AUDIT.txt:65841: import static org.mockito.Mockito.when;
+FANTAFOOT-FULL-AUDIT.txt:65845: import org.mockito.ArgumentCaptor;
+FANTAFOOT-FULL-AUDIT.txt:65849: import org.springframework.test.context.bean.override.mockito.MockitoBean;
+FANTAFOOT-FULL-AUDIT.txt:65864: @MockitoBean LiveAuctionDecisionService b58;
+FANTAFOOT-FULL-AUDIT.txt:65875: when(b58.decide(any())).thenReturn(org.mockito.Mockito.mock(LiveAuctionDecisionResponse.class));
+FANTAFOOT-FULL-AUDIT.txt:66435: import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+FANTAFOOT-FULL-AUDIT.txt:66436: import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+FANTAFOOT-FULL-AUDIT.txt:66437: import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+FANTAFOOT-FULL-AUDIT.txt:66443: import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+FANTAFOOT-FULL-AUDIT.txt:66446: import org.springframework.test.web.servlet.MockMvc;
+FANTAFOOT-FULL-AUDIT.txt:66452: @AutoConfigureMockMvc
+FANTAFOOT-FULL-AUDIT.txt:66457: MockMvc mvc;
+FANTAFOOT-FULL-AUDIT.txt:66668: import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+FANTAFOOT-FULL-AUDIT.txt:66669: import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+FANTAFOOT-FULL-AUDIT.txt:66670: import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+FANTAFOOT-FULL-AUDIT.txt:66676: import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+FANTAFOOT-FULL-AUDIT.txt:66678: import org.springframework.test.web.servlet.MockMvc;
+FANTAFOOT-FULL-AUDIT.txt:66684: @AutoConfigureMockMvc
+FANTAFOOT-FULL-AUDIT.txt:66689: MockMvc mvc;
+FANTAFOOT-FULL-AUDIT.txt:67017: import static org.mockito.ArgumentMatchers.any;
+FANTAFOOT-FULL-AUDIT.txt:67018: import static org.mockito.Mockito.doThrow;
+FANTAFOOT-FULL-AUDIT.txt:67019: import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
+FANTAFOOT-FULL-AUDIT.txt:67020: import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+FANTAFOOT-FULL-AUDIT.txt:67021: import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+FANTAFOOT-FULL-AUDIT.txt:67022: import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+FANTAFOOT-FULL-AUDIT.txt:67023: import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+FANTAFOOT-FULL-AUDIT.txt:67028: import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+FANTAFOOT-FULL-AUDIT.txt:67031: import org.springframework.test.context.bean.override.mockito.MockitoBean;
+FANTAFOOT-FULL-AUDIT.txt:67032: import org.springframework.test.web.servlet.MockMvc;
+FANTAFOOT-FULL-AUDIT.txt:67035: @AutoConfigureMockMvc
+FANTAFOOT-FULL-AUDIT.txt:67039: MockMvc mvc;
+FANTAFOOT-FULL-AUDIT.txt:67041: @MockitoBean
+FANTAFOOT-FULL-AUDIT.txt:67044: @MockitoBean
+FANTAFOOT-FULL-AUDIT.txt:67047: @MockitoBean
+FANTAFOOT-FULL-AUDIT.txt:67050: @MockitoBean
+FANTAFOOT-FULL-AUDIT.txt:67151: import static org.mockito.ArgumentMatchers.any;
+FANTAFOOT-FULL-AUDIT.txt:67152: import static org.mockito.ArgumentMatchers.eq;
+FANTAFOOT-FULL-AUDIT.txt:67153: import static org.mockito.Mockito.doNothing;
+FANTAFOOT-FULL-AUDIT.txt:67154: import static org.mockito.Mockito.when;
+FANTAFOOT-FULL-AUDIT.txt:67155: import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
+FANTAFOOT-FULL-AUDIT.txt:67156: import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+FANTAFOOT-FULL-AUDIT.txt:67157: import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+FANTAFOOT-FULL-AUDIT.txt:67164: import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+FANTAFOOT-FULL-AUDIT.txt:67167: import org.springframework.test.context.bean.override.mockito.MockitoBean;
+FANTAFOOT-FULL-AUDIT.txt:67168: import org.springframework.test.web.servlet.MockMvc;
+FANTAFOOT-FULL-AUDIT.txt:67175: @AutoConfigureMockMvc
+FANTAFOOT-FULL-AUDIT.txt:67179: MockMvc mvc;
+FANTAFOOT-FULL-AUDIT.txt:67181: @MockitoBean
+FANTAFOOT-FULL-AUDIT.txt:67184: @MockitoBean
+FANTAFOOT-FULL-AUDIT.txt:67187: @MockitoBean
+FANTAFOOT-FULL-AUDIT.txt:67190: @MockitoBean
+FANTAFOOT-FULL-AUDIT.txt:67193: @MockitoBean
+FANTAFOOT-FULL-AUDIT.txt:67302: org.mockito.Mockito.mock(
+FANTAFOOT-FULL-AUDIT.txt:67357: import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
+FANTAFOOT-FULL-AUDIT.txt:67358: import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+FANTAFOOT-FULL-AUDIT.txt:67359: import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+FANTAFOOT-FULL-AUDIT.txt:67360: import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+FANTAFOOT-FULL-AUDIT.txt:67365: import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+FANTAFOOT-FULL-AUDIT.txt:67367: import org.springframework.test.context.bean.override.mockito.MockitoBean;
+FANTAFOOT-FULL-AUDIT.txt:67368: import org.springframework.test.web.servlet.MockMvc;
+FANTAFOOT-FULL-AUDIT.txt:67371: @AutoConfigureMockMvc
+FANTAFOOT-FULL-AUDIT.txt:67375: MockMvc mvc;
+FANTAFOOT-FULL-AUDIT.txt:67377: @MockitoBean
+FANTAFOOT-FULL-AUDIT.txt:67380: @MockitoBean
+FANTAFOOT-FULL-AUDIT.txt:67383: @MockitoBean
+FANTAFOOT-FULL-AUDIT.txt:67386: @MockitoBean
+FANTAFOOT-FULL-AUDIT.txt:67586: import static org.mockito.ArgumentMatchers.anyBoolean;
+FANTAFOOT-FULL-AUDIT.txt:67587: import static org.mockito.ArgumentMatchers.anyInt;
+FANTAFOOT-FULL-AUDIT.txt:67588: import static org.mockito.ArgumentMatchers.anyString;
+FANTAFOOT-FULL-AUDIT.txt:67589: import static org.mockito.Mockito.when;
+FANTAFOOT-FULL-AUDIT.txt:67601: import org.springframework.test.context.bean.override.mockito.MockitoBean;
+FANTAFOOT-FULL-AUDIT.txt:67617: @MockitoBean
+FANTAFOOT-FULL-AUDIT.txt:68110: .request.MockMvcRequestBuilders.put;
+FANTAFOOT-FULL-AUDIT.txt:68113: .result.MockMvcResultMatchers.status;
+FANTAFOOT-FULL-AUDIT.txt:68119: import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+FANTAFOOT-FULL-AUDIT.txt:68122: import org.springframework.test.web.servlet.MockMvc;
+FANTAFOOT-FULL-AUDIT.txt:68125: @AutoConfigureMockMvc
+FANTAFOOT-FULL-AUDIT.txt:68129: private MockMvc mockMvc;
+FANTAFOOT-FULL-AUDIT.txt:68135: mockMvc.perform(
+FANTAFOOT-FULL-AUDIT.txt:68158: mockMvc.perform(
+FANTAFOOT-FULL-AUDIT.txt:69820: import static org.mockito.Mockito.*;
+
+
+=== IMPORTANT DOCUMENTATION FILES ===
+documentation\BACKEND_PRODUCTION_RUNBOOK.md
+documentation\d01-production-deployment-preflight-report.txt
+documentation\fantasy-player-value-model-v1.md
+documentation\player-performance-feature-model-v1.md
+documentation\production-deployment-runbook.md
+
+
+===== END =====

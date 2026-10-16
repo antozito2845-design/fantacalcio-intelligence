@@ -1,0 +1,455 @@
+FANTAFOOT / FANTACALCIO-INTELLIGENCE
+M05 - LIVE AUCTION COMPLETION CERTIFICATION
+Data: 2026-08-31 (Europe/Rome)
+
+======================================================================
+1. VERDETTO
+======================================================================
+
+VERDETTO FINALE: CLOSED_GREEN
+
+Il flusso Live Auction persistente e' stato completato lato frontend e
+certificato end-to-end su runtime locale. Il backend gia' esponeva il
+ciclo di vita persistente necessario (creazione, attivazione, nomina,
+decisione, acquisto e completamento); il gap principale era la UI, che
+prima consentiva soltanto creazione e lettura/polling dello stato.
+
+Sono stati aggiunti:
+- client API tipizzato per l'intero ciclo di vita;
+- interfaccia DRAFT/ACTIVE/COMPLETED;
+- nomina del calciatore e prezzo corrente;
+- valutazione dell'offerta con motivazioni, warning e budget residuo;
+- registrazione dell'esito USER/OTHER con chiave di idempotenza;
+- completamento dell'asta e stato finale in sola lettura;
+- gestione degli errori backend, degli stati pending e dei doppi submit;
+- copertura frontend mirata del flusso;
+- supporto CORS dev anche per 127.0.0.1, oltre a localhost, con test di
+  sicurezza dedicato.
+
+Non sono stati effettuati commit, push, deploy, accessi Oracle o
+migrazioni. Le modifiche gia' presenti da M01/M03/M04 sono state
+preservate.
+
+======================================================================
+2. PRECHECK E AMBIENTE
+======================================================================
+
+ROOT_LOCALE:
+C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence
+
+Branch atteso/rilevato: stabilization/m01-local-green
+HEAD iniziale/finale: a40557e4132189fbb7aa02e869cf126072e03945
+Java: 21.0.11
+Maven: 3.9.16
+Node.js: v22.21.0
+npm: 10.9.4
+
+Runtime finale:
+- backend: PID 20740, porta 8080, health UP;
+- frontend Vite: PID 10472, porta 5173, HTTP 200;
+- URL browser finale: http://127.0.0.1:5173/auction/live;
+- database dev: PostgreSQL locale, database fantacalcio_intelligence;
+- versione schema: 69;
+- database test esplicito: fantacalcio_intelligence_test;
+- repository Maven esplicito: C:\Users\user\.m2\repository.
+
+Log runtime backend M05:
+- logs\M05-backend-runtime.txt
+- logs\M05-backend-runtime.stderr.txt
+
+Oracle: 0 corrispondenze; nessun accesso effettuato.
+
+======================================================================
+3. AUDIT DEL CONTRATTO BACKEND
+======================================================================
+
+Endpoint persistenti di sessione:
+- POST /api/v1/auction/sessions
+  Crea una sessione DRAFT per squadId.
+- POST /api/v1/auction/sessions/{id}/activate
+  Attiva la sessione e materializza lo stato di disponibilita'.
+- POST /api/v1/auction/sessions/{id}/nomination
+  Registra playerId e currentPrice.
+- POST /api/v1/auction/sessions/{id}/decision
+  Valuta proposedBid e restituisce decisione, ragioni, warning e budget.
+- POST /api/v1/auction/sessions/{id}/purchases
+  Registra l'esito USER oppure OTHER con idempotencyKey.
+- POST /api/v1/auction/sessions/{id}/complete
+  Porta la sessione a COMPLETED.
+- GET /api/v1/auction/sessions/{id}
+  Legge la sessione.
+- GET /api/v1/auction/sessions/{id}/state
+  Legge stato aggregato, budget, acquisti e disponibilita'.
+
+Endpoint analitico distinto:
+- POST /api/v1/auction/live/decision
+  Endpoint read-only basato su contesto fornito dal chiamante. Non e' il
+  comando persistente della sessione certificato in questo report.
+
+Autorizzazione:
+- gli endpoint persistenti richiedono autenticazione;
+- proprietario della sessione e amministratore possono operare;
+- un altro utente riceve 404, evitando anche la disclosure dell'oggetto;
+- l'accesso alla rosa viene validato al momento della creazione;
+- l'ordine dei matcher di sicurezza mantiene protetti gli endpoint
+  /auction/sessions anche se l'endpoint analitico live e' pubblico.
+
+Regole di acquisto USER:
+- sessione obbligatoriamente ACTIVE;
+- calciatore ancora AVAILABLE e nuovamente verificato in transazione;
+- prezzo intero >= 1;
+- vincolo di budget e riserva minima di un credito per ogni slot residuo;
+- capienza per ruolo verificata tramite DynamicBudgetEngine;
+- lock sulle righe di sessione, stato calciatore e rosa;
+- vincoli unici contro duplicati;
+- stesso idempotencyKey e stesso payload restituiscono lo stesso acquisto;
+- stessa chiave con payload diverso genera conflitto;
+- il calciatore viene aggiunto alla rosa autorevole con prezzo pagato.
+
+Regole di acquisto OTHER:
+- il calciatore diventa non disponibile per l'utente;
+- rosa e budget dell'utente non vengono modificati.
+
+Semantica dell'offerta:
+- proposedBid < currentPrice: rifiutata;
+- proposedBid > remainingBudget: rifiutata;
+- proposedBid == currentPrice: ammessa alla valutazione;
+- la decisione e' analitica e non persiste una cronologia di rilanci;
+- l'acquisto registra l'esito esterno dell'asta.
+
+Funzioni non supportate dal contratto corrente, dichiarate senza
+simulazione in UI:
+- cronologia persistente dei rilanci;
+- current bidder/leader dell'offerta;
+- timeout automatico;
+- endpoint next-player;
+- endpoint cancel;
+- elenco o recupero automatico della sessione ACTIVE corrente.
+
+======================================================================
+4. MATRICE DI STATO E CASI CERTIFICATI
+======================================================================
+
+Caso                         Contratto/runtime                     UI/esito
+---------------------------  -----------------------------------  -----------------------------
+NO_ACTIVE_AUCTION             Nessun list/current endpoint         Launcher e creazione nuova
+ACTIVE_AUCTION_NO_PLAYER      state 200, currentPlayer null        Form di nomina disponibile
+PLAYER_NOMINATED              nomination 200, id/prezzo correnti   Calciatore corrente visibile
+BID_ALLOWED                   decision 200                         Esito/ragioni/budget visibili
+BID_TOO_LOW                   decision 400                         Errore backend leggibile
+BID_OVER_BUDGET               decision 400                         Errore backend leggibile
+PLAYER_ALREADY_OWNED          unavailable/conflitto 409            Escluso/non acquistabile
+ROLE_FULL                     purchase USER 409                    Errore backend leggibile
+WINNING_PURCHASE              purchase USER 200                    Rosa/prezzo/budget aggiornati
+OTHER_PURCHASE                purchase OTHER 200                   Disponibilita', budget invariato
+AUCTION_COMPLETED             complete 200; mutazioni 409          Stato finale in sola lettura
+
+La decisione runtime valida ha restituito INSUFFICIENT_EVIDENCE: non e'
+stato forzato un suggerimento artificiale. La UI ha mostrato fedelmente
+l'assenza di evidenza insieme alle ragioni prodotte dal backend.
+
+======================================================================
+5. MODIFICHE M05
+======================================================================
+
+Frontend:
+- frontend/src/features/core/api.ts
+  Aggiunti tipi e metodi per activate, complete, nomination, decision e
+  purchase; purchases non e' piu' un valore unknown.
+- frontend/src/pages/LiveAuctionPage.tsx
+  Completato il flusso DRAFT/ACTIVE/COMPLETED, polling, nomina,
+  valutazione, acquisto USER/OTHER, completamento, pending state,
+  idempotenza client e messaggi di errore/successo coerenti.
+- frontend/src/features/core/api.test.ts
+  Aggiunto test del contratto HTTP completo e dei payload autenticati.
+- frontend/src/pages/LiveAuctionPage.test.tsx
+  Nuovo file con 5 test del ciclo di vita, errori, autorizzazione,
+  doppio submit, aggiornamento rosa/budget e stato completato.
+
+Backend/configurazione:
+- backend/src/main/resources/application-dev.properties
+  Origini dev consentite: localhost e 127.0.0.1 sulle porte 4200/5173.
+- backend/src/test/resources/application.properties
+  Configurazione test allineata.
+- backend/src/test/java/it/fantacalciointelligence/backend/config/SecurityConfigurationTest.java
+  Preflight POST da 127.0.0.1 verificato; origine sconosciuta resta negata.
+
+Non sono state necessarie modifiche al codice Java di prodotto del
+dominio auction. Nessuna migration e nessuna variazione di schema.
+
+Nota di tracciabilita': api.ts conteneva gia' modifiche locali precedenti;
+la modifica M05 e' stata applicata in modo incrementale e la copia byte
+di sicurezza temporanea e' stata rimossa soltanto dopo il collaudo.
+
+======================================================================
+6. TEST AUTOMATICI
+======================================================================
+
+Baseline backend prima delle correzioni:
+- suite mirata auction: exit 0;
+- interazione squad: exit 0;
+- security: exit 0;
+- compile: exit 0.
+
+Baseline frontend prima delle correzioni:
+- typecheck: exit 0;
+- lint: exit 0;
+- App + api: 2 file, 22 test passati;
+- warning HTML React: 0.
+
+Ricertificazione frontend finale:
+- prettier check: exit 0;
+- typecheck: exit 0;
+- lint: exit 0;
+- suite mirata LiveAuction + api + App:
+  3 file, 28 test passati, exit 0;
+- suite completa:
+  23 file, 125 test passati, exit 0, durata 71.16 s;
+- warning HTML React mirati: 0;
+- warning HTML React suite completa: 0;
+- build produzione: exit 0, durata 1.92 s;
+- bundle LiveAuction: 9.62 kB.
+
+Ricertificazione backend finale:
+- suite mirata auction/squad/security/concurrency: exit 0;
+- test CORS security dedicato: exit 0;
+- compile: exit 0;
+- suite completa su database test isolato: exit 0;
+- test eseguiti: 635;
+- failure: 0;
+- error: 0;
+- skipped: 4.
+
+Concorrenza:
+- USER contro OTHER sullo stesso calciatore: un solo vincitore;
+- retry concorrenti con stessa chiave: risultato idempotente;
+- nessuna doppia assegnazione e nessun doppio addebito.
+
+Controllo Git finale:
+- git diff --check: exit 0;
+- output di errore logico: nessuno;
+- presenti soltanto avvisi del vecchio client Git sulla conversione
+  locale LF/CRLF, senza modifica di contenuto o errore del diff.
+
+======================================================================
+7. PROVA HTTP/API REALE
+======================================================================
+
+Rosa usata: id 5, utente user.
+Stato iniziale autorevole:
+- giocatori: 23;
+- spesa: 879;
+- budget residuo: 121.
+
+Sessione temporanea API: id 57.
+
+Sequenza verificata:
+1. create anonima -> 401;
+2. create autenticata -> 200, DRAFT;
+3. state anonimo -> 401;
+4. state da altro utente -> 404;
+5. state da admin -> 200;
+6. activate -> 200, ACTIVE, availabilityComplete=true, 498 giocatori;
+7. acquisto USER su ruolo gia' pieno -> 409;
+8. nomination player 45 (Aboukhlal, ruolo C), currentPrice 2 -> 200;
+9. decision proposedBid 1 -> 400, sotto currentPrice;
+10. decision proposedBid 2 -> 200, budgetAfter 119;
+11. decision proposedBid 122 -> 400, oltre budget;
+12. decision da altro utente -> 404;
+13. purchase USER prezzo 2 -> 200, purchase id 15;
+14. retry stessa chiave/payload -> 200, stesso purchase id;
+15. nuova chiave sullo stesso giocatore -> 409;
+16. state: spent 881, remaining 119, stato ACQUIRED_BY_USER,
+    nomination azzerata;
+17. rosa autorevole: 24 giocatori, spent 881, remaining 119,
+    prezzo di acquisto 2, ruolo C da 7/8 a 8/8;
+18. squad analysis coerente con 24 giocatori;
+19. complete -> 200, COMPLETED;
+20. ulteriore purchase -> 409.
+
+CORS reale finale:
+- preflight POST Origin http://127.0.0.1:5173 -> HTTP 200;
+- Access-Control-Allow-Origin corretto;
+- header authorization e content-type consentiti;
+- origine estranea ancora rifiutata dai test di sicurezza.
+
+======================================================================
+8. PROVA BROWSER REALE
+======================================================================
+
+Browser in-app riutilizzato con sessione autenticata reale, senza
+esporre o registrare credenziali. Sessione temporanea browser: id 58.
+
+Sequenza verificata nella UI:
+- launcher con rosa reale: 23/25 e budget 121;
+- creazione sessione DRAFT;
+- attivazione ACTIVE e 498 giocatori disponibili;
+- selezione e nomina di Aboukhlal, ruolo C, prezzo corrente 2;
+- offerta valida 2 e visualizzazione di INSUFFICIENT_EVIDENCE,
+  motivazioni e budgetAfter 119;
+- offerta 1 rifiutata con messaggio backend leggibile;
+- acquisto OTHER registrato, nomina rimossa, cronologia acquisti visibile,
+  budget utente invariato a 121;
+- correzione e verifica della rimozione di un vecchio alert dopo il
+  successivo successo;
+- completamento della sessione e UI COMPLETED in sola lettura;
+- ritorno finale al launcher Live Auction.
+
+Console browser finale:
+- errori applicativi: 0;
+- warning applicativi: 0;
+- warning hydration/HTML: 0;
+- presenti solo messaggi informativi Vite/HMR e React DevTools.
+
+======================================================================
+9. CLEANUP E INTEGRITA' DATI
+======================================================================
+
+Il prodotto non espone un endpoint di cancellazione delle sessioni.
+Pertanto la pulizia e' stata eseguita con SQL locale, strettamente sugli
+ID temporanei provati 57 e 58, dopo verifica di proprietario, rosa,
+stato, acquisti ed eventi.
+
+Cleanup sessione API 57:
+- rimossi soltanto eventi, acquisti, player states e sessione 57;
+- rimosso dalla rosa il giocatore temporaneamente acquistato tramite API
+  pubblica;
+- risposta finale della rosa identica allo stato iniziale:
+  23 giocatori, spesa 879, budget 121.
+
+Cleanup sessione browser 58:
+- sessione verificata COMPLETED, owner user, squad 5;
+- rimossi soltanto record collegati alla sessione 58;
+- nessuna modifica alla rosa, poiche' l'esito era OTHER.
+
+Conteggi database dev prima/dopo:
+- prima: auction_sessions 2, purchases 0, events 2;
+- dopo: auction_sessions 2, purchases 0, events 2, ACTIVE 0;
+- residui sessioni 57/58: 0.
+
+Le due sessioni DRAFT preesistenti (id 55 e 56, owner admin, squad 80)
+non sono state modificate.
+
+Pulizia filesystem temporaneo:
+- backup M05 temporaneo rimosso;
+- 25 file temporanei M05 rimossi;
+- file temporanei M05 residui nella cartella TEMP: 0;
+- log runtime nel repository preservati come evidenza.
+
+======================================================================
+10. CLASSIFICAZIONE GIT E VINCOLI OPERATIVI
+======================================================================
+
+Modifiche M05 attese:
+- application-dev.properties;
+- application.properties di test;
+- SecurityConfigurationTest.java;
+- api.test.ts;
+- api.ts (incrementale sopra modifiche preesistenti);
+- LiveAuctionPage.tsx;
+- nuovo LiveAuctionPage.test.tsx;
+- questo report finale.
+
+Modifiche locali M01/M03/M04 rilevate e preservate:
+- squadanalysis controller/service e test ownership;
+- App.test.tsx, AppRouter.tsx, SquadManagementFlows.test.tsx;
+- GlobalSearch.tsx, PlayersPage.tsx;
+- pagine/controller/service/test historical player non tracciati;
+- file di audit gia' presenti.
+
+Modifiche inattese attribuibili a M05: 0.
+Commit creati: NO.
+Push eseguiti: NO.
+Deploy eseguiti: NO.
+Oracle contattato: NO.
+Migrazioni create/applicate: NO.
+HEAD modificato: NO.
+
+======================================================================
+11. EVIDENZE PER LIVELLO
+======================================================================
+
+STATICO:
+- audit di controller, service, security matcher, transazioni, lock,
+  vincoli unici, stati e DTO;
+- verifica delle funzioni effettivamente supportate e di quelle assenti.
+
+TEST:
+- 635 test backend completi verdi;
+- 125 test frontend completi verdi;
+- test mirati di lifecycle, ownership, CORS, idempotenza e concorrenza;
+- typecheck, lint, prettier e build verdi.
+
+HTTP:
+- lifecycle persistente completo su sessione 57;
+- auth 401, ownership 404, admin 200;
+- offerte valida/bassa/oltre-budget;
+- ruolo pieno, idempotenza, duplicato, acquisto, rosa, budget e chiusura;
+- preflight CORS 127.0.0.1 verificato.
+
+BROWSER:
+- lifecycle completo su sessione 58 nella UI reale;
+- nomina, decisione, errore, acquisto OTHER, completamento e sola lettura;
+- console senza errori/warning applicativi;
+- launcher Live Auction lasciato aperto.
+
+======================================================================
+12. RIEPILOGO FINALE RICHIESTO
+======================================================================
+
+BRANCH_OK=YES
+HEAD_UNCHANGED=YES
+BACKEND_HEALTH_OK=YES
+FRONTEND_HTTP_OK=YES
+AUTH_RUNTIME_OK=YES
+CONTRACT_OK=YES
+SECURITY_OK=YES
+OWNERSHIP_OK=YES
+ACTIVE_AUCTION_RUNTIME_OK=YES
+AUCTION_CREATE_OK=YES
+PLAYER_NOMINATION_OK=YES
+VALID_BID_OK=YES
+LOW_BID_REJECTED=YES
+OVER_BUDGET_BID_REJECTED=YES
+OTHER_USER_BID_REJECTED=YES
+AUCTION_WIN_OK=YES
+AUCTION_TO_SQUAD_OK=YES
+PURCHASE_PRICE_OK=YES
+BUDGET_UPDATE_OK=YES
+ROLE_COUNTER_UPDATE_OK=YES
+DUPLICATE_PROTECTION_OK=YES
+IDEMPOTENCY_OK=YES
+CONCURRENCY_OK=YES
+FRONTEND_LIFECYCLE_OK=YES
+BROWSER_E2E_OK=YES
+BROWSER_ERRORS=NO
+BROWSER_WARNINGS=NO
+BACKEND_TARGETED_EXIT=0
+BACKEND_FULL_EXIT=0
+BACKEND_FULL_TESTS=635
+BACKEND_FULL_FAILURES=0
+BACKEND_FULL_ERRORS=0
+BACKEND_FULL_SKIPPED=4
+FRONTEND_PRETTIER_EXIT=0
+FRONTEND_TYPECHECK_EXIT=0
+FRONTEND_LINT_EXIT=0
+FRONTEND_TARGETED_EXIT=0
+FRONTEND_TARGETED_TESTS=28
+FRONTEND_FULL_EXIT=0
+FRONTEND_FULL_TESTS=125
+FRONTEND_BUILD_EXIT=0
+TARGET_HTML_WARNINGS=NO
+FULL_HTML_WARNINGS=NO
+TEMP_AUCTION_CREATED=YES
+TEMP_PLAYER_PURCHASED=YES
+TEMP_DATA_CLEANUP_OK=YES
+SCHEMA_CHANGED=NO
+MIGRATIONS_CREATED=NO
+UNEXPECTED_CHANGES=0
+COMMIT=NO
+PUSH=NO
+DEPLOY=NO
+ORACLE=NO
+CLOSED_GREEN=YES
+
+LOG_FILE=C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\logs\M05-live-auction-completion-certification.txt

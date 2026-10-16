@@ -1,0 +1,48 @@
+D02_23_PREREQUISITE=PASS - D02.23 REAL SQUAD MANAGEMENT certificato con backend 629 test e frontend 94 test
+PRE_DEPLOY_TESTS=PASS - tutti i gate obbligatori superati prima di accedere agli artifact production
+
+BACKEND_TESTS=629 passed, 0 failures, 0 errors, 4 skipped; .\mvnw.cmd clean test BUILD SUCCESS; .\mvnw.cmd clean package BUILD SUCCESS
+FRONTEND_TESTS=94 passed in 16 test files; 0 failures
+TYPECHECK=PASS - npm run typecheck
+BUILD=PASS - backend JAR Spring Boot generato; frontend Vite production build, 1983 moduli trasformati, 22 file; VITE_API_BASE_URL=/api/v1; unresolved import.meta.env=0
+
+BACKEND_BACKUP=PASS - /opt/fantacalcio/backend/backend.jar.bak-d02-24; owner fantacalcio:fantacalcio; mode 640; byte-identico; SHA256 f1d40cf61103c868e30d2dc9be8ac0a1547d6cdf07ebf59e8303503ea6cc97bd
+FRONTEND_BACKUP=PASS - /opt/fantacalcio/frontend.bak-d02-24; owner fantacalcio:fantacalcio; mode 755; confronto ricorsivo identico prima della sostituzione
+UPLOAD_STATUS=PASS - artifact caricati in /tmp/fantacalcio-d02-24/; frontend estratto in /tmp/fantacalcio-d02-24/frontend-dist/ con index.html alla root e 22 file
+HASH_VERIFICATION=PASS - backend locale/remoto adc4d9d92a5d6462b085f89cf6b3cc6b0f3e84b056ba2fc414c083469436d424; frontend archive locale/remoto a6f82fbca9f724cc1c362c49aab54a9517cadb4ffdf14008fdff2b43922e8672; deployed index locale/remoto 1f6c5204f2ff0c6d6de4808cd4dead4c82038294bfb3af5bfd7bd0a531ed781a
+
+BACKEND_DEPLOY=PASS - sostituito solo /opt/fantacalcio/backend/backend.jar; owner fantacalcio:fantacalcio e mode 640 preservati; deployed SHA256 verificato
+BACKEND_SERVICE=active
+PORT_8080=LISTENING
+SYSTEM_STATUS_HTTP=200; status=UP
+ENVIRONMENT=production
+READINESS=HTTP 200; status=UP
+
+FRONTEND_DEPLOY=PASS - rsync -a --delete --chown=fantacalcio:fantacalcio --chmod=D755,F644 dalla staging certificata
+FRONTEND_PERMISSIONS=PASS - directory 755, file 644, owner/group fantacalcio:fantacalcio; zero directory senza execute per others e zero file senza read per others
+WWW_DATA_READABLE=PASS - index.html leggibile e assets attraversabile da www-data
+NGINX_TEST=PASS - syntax ok; reload PASS
+FRONTEND_HTTP=200
+NGINX_PERMISSION_ERRORS=NONE_NEW - error.log 3 righe prima e 3 dopo; 0 nuovi permission denied/directory forbidden/open failed/stat failed
+
+PAGE_0_HTTP=200; IDs=44,45,419,420,46
+PAGE_1_HTTP=200; IDs=47,48,421,49,50
+PAGINATION_DIFFERENT_DATA=PASS
+
+PLAYERS_COUNT=1020
+FIXTURES_COUNT=380
+FANTASY_SQUADS_COUNT=0
+
+AUTH_PROTECTION_CHECK=PASS - PATCH anonima /api/v1/squad/players/1 respinta con HTTP 401; nessuna rosa o dato creato
+
+ROLLBACK_EXECUTED=NO
+
+DATABASE_MANUALLY_CHANGED=NO
+TEST_DATA_ADDED=NO
+SECRETS_CHANGED=NO
+NGINX_CONFIG_CHANGED=NO
+TAILSCALE_CHANGED=NO
+GIT_COMMIT=NO
+GIT_PUSH=NO
+
+D02_24_STATUS=PASS

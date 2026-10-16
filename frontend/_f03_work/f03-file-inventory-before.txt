@@ -1,0 +1,37 @@
+F03 FILE INVENTORY BEFORE
+Captured: 2026-08-22 Europe/Rome
+
+Frontend foundation: React 19, TypeScript strict, Vite 8, React Router 7,
+TanStack Query, Zod, CSS Modules, Vitest, Testing Library, MSW and Lucide React.
+
+Source files before F03:
+src/api/client/httpClient.test.ts
+src/api/client/httpClient.ts
+src/api/contracts/apiError.ts
+src/api/errors/AppError.ts
+src/app/bootstrap/App.test.tsx
+src/app/bootstrap/App.tsx
+src/app/bootstrap/env.test.ts
+src/app/bootstrap/env.ts
+src/app/providers/AppProviders.tsx
+src/app/providers/queryClient.ts
+src/app/router/AppRouter.tsx
+src/main.tsx
+src/pages/FoundationPage.module.css
+src/pages/FoundationPage.tsx
+src/pages/NotFoundPage.tsx
+src/styles/global.css
+src/styles/tokens.css
+src/test/server.ts
+src/test/setup.ts
+src/vite-env.d.ts
+
+Placeholder README files were present in assets, components, data-display,
+feedback, navigation, domain, features, hooks, layouts, state, styles/tokens,
+utils and public.
+
+Frontend git status before F03: the complete frontend directory was already
+untracked in the repository; no tracked frontend delta was present.
+
+Backend baseline: pre-existing tracked and untracked backend work exists.
+F03 will not alter, start, test, or call the backend.

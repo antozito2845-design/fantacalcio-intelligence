@@ -1,0 +1,39 @@
+F03.1 FILE INVENTORY BEFORE
+Date: 2026-08-22
+
+Configuration
+- package.json
+- package-lock.json
+- vite.config.ts
+- tsconfig.json
+- tsconfig.app.json
+- tsconfig.node.json
+- eslint.config.js
+
+Theme and global styles
+- src/styles/tokens.css
+- src/styles/global.css
+
+App shell and routes
+- src/layouts/AppShell.tsx
+- src/layouts/AppShell.module.css
+- src/app/router/AppRouter.tsx
+
+Dashboard preview
+- src/pages/DesignSystemPage.tsx
+- src/pages/DesignSystemPage.module.css
+
+Reusable primitives
+- src/components/ui/index.tsx
+- src/components/ui/ui.module.css
+- src/components/data-display/index.tsx
+- src/components/data-display/data-display.module.css
+
+Prior reports
+- f03-design-system.txt
+- f03-visual-certification.txt
+- _f03_work/f03-preimplementation-audit.txt
+- _f03_work/f03-validation-output.txt
+
+BASELINE_GIT_NOTE=frontend directory was untracked in the repository baseline;
+backend contained pre-existing modified and untracked files.

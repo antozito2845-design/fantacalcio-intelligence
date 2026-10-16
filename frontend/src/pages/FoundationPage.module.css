@@ -1,0 +1,35 @@
+.page {
+  display: grid;
+  min-block-size: 100vh;
+  padding: var(--space-6);
+  place-items: center;
+}
+
+.panel {
+  inline-size: min(100%, 42rem);
+  padding: var(--space-8);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-raised);
+  box-shadow: var(--shadow-soft);
+}
+
+.eyebrow {
+  margin: 0 0 var(--space-3);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.panel h1 {
+  margin: 0 0 var(--space-4);
+  font-size: var(--font-size-2xl);
+  line-height: 1.1;
+}
+
+.panel p:last-child {
+  margin: 0;
+  color: var(--color-text-muted);
+}

@@ -1,0 +1,59 @@
+D02.28 — VISUALIZZAZIONE STATISTICHE PORTIERI
+Data: 2026-08-27
+Branch: arena/01a043d3-fantacalcio-intelligence
+
+SCOPO
+Implementata soltanto la lettura/renderizzazione frontend dei campi già restituiti dal
+backend. Nessun calcolo, import, refresh, scheduler, database, migration, dato reale,
+produzione o deploy è stato modificato.
+
+CONTRATTO E COMPORTAMENTO
+- `frontend/src/features/core/api.ts` ora dichiara esplicitamente nel contratto storico
+  `goalsConceded`, `saves`, `penaltiesSaved`, `cleanSheets`, `appearances` e
+  `minutesPlayed`, oltre a sourceExternalId, club, storico club, provenienza batch e
+  timestamp già presenti nel DTO backend.
+- I campi numerici nullable/assenti restano null/undefined e la UI mostra esattamente
+  `Dato non disponibile`; lo zero reale continua a essere visualizzato come zero.
+- Il ruolo P viene riconosciuto dal ruolo fantasy `roles.FANTACALCIO`.
+- Per P le colonne principali sono: Presenze, Minuti giocati, Gol subiti, Parate
+  effettuate, Rigori parati, Porte inviolate / Clean sheet. Gol e Assist non sono
+  presentati nella tabella del portiere.
+- Per D/C/A restano le colonne precedenti: Presenze, Gol, Assist, Fantamedia.
+- Ogni riga mantiene stagione e fonte; quando presente viene mostrato anche il
+  sourceExternalId.
+- Lo storico continua a mostrare tutte le righe ricevute dal backend, senza generare
+  stagioni o statistiche mancanti.
+
+PROVE E LIMITI DATI
+Il backend `PlayerSeasonStatisticsResponse` e la query `PlayerDetailService` espongono
+realmente i sei campi goalkeeper; perciò non è stato necessario modificare il backend.
+La diagnosi precedente ha però rilevato che la pipeline Fantacalcio può lasciare NULL
+saves, clean_sheets e minutes_played quando la fonte non li pubblica. Questa modifica non
+nasconde il limite: la UI segnala il dato non disponibile e non sostituisce NULL con zero.
+La copertura corrente del database locale non è stata rieseguita in questo blocco; la
+sandbox non dispone di PostgreSQL/psql. La diagnosi DB e le query SELECT-only preparate
+sono nel report `D02-27-goalkeeper-statistics-diagnosis-report.txt`.
+
+TEST
+- Portiere con tutte le metriche: PASS.
+- Portiere con metriche nullable: PASS.
+- Giocatore di movimento con Gol/Assist invariati: PASS.
+- Suite frontend completa: PASS — 20 file / 115 test.
+- Typecheck: PASS.
+- Build: PASS.
+- `git diff --check`: PASS.
+- Lint globale: non PASS per 2 errori preesistenti in
+  `frontend/src/layouts/GlobalSearch.tsx`; nessun nuovo errore relativo a questo blocco.
+
+FILE PRINCIPALI
+- `frontend/src/features/core/api.ts`
+- `frontend/src/pages/PlayerDetailPage.tsx`
+- `frontend/src/features/core/PlayerFlows.test.tsx`
+- questo report.
+
+RISCHI RESIDUI
+- La UI ora è role-specific, ma la disponibilità effettiva di saves, clean sheets e
+  minuti dipende dal feed/import già esistente; non è stata aggiunta alcuna fonte.
+- Il backend limita lo storico a 10 righe, comportamento invariato.
+- Eventuali metriche portiere per giornata richiederebbero un contratto/grain dati dedicato;
+  questo blocco usa esclusivamente l’aggregato stagione/source già esposto.

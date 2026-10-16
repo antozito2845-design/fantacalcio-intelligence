@@ -1,0 +1,8 @@
+dist/
+node_modules/
+coverage/
+package-lock.json
+_f01_work/
+_f02_work/
+f01-*.txt
+f02-*.txt

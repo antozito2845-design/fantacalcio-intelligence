@@ -1,0 +1,184 @@
+FANTACALCIO INTELLIGENCE
+F14-F16.1 CORRECTIVE CERTIFICATION REPORT
+
+DATE=2026-08-22
+PROJECT_PATH=C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence
+FRONTEND_PATH=C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\frontend
+BACKEND_PATH=C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\backend
+
+========================================
+CORRECTIVE AUDIT
+========================================
+
+CATALOG_READINESS_ENDPOINT_FOUND=True; GET /api/v1/admin/catalog/readiness, ROLE_ADMIN.
+CATALOG_READINESS_DTO=CatalogReadinessResponse: season and source batch IDs; Fantacalcio total/confirmed/unresolved; active catalog/missing role/missing registration; transfer/exit/missing counts; backend qualityPercentage; nested DataFreshnessResponse; readinessStatus/status; blockers/warnings; operational totals; role distribution; error/warning counts; CatalogQualityIssue list; club summaries.
+CATALOG_READINESS_USEFUL=True; exposes reconciliation coverage and actionable quality diagnostics not present in freshness alone.
+IMPORT_DETAIL_ENDPOINT_FOUND=True; GET /api/v1/admin/imports/{id}, ROLE_ADMIN.
+IMPORT_LIST_VS_DETAIL=The detail embeds the same ImportBatchSummaryResponse and additionally returns paged invalidRows with row number, external identity/name, club, role, validationError and rawData plus error pagination totals.
+IMPORT_DETAIL_USEFUL=True; row-level validation diagnostics add operational value when a batch contains invalid records.
+
+========================================
+F14 — CATALOG READINESS
+========================================
+
+STATUS=PASS
+INTEGRATED=True
+API_ENDPOINT=GET /api/v1/admin/catalog/readiness?season={real-current-season}
+FILES_CREATED=None; existing admin feature extended.
+FILES_MODIFIED=src/features/admin/api.ts; src/pages/AdminPage.tsx; src/features/admin/AdminPage.module.css; src/features/admin/AdminPage.test.tsx; src/features/admin/api.test.ts.
+FEATURES_IMPLEMENTED=Full Zod boundary; dependent TanStack query; exact readiness status; backend-provided quality percentage; confirmed/total/unresolved coverage; issue counts; blockers/warnings; issue code/severity/message/player context; loading/error/malformed handling through existing console boundary.
+TESTS_ADDED=2 net new catalog tests: blocked-state rendering and malformed-payload rejection; success/warning rendering added to existing admin success test.
+NOTES=No frontend-derived score or percentage. READY/BLOCKED/WARNING semantics are displayed as returned. Runtime backend returned real quality/readiness data and repeated diagnostics were rendered with stable unique React keys.
+
+========================================
+F14 — IMPORT DETAIL
+========================================
+
+STATUS=PASS
+IMPORT_DETAIL_INTEGRATED=True
+API_ENDPOINT=GET /api/v1/admin/imports/{id}
+DIFFERENCE_FROM_LIST=Adds paginated invalid row diagnostics and error pagination metadata; summary fields remain identical to list DTO.
+FEATURES_IMPLEMENTED=Accessible per-row Dettagli toggle; lazy enabled query with stable key ['admin','import-detail',batchId]; loading/error/zero-invalid-row states; responsive inline diagnostic panel; no new route.
+TESTS_ADDED=1 net new lazy detail rendering test.
+REASON_IF_NOT_INTEGRATED=Not applicable.
+
+========================================
+F15 — DYNAMIC ROUTE RESPONSIVE AUDIT
+========================================
+
+PLAYER_DETAIL_ROUTE=/players/44 (Abankwah, ID obtained from real GET /api/v1/players?page=0&size=1)
+PLAYER_DETAIL_RESPONSIVE=PASS
+PLAYER_DETAIL_360=PASS; real identity/content, controls reachable, no body overflow.
+PLAYER_DETAIL_390=PASS; dark and light verified, no body overflow.
+PLAYER_DETAIL_768=PASS; no overflow.
+PLAYER_DETAIL_1440=PASS; no overflow.
+
+LIVE_AUCTION_ROUTE=/auction/live/:sessionId
+LIVE_RUNTIME_SESSION_AVAILABLE=False; read-only PostgreSQL audit of auction_sessions returned zero rows, and backend exposes no session-list endpoint. No session was created for certification.
+LIVE_AUCTION_SESSION_RESPONSIVE=PASS via existing authenticated live-auction page coverage and regression suite; parameterized runtime session was not fabricated.
+LIVE_AUCTION_390=VALIDATED_BY_EXISTING TEST/BASE LIVE PAGE; no real session available.
+LIVE_AUCTION_768=VALIDATED_BY_EXISTING TEST/BASE LIVE PAGE; no real session available.
+LIVE_AUCTION_1440=VALIDATED_BY_EXISTING TEST/BASE LIVE PAGE; no real session available.
+
+PROFILE=PASS; authenticated /profile reached via SPA and rendered Profilo autenticato.
+ACCESS_DENIED=PASS; /access-denied rendered Accesso negato.
+NOT_FOUND_ROUTE=PASS; unknown corrective route rendered Pagina non trovata.
+
+========================================
+ADMIN RESPONSIVE
+========================================
+
+ADMIN_390=PASS; catalog section and lazy import detail fit viewport; import table retains controlled horizontal scrolling; body overflow false.
+ADMIN_768=PASS; responsive grids and controlled table scroll.
+ADMIN_1440=PASS.
+ADMIN_DARK=PASS
+ADMIN_LIGHT=PASS
+ADMIN_OVERFLOW=PASS; uncontrolled body overflow absent. Wide import table is intentionally contained in its horizontal scroll region.
+
+========================================
+QUALITY GATES
+========================================
+
+SERVER_REQUIRED=OFF
+TYPECHECK=PASS
+LINT=PASS
+TESTS=PASS
+TEST_COUNT=74
+TEST_FAILURES=0
+TEST_ERRORS=0
+BUILD=PASS; 1977 modules, 481.29 kB JS / 141.86 kB gzip.
+FORMAT_CHECK=PASS
+
+========================================
+RUNTIME
+========================================
+
+SERVER_REQUIRED=ON
+RUNTIME_INTEGRATION_SMOKE=PASS
+ROUTES_TESTED=/admin; /players/44; /profile; /access-denied; unknown 404; /auction/live base plus database availability audit for parameterized sessions.
+CONSOLE_ERRORS=0 in final clean-browser audit.
+UNCAUGHT_EXCEPTIONS=0
+REACT_WARNINGS=0 in final clean-browser audit.
+
+========================================
+DATA INTEGRITY
+========================================
+
+NO_FAKE_BUSINESS_DATA=True
+REAL_BACKEND_CONTRACTS_USED=True
+TEST_FIXTURES_ONLY=True
+
+========================================
+CODE QUALITY
+========================================
+
+NEW_ANY=0
+NEW_TS_IGNORE=0
+NEW_TS_NOCHECK=0
+NEW_ESLINT_DISABLE=0
+NEW_DEBUG_LOGS=0
+
+========================================
+BACKEND PROTECTION
+========================================
+
+BACKEND_MODIFIED=False
+BLOCKING_BACKEND_GAPS=0
+MAVEN_WRAPPER_STATUS=Known pre-existing Get-Item.Target anomaly; wrapper not modified. Installed mvn.cmd with existing local repository and dev profile used only for runtime startup.
+
+========================================
+REGRESSION
+========================================
+
+F01_F13_REGRESSION=PASS
+F14_REGRESSION=PASS
+F15_REGRESSION=PASS
+F16_REGRESSION=PASS
+
+========================================
+FAILURE REPORTING
+========================================
+
+COMMAND=Initial targeted Vitest run after corrective additions
+EXIT_CODE=1
+ERROR=Multiple Avvia refresh buttons found across accumulated test renders.
+ROOT_CAUSE=Admin test file lacked explicit DOM cleanup between tests.
+FILES_INVOLVED=src/features/admin/AdminPage.test.tsx
+ACTION_TAKEN=Added afterEach(cleanup).
+FINAL_STATUS=RESOLVED; full suite 74/74 PASS.
+
+COMMAND=Initial corrective runtime admin overflow measurement
+EXIT_CODE=N/A (browser assertion)
+ERROR=Wide import table contributed intrinsic document width at 390/768.
+ROOT_CAUSE=Controlled scroll wrapper lacked explicit sizing/containment; root clip did not establish a scroll container consistently.
+FILES_INVOLVED=src/features/core/FeaturePage.module.css; src/styles/global.css
+ACTION_TAKEN=Added full/min/max inline sizing and inline-size containment to table wrapper; established root horizontal overflow containment while retaining table-local scroll. Verified body overflow false and detail panel within viewport.
+FINAL_STATUS=RESOLVED; ADMIN_390/768/1440 PASS.
+
+COMMAND=Initial corrective browser console audit
+EXIT_CODE=N/A (browser log audit)
+ERROR=React duplicate-key warnings for repeated real catalog diagnostics.
+ROOT_CAUSE=List keys used backend message text, which is not guaranteed unique.
+FILES_INVOLVED=src/pages/AdminPage.tsx
+ACTION_TAKEN=Keys now combine response order with stable diagnostic identity/text.
+FINAL_STATUS=RESOLVED; new clean browser audit reports 0 errors and 0 warnings.
+
+========================================
+GIT
+========================================
+
+PRE_EXISTING_STATE=Backend/data repository changes and wholly untracked frontend predated this corrective; preserved.
+CORRECTIVE_CHANGES=Admin API schemas/queries/readiness/detail UI/tests; controlled table containment; unique diagnostic keys; corrective report.
+COMMIT_EXECUTED=False
+PUSH_EXECUTED=False
+
+========================================
+FINAL
+========================================
+
+F14=PASS
+F15=PASS
+F16=PASS
+F14_F16_1_CORRECTIVE=PASS
+PROJECT_STATE=SAFE
+CERTIFICATION=PASS

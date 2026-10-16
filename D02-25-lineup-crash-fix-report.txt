@@ -1,0 +1,43 @@
+D02.25 — LINEUP CRASH FIX
+Data: 2026-08-27
+Scope: solo frontend della pagina /lineup. Nessun deploy, accesso a produzione, modifica DB/migrazioni Flyway, rosa o giocatori di test.
+
+DIAGNOSI
+La pagina leggeva direttamente le collezioni della risposta: `starters.length`,
+`bench.length`, `warnings.length` e `Object.entries(roles)`. La risposta lineup reale ha
+liste/mappe normalmente valorizzate, ma una risposta legacy/parziale può omettere una di
+queste proprietà; in quel caso il valore è `undefined` e la lettura di `.length` può
+interrompere il render. Il punto coerente con lo stack osservato è il ramo della panchina
+(`bench.length`); lo stesso presupposto non difensivo esisteva anche per titolari e warning.
+I segnali di evidenza (`fixtureDifficulty`, `selectionScore`, `availabilityStatus`) sono
+facoltativi: l'assenza non deve diventare un punteggio inventato.
+
+FIX
+- `LineupPage` normalizza sempre liste mancanti/non-array a `[]` e mappe mancanti/non-object
+a `{}`, usa questi valori per pitch, panchina, motivazioni e reparti, e mostra uno stato
+invalid-response se il risultato della query è assente.
+- Il contratto Zod della pagina accetta collezioni omesse come collezioni vuote e normalizza
+i segnali omessi a `null`; campi strutturali obbligatori ancora non conformi restano errori
+API visibili, senza dati sintetici.
+- Loading, errori API, contratto invalido e formazione vuota restano percorsi espliciti.
+
+FILE MODIFICATI
+- `frontend/src/pages/LineupPage.tsx`
+- `frontend/src/features/intelligence/api.ts`
+- `frontend/src/features/intelligence/IntelligencePages.test.tsx`
+- `frontend/src/features/intelligence/api.test.ts`
+
+VERIFICA
+- Test mirati Lineup/API: PASS, 19/19.
+- Suite frontend completa: PASS, 19 file / 107 test.
+- Typecheck (`npm run typecheck`): PASS.
+- Build (`npm run build`): PASS.
+- `git diff --check`: PASS.
+- Lint (`npm run lint`): BLOCKED by 2 pre-existing errors in
+  `frontend/src/layouts/GlobalSearch.tsx` (setState in effect and promise-returning
+  handler); that file was not touched because it is outside this crash fix.
+
+RISCHI RESIDUI
+Il backend non è stato modificato né eseguito in questo blocco. Una risposta con campi
+strutturali scalari errati o con collezioni di tipo non valido viene ancora rifiutata dal
+contratto e visualizzata come errore, non come dati inventati; il render resta protetto.

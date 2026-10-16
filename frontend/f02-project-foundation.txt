@@ -1,0 +1,126 @@
+FANTACALCIO INTELLIGENCE
+F02 - PROJECT FOUNDATION CERTIFICATION
+Data: 2026-08-22
+
+1. ESITO
+
+Foundation React + TypeScript + Vite creata e certificata senza implementare feature
+business. I report F01 e _f01_work sono stati preservati. Backend non modificato.
+
+2. FOUNDATION
+
+- React SPA con bootstrap StrictMode.
+- React Router con home foundation e fallback 404.
+- TanStack Query provider con retry massimo 2 solo per network/timeout/5xx,
+  refetch-on-focus disabilitato e nessun polling globale.
+- TypeScript strict con noUncheckedIndexedAccess, noImplicitOverride,
+  noFallthroughCasesInSwitch e forceConsistentCasingInFileNames.
+- Alias @/* -> ./src/* coerente tra TypeScript e Vite.
+- CSS Modules e design token semantici light/dark, focus ring e reduced motion.
+- Struttura directory professionale predisposta tramite README sobri, senza fake data.
+- .node-version fissa Node 22.21.0; package-lock.json e l'unico lockfile.
+
+3. ENVIRONMENT E DEV PROXY
+
+- .env.example contiene solo VITE_API_BASE_URL=/api/v1.
+- .env.test contiene lo stesso path non segreto per test deterministici.
+- Le variabili VITE_* sono considerate pubbliche; nessuna credenziale presente.
+- env.ts valida con Zod, accetta path assoluti o URL validi e fallisce subito se manca.
+- Vite ascolta su porta 5173 con strictPort.
+- Proxy /api -> VITE_DEV_PROXY_TARGET oppure http://localhost:8080.
+- Nessun fallback silenzioso per VITE_API_BASE_URL nel codice applicativo.
+
+4. HTTP CLIENT
+
+- fetch centralizzato con base URL unica e timeout AbortController predefinito 10 s.
+- parsing robusto di JSON, testo non JSON, body vuoto e 204.
+- mapping validato Zod di timestamp/status/error/message/path.
+- AppError distingue 400, 401, 403, 404, 409, 422, 429, 5xx, altri HTTP,
+  network e timeout.
+- nessun retry automatico nel client.
+- callback getAuthorization predisposta per un header in memoria futuro; nessuna
+  credenziale/persistenza Basic Auth implementata.
+
+5. DIPENDENZE
+
+Runtime installate soltanto:
+- react, react-dom, react-router-dom, @tanstack/react-query, zod, lucide-react.
+
+Dev installate soltanto per TypeScript/Vite, lint/format e test foundation:
+- typescript, vite, @vitejs/plugin-react, type definitions;
+- eslint 9, @eslint/js, typescript-eslint, globals, react hooks/refresh/jsx-a11y;
+- prettier;
+- vitest, jsdom 29, Testing Library, user-event, jest-dom, MSW.
+
+Non installati: Zustand, React Hook Form, Radix, TanStack Table, chart library,
+Playwright. Nessuna dipendenza e stata forzata ignorando peer dependency.
+
+6. SCRIPT
+
+- npm run dev
+- npm run build
+- npm run test
+- npm run test:run
+- npm run lint
+- npm run format
+- npm run format:check
+- npm run typecheck
+
+7. VALIDAZIONE
+
+- npm ci: PASS.
+- typecheck: PASS.
+- lint con zero warning: PASS.
+- Vitest: 3 file, 9 test, tutti PASS.
+- production build: PASS.
+- format check: PASS.
+
+8. SICUREZZA GIT/BACKEND
+
+Prima di F02 il backend era gia ampiamente dirty/untracked. Lo stato finale conserva
+lo stesso insieme rilevato nel preflight. F02 ha scritto esclusivamente nel frontend,
+salvo l'ispezione read-only delle installazioni npm. Nessun file backend cancellato,
+nessun commit, push, reset, checkout o clean.
+
+9. RISCHI RESIDUI / F03 GATE
+
+- Il repository sotto OneDrive puo temporaneamente bloccare operazioni massive su
+  node_modules; npm ci finale e comunque riuscito dopo rigenerazione controllata.
+- Esistono npm globale utente 10.2.3 e npm incluso in Node 10.9.4. Non sono in conflitto
+  fuori sandbox, ma CI/documentazione devono usare la baseline Node/npm dichiarata.
+- ESLint 9 ha emesso un warning upstream di linea non piu supportata dal pacchetto
+  corrente, ma resta necessario per jsx-a11y 6.10.2. Pianificare upgrade coordinato
+  quando il plugin supportera ESLint 10; non usare force.
+- HTTP Basic, formato security error e contratto OpenAPI restano gap architetturali gia
+  documentati in F01; nessuna modifica backend autorizzata in F02.
+- npm audit separato non ha potuto raggiungere l'endpoint nell'ultima probe sandbox;
+  l'installazione npm aveva riportato 0 vulnerabilita. Audit CI resta raccomandato.
+
+10. FINAL STATUS
+
+F02_TOOLCHAIN=PASS
+NODE=v22.21.0
+NPM=10.9.4
+NPX=10.9.4
+PACKAGE_MANAGER=npm
+FRAMEWORK=React
+LANGUAGE=TypeScript
+BUILD_TOOL=Vite
+TYPESCRIPT_STRICT=True
+ROUTER=React Router
+SERVER_STATE=TanStack Query
+HTTP_CLIENT=fetch
+TEST_FRAMEWORK=Vitest
+FRONTEND_TESTS=9
+TYPECHECK=PASS
+LINT=PASS
+TESTS=PASS
+BUILD=PASS
+FORMAT_CHECK=PASS
+BACKEND_MODIFIED=False
+BACKEND_FILES_DELETED=0
+GIT_COMMIT=NO
+GIT_PUSH=NO
+F02_STATUS=CERTIFIED
+PROJECT_STATE=SAFE
+NEXT=F03_DESIGN_SYSTEM

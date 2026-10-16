@@ -1,0 +1,91 @@
+===== D02.14.2 SCHEMA AUDIT =====
+DATE=2026-08-24T15:57:04.0374369+02:00
+=== SEASONS COLUMNS ===
+id|bigint
+code|character varying
+start_year|smallint
+end_year|smallint
+current_season|boolean
+created_at|timestamp with time zone
+
+=== SEASON_CLUBS COLUMNS ===
+season_id|bigint
+club_id|bigint
+created_at|timestamp with time zone
+
+=== PLAYER_REGISTRATIONS COLUMNS ===
+id|bigint
+player_id|bigint
+club_id|bigint
+season_id|bigint
+shirt_number|smallint
+joined_at|date
+left_at|date
+registration_status|character varying
+created_at|timestamp with time zone
+updated_at|timestamp with time zone
+
+=== FIXTURES COLUMNS ===
+id|bigint
+season_id|bigint
+matchday|integer
+home_club_id|bigint
+away_club_id|bigint
+kickoff_at|timestamp with time zone
+status|character varying
+home_goals|integer
+away_goals|integer
+created_at|timestamp with time zone
+updated_at|timestamp with time zone
+
+=== PLAYER_SEASON_STATISTICS COLUMNS ===
+id|bigint
+player_id|bigint
+club_id|bigint
+season_id|bigint
+source|character varying
+appearances|integer
+starts|integer
+minutes_played|integer
+average_rating|numeric
+fantasy_average|numeric
+goals|integer
+assists|integer
+penalties_scored|integer
+penalties_missed|integer
+yellow_cards|integer
+red_cards|integer
+own_goals|integer
+goals_conceded|integer
+clean_sheets|integer
+penalties_saved|integer
+expected_goals|numeric
+expected_assists|numeric
+imported_at|timestamp with time zone
+updated_at|timestamp with time zone
+source_external_id|character varying
+penalties_taken|integer
+saves|integer
+source_updated_at|timestamp with time zone
+import_batch_id|bigint
+
+=== IMPORT_BATCHES COLUMNS ===
+id|bigint
+source|character varying
+season_id|bigint
+original_filename|character varying
+status|character varying
+total_rows|integer
+valid_rows|integer
+invalid_rows|integer
+started_at|timestamp with time zone
+completed_at|timestamp with time zone
+error_message|text
+reconciliation_started_at|timestamp with time zone
+reconciliation_completed_at|timestamp with time zone
+reconciled_rows|integer
+source_reference|text
+source_observed_at|timestamp with time zone
+
+PSQL_EXIT_CODE=0
+===== D02.14.2 END =====

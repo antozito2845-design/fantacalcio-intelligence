@@ -1,0 +1,161 @@
+# Ambiente
+
+.env
+.env.*
+!.env.example
+
+# Next.js
+
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+
+# Java
+
+backend/target/
+backend/.classpath
+backend/.project
+backend/.settings/
+
+# Python
+
+.venv/
+ai-service/.venv/
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+
+# FBref viene acquisito manualmente: non versionare scraper esplorativi.
+
+scripts/fbref/fbref_serie_a_preview.py
+
+# Import giocatori: file scaricati e generati
+
+scripts/player-import/input/**
+scripts/player-import/output/**
+scripts/player-import/logs/**
+
+# Mantieni la struttura delle cartelle
+
+!scripts/player-import/input/.gitkeep
+!scripts/player-import/input/fantacalcio/
+!scripts/player-import/input/fantacalcio/.gitkeep
+!scripts/player-import/input/fantamarkt/
+!scripts/player-import/input/fantamarkt/.gitkeep
+!scripts/player-import/input/gazzetta/
+!scripts/player-import/input/gazzetta/.gitkeep
+!scripts/player-import/output/.gitkeep
+!scripts/player-import/logs/.gitkeep
+
+# Database
+
+database/data/
+
+# IDE
+
+.vscode/
+.idea/
+
+# Sistema operativo
+
+.DS_Store
+Thumbs.db
+
+# Log generici
+
+*.log
+
+# FBref local datasets and generated review artifacts
+
+data/fbref/**
+
+# ==============================================================
+# Identity data - local/raw/intermediate artifacts
+# ==============================================================
+
+# Backup PostgreSQL: locale, mai nel repository
+data/identity/**/*.dump
+
+# HTML/snapshot esplorativi
+data/identity/**/*-test/
+data/identity/**/*.html
+
+# Snapshot raw per singola squadra.
+# Restano sul PC; i master consolidati vengono versionati.
+data/identity/fantacalcio-2026-2027/
+data/identity/transfermarkt-2026-2027/
+
+# Test/esplorazioni Transfermarkt
+data/identity/transfermarkt-inter-2026-2027.csv
+
+# Output legacy/intermedi non certificati
+data/identity/catalog-transfermarkt-match-2026-2027.csv
+data/identity/catalog-transfermarkt-safe-import-2026-2027.csv
+data/identity/player-identity-enrichment.csv
+data/identity/player-identity-safe-import.csv
+
+data/identity/comparison-2026-2027/catalog-reconciliation-final-report.txt
+data/identity/comparison-2026-2027/catalog-reconciliation-final.csv
+data/identity/comparison-2026-2027/catalog-reconciliation-new-players.csv
+data/identity/comparison-2026-2027/catalog-reconciliation-outgoing.csv
+data/identity/comparison-2026-2027/catalog-reconciliation-review.csv
+data/identity/comparison-2026-2027/catalog-reconciliation-same-player.csv
+data/identity/comparison-2026-2027/catalog-reconciliation-transfers.csv
+
+data/identity/comparison-2026-2027/db-preimport-schema-audit.txt
+data/identity/comparison-2026-2027/dev-catalog-audit.txt
+
+data/identity/comparison-2026-2027/fantacalcio-not-in-operational-catalog.csv
+data/identity/comparison-2026-2027/fantacalcio-not-in-operational-catalog-v2.csv
+data/identity/comparison-2026-2027/operational-catalog-not-in-fantacalcio.csv
+data/identity/comparison-2026-2027/operational-catalog-not-in-fantacalcio-v2.csv
+
+data/identity/comparison-2026-2027/fantacalcio-transfermarkt-alias-high.csv
+data/identity/comparison-2026-2027/fantacalcio-transfermarkt-all-matches.csv
+data/identity/comparison-2026-2027/fantacalcio-transfermarkt-certified-v2.csv
+data/identity/comparison-2026-2027/fantacalcio-transfermarkt-certified-v2-report.txt
+data/identity/comparison-2026-2027/fantacalcio-transfermarkt-comparison-report.txt
+data/identity/comparison-2026-2027/fantacalcio-transfermarkt-high.csv
+data/identity/comparison-2026-2027/fantacalcio-transfermarkt-review.csv
+data/identity/comparison-2026-2027/fantacalcio-transfermarkt-unmatched.csv
+# Identity acquisition - exploratory/local helper scripts
+
+scripts/identity/fantacalcio_atalanta_test.py
+scripts/identity/transfermarkt_inter_test.py
+scripts/identity/transfermarkt_batch_5.py
+scripts/identity/transfermarkt_batch_next5.py
+scripts/identity/transfermarkt_batch_last5.py
+
+# Local final working report; certified reports live under data/identity/
+blocco-46-identity-enrichment-final-report.txt
+# Local block reports
+blocco-47-final-report.txt
+
+# Local package-manager cache
+.pnpm-store/
+
+# Database backups and dumps: never commit
+backend/*.dump
+backend/*.backup
+*.dump
+*.backup
+
+# Private keys and local secrets: never commit
+*.pem
+*.key
+id_rsa
+id_rsa.*
+chiavi oracle/
+keys/
+secrets/
+
+# Frontend environment files
+frontend/.env.development
+frontend/.env.production
+frontend/.env.test
+frontend/.env.local
+frontend/.env.*.local
+
+# Safe frontend environment templates may be versioned
+!frontend/.env.example
+!frontend/.env.production.example

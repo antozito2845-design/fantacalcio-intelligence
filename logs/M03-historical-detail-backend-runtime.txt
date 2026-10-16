@@ -1,0 +1,57 @@
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.1.0)
+
+2026-08-31T09:20:56.614+02:00  INFO 12228 --- [backend] [           main] i.f.backend.BackendApplication           : Starting BackendApplication using Java 21.0.11 with PID 12228 (C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\backend\target\classes started by user in C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\backend)
+2026-08-31T09:20:56.629+02:00  INFO 12228 --- [backend] [           main] i.f.backend.BackendApplication           : The following 1 profile is active: "dev"
+2026-08-31T09:21:01.185+02:00  INFO 12228 --- [backend] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-08-31T09:21:01.553+02:00  INFO 12228 --- [backend] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 325 ms. Found 3 JPA repository interfaces.
+2026-08-31T09:21:12.145+02:00  INFO 12228 --- [backend] [           main] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8080 (http)
+2026-08-31T09:21:12.221+02:00  INFO 12228 --- [backend] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-08-31T09:21:12.222+02:00  INFO 12228 --- [backend] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.22]
+2026-08-31T09:21:12.504+02:00  INFO 12228 --- [backend] [           main] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 15663 ms
+2026-08-31T09:21:14.014+02:00  INFO 12228 --- [backend] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-08-31T09:21:14.869+02:00  INFO 12228 --- [backend] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@71139e77
+2026-08-31T09:21:14.877+02:00  INFO 12228 --- [backend] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-08-31T09:21:14.960+02:00  INFO 12228 --- [backend] [           main] org.flywaydb.core.FlywayExecutor         : Database: jdbc:postgresql://localhost:5432/fantacalcio_intelligence (PostgreSQL 17.10)
+2026-08-31T09:21:15.570+02:00  INFO 12228 --- [backend] [           main] o.f.core.internal.command.DbValidate     : Successfully validated 70 migrations (execution time 00:00.371s)
+2026-08-31T09:21:15.623+02:00  INFO 12228 --- [backend] [           main] o.f.core.internal.command.DbMigrate      : Current version of schema "public": 69
+2026-08-31T09:21:15.637+02:00  INFO 12228 --- [backend] [           main] o.f.core.internal.command.DbMigrate      : Schema "public" is up to date. No migration necessary.
+2026-08-31T09:21:16.148+02:00  INFO 12228 --- [backend] [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-08-31T09:21:16.424+02:00  INFO 12228 --- [backend] [           main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.4.1.Final
+2026-08-31T09:21:18.341+02:00  INFO 12228 --- [backend] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-08-31T09:21:18.786+02:00  INFO 12228 --- [backend] [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/fantacalcio_intelligence]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 17.10
+	Default catalog/schema: fantacalcio_intelligence/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-08-31T09:21:22.489+02:00  INFO 12228 --- [backend] [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-08-31T09:21:22.835+02:00  INFO 12228 --- [backend] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-08-31T09:21:24.035+02:00  INFO 12228 --- [backend] [           main] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-08-31T09:21:26.975+02:00  INFO 12228 --- [backend] [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name databaseUserDetailsService
+2026-08-31T09:21:29.345+02:00  INFO 12228 --- [backend] [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 2 endpoints beneath base path '/actuator'
+2026-08-31T09:21:29.651+02:00  INFO 12228 --- [backend] [           main] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8080 (http) with context path '/'
+2026-08-31T09:21:29.686+02:00  INFO 12228 --- [backend] [           main] i.f.backend.BackendApplication           : Started BackendApplication in 35.066 seconds (process running for 36.682)
+2026-08-31T09:21:30.986+02:00  INFO 12228 --- [backend] [nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-08-31T09:21:30.986+02:00  INFO 12228 --- [backend] [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-08-31T09:21:30.993+02:00  INFO 12228 --- [backend] [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 7 ms
+[ERROR] Failed to execute goal org.springframework.boot:spring-boot-maven-plugin:4.1.0:run (default-cli) on project backend: Process terminated with exit code: -1 -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException

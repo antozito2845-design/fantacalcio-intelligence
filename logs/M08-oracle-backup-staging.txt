@@ -1,0 +1,91 @@
+﻿
+
+==============================================================================
+M08.3 ORACLE BACKUP + STAGING
+==============================================================================
+PRODUCTION_REPLACED=NO
+SERVICES_RESTARTED=NO
+DATABASE_MUTATIONS=NONE
+
+==============================================================================
+1. LOCAL ARTIFACTS
+==============================================================================
+LOCAL_JAR=C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\backend\target\backend-0.0.1-SNAPSHOT.jar
+LOCAL_JAR_SIZE=62049318
+LOCAL_JAR_SHA256=e054af992d66d3fdd24d2006126b3b55daedf194e0dc6ea40673d28fabd3cd16
+LOCAL_FRONTEND_FILES=27
+
+==============================================================================
+2. FRONTEND PACKAGE
+==============================================================================
+FRONTEND_ZIP=C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\logs\M08-frontend-dist.zip
+FRONTEND_ZIP_SIZE=176330
+FRONTEND_ZIP_SHA256=170b3831bd9c2144c2d2cbfff79288f07e4c52459d51c04fe26cf7d6806738e5
+
+==============================================================================
+3. REMOTE BACKUP
+==============================================================================
+REMOTE_STAGE=/home/ubuntu/m08-staging-20260902-140814
+REMOTE_BACKUP=/home/ubuntu/m08-backup-20260902-140814
+BACKUP_BACKEND_BEGIN
+BACKUP_BACKEND_OK=YES
+BACKUP_FRONTEND_BEGIN
+BACKUP_FRONTEND_OK=YES
+BACKUP_HASHES_BEGIN
+adc4d9d92a5d6462b085f89cf6b3cc6b0f3e84b056ba2fc414c083469436d424  /home/ubuntu/m08-backup-20260902-140814/backend.jar
+69e5d7917902e08d2870c408ed5e8b20ce925db500224bd308d3f8498c7ddb6d  /home/ubuntu/m08-backup-20260902-140814/frontend.tar.gz
+BACKUP_HASHES_END
+PRODUCTION_REPLACED=NO
+SERVICES_RESTARTED=NO
+DATABASE_MUTATIONS=NONE
+REMOTE_BACKUP_EXIT=0
+
+==============================================================================
+4. UPLOAD TO REMOTE STAGING
+==============================================================================
+SCP_BACKEND_EXIT=0
+SCP_FRONTEND_EXIT=0
+
+==============================================================================
+5. STAGING HASH VERIFICATION
+==============================================================================
+REMOTE_STAGE=/home/ubuntu/m08-staging-20260902-140814
+REMOTE_STAGED_JAR_BEGIN
+REMOTE_STAGED_JAR_SIZE=62049318
+e054af992d66d3fdd24d2006126b3b55daedf194e0dc6ea40673d28fabd3cd16
+REMOTE_STAGED_JAR_END
+REMOTE_STAGED_FRONTEND_BEGIN
+REMOTE_STAGED_FRONTEND_ZIP_SIZE=176330
+170b3831bd9c2144c2d2cbfff79288f07e4c52459d51c04fe26cf7d6806738e5
+REMOTE_STAGED_FRONTEND_END
+CURRENT_PRODUCTION_BACKEND_HASH_BEGIN
+adc4d9d92a5d6462b085f89cf6b3cc6b0f3e84b056ba2fc414c083469436d424  /opt/fantacalcio/backend/backend.jar
+CURRENT_PRODUCTION_BACKEND_HASH_END
+CURRENT_SERVICES_BEGIN
+BACKEND_ACTIVE=active
+NGINX_ACTIVE=active
+{"groups":["liveness","readiness"],"status":"UP"}
+CURRENT_SERVICES_END
+PRODUCTION_REPLACED=NO
+SERVICES_RESTARTED=NO
+DATABASE_MUTATIONS=NONE
+
+==============================================================================
+M08.3 FINAL SUMMARY
+==============================================================================
+REMOTE_STAGE=/home/ubuntu/m08-staging-20260902-140814
+REMOTE_BACKUP=/home/ubuntu/m08-backup-20260902-140814
+LOCAL_JAR_SHA256=e054af992d66d3fdd24d2006126b3b55daedf194e0dc6ea40673d28fabd3cd16
+REMOTE_STAGED_JAR_SHA256=
+BACKEND_HASH_MATCH=NO
+LOCAL_FRONTEND_ZIP_SHA256=170b3831bd9c2144c2d2cbfff79288f07e4c52459d51c04fe26cf7d6806738e5
+REMOTE_STAGED_FRONTEND_ZIP_SHA256=
+FRONTEND_HASH_MATCH=NO
+BACKUP_CREATED=YES
+PRODUCTION_REPLACED=NO
+SERVICES_RESTARTED=NO
+DATABASE_MUTATIONS=NONE
+DEPLOY_EXECUTED=NO
+M08_STAGING_STATUS=BLOCKED
+ALL_GREEN=NO
+LOG_FILE=C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\logs\M08-oracle-backup-staging.txt

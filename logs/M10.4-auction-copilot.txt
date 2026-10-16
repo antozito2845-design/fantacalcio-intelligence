@@ -1,0 +1,234 @@
+﻿
+=== M10.4 AUCTION COPILOT ===
+BRANCH=stabilization/m01-local-green
+HEAD=a40557e4132189fbb7aa02e869cf126072e03945
+BACKUP=backend\src\main\java\it\fantacalciointelligence\backend\auctionranking\IntelligentAuctionRankingService.java
+BACKUP=frontend\src\features\core\api.ts
+BACKUP=frontend\src\pages\AuctionPage.tsx
+BACKUP=frontend\src\pages\AuctionCopilot.module.css
+BACKUP=frontend\src\pages\AuctionPage.test.tsx
+BACKUP=frontend\src\layouts\GlobalSearch.tsx
+BACKUP=frontend\src\layouts\AppShell.test.tsx
+BACKUP_DIR=C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\logs\M10.4-backup-20260902-175046
+BACKEND_RANKING_MAX=600
+FRONTEND_RANKING_LIMIT=UPDATED
+GLOBAL_SEARCH_ENCODING=FIXED
+DARK_MODE_FIX=ADDED
+
+=== PRETTIER_WRITE ===
+[90msrc/features/core/api.ts[39m 239ms (unchanged)
+[90msrc/pages/AuctionPage.tsx[39m 240ms (unchanged)
+src/pages/AuctionCopilot.module.css 128ms
+[90msrc/pages/AuctionPage.test.tsx[39m 44ms (unchanged)
+[90msrc/layouts/GlobalSearch.tsx[39m 29ms (unchanged)
+[90msrc/layouts/AppShell.test.tsx[39m 32ms (unchanged)
+PRETTIER_WRITE_EXIT=0
+
+=== BACKEND_AUCTION_TESTS ===
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] -----------------< it.fantacalciointelligence:backend >-----------------
+[INFO] Building backend 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.5.0:resources (default-resources) @ backend ---
+[INFO] Copying 3 resources from src\main\resources to target\classes
+[INFO] Copying 70 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.15.0:compile (default-compile) @ backend ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 315 source files with javac [debug parameters release 21] to target\classes
+[INFO] /C:/Users/user/OneDrive/Desktop/Fantafoot/fantacalcio-intelligence/backend/src/main/java/it/fantacalciointelligence/backend/liveauction/LiveAuctionDecisionService.java: C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\backend\src\main\java\it\fantacalciointelligence\backend\liveauction\LiveAuctionDecisionService.java uses or overrides a deprecated API.
+[INFO] /C:/Users/user/OneDrive/Desktop/Fantafoot/fantacalcio-intelligence/backend/src/main/java/it/fantacalciointelligence/backend/liveauction/LiveAuctionDecisionService.java: Recompile with -Xlint:deprecation for details.
+[INFO] 
+[INFO] --- resources:3.5.0:testResources (default-testResources) @ backend ---
+[INFO] Copying 2 resources from src\test\resources to target\test-classes
+[INFO] 
+[INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ backend ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 129 source files with javac [debug parameters release 21] to target\test-classes
+[INFO] /C:/Users/user/OneDrive/Desktop/Fantafoot/fantacalcio-intelligence/backend/src/test/java/it/fantacalciointelligence/backend/liveauction/LiveAuctionControllerSecurityTest.java: Some input files use or override a deprecated API.
+[INFO] /C:/Users/user/OneDrive/Desktop/Fantafoot/fantacalcio-intelligence/backend/src/test/java/it/fantacalciointelligence/backend/liveauction/LiveAuctionControllerSecurityTest.java: Recompile with -Xlint:deprecation for details.
+[INFO] /C:/Users/user/OneDrive/Desktop/Fantafoot/fantacalcio-intelligence/backend/src/test/java/it/fantacalciointelligence/backend/liveauction/LiveAuctionDecisionServiceBatchTest.java: Some input files use unchecked or unsafe operations.
+[INFO] /C:/Users/user/OneDrive/Desktop/Fantafoot/fantacalcio-intelligence/backend/src/test/java/it/fantacalciointelligence/backend/liveauction/LiveAuctionDecisionServiceBatchTest.java: Recompile with -Xlint:unchecked for details.
+[INFO] 
+[INFO] --- surefire:3.5.6:test (default-test) @ backend ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running it.fantacalciointelligence.backend.auctionranking.AuctionRankingServiceTest
+17:51:16.192 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [it.fantacalciointelligence.backend.auctionranking.AuctionRankingServiceTest]: AuctionRankingServiceTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+17:51:16.452 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration it.fantacalciointelligence.backend.BackendApplication for test class it.fantacalciointelligence.backend.auctionranking.AuctionRankingServiceTest
+17:51:16.585 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [it.fantacalciointelligence.backend.auctionranking.AuctionRankingServiceTest]: AuctionRankingServiceTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+17:51:16.585 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration it.fantacalciointelligence.backend.BackendApplication for test class it.fantacalciointelligence.backend.auctionranking.AuctionRankingServiceTest
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.1.0)
+
+2026-09-02T17:51:17.119+02:00  INFO 6984 --- [           main] i.f.b.a.AuctionRankingServiceTest        : Starting AuctionRankingServiceTest using Java 21.0.11 with PID 6984 (started by user in C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\backend)
+2026-09-02T17:51:17.121+02:00  INFO 6984 --- [           main] i.f.b.a.AuctionRankingServiceTest        : The following 1 profile is active: "dev"
+2026-09-02T17:51:19.578+02:00  INFO 6984 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-09-02T17:51:19.756+02:00  INFO 6984 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 165 ms. Found 3 JPA repository interfaces.
+mvnw.cmd : Mockito is currently 
+self-attaching to enable the 
+inline-mock-maker. This will no longer work 
+in future releases of the JDK. Please add 
+Mockito as an agent to your build as 
+described in Mockito's documentation: https:/
+/javadoc.io/doc/org.mockito/mockito-core/late
+st/org.mockito/org/mockito/Mockito.html#0.3
+In riga:296 car:13
++             & $mvn `
++             ~~~~~~~~
+    + CategoryInfo          : NotSpecified:  
+   (Mockito is curr...ockito.html#0.3:Strin  
+  g) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandE 
+   rror
+ 
+
+BACKEND_AUCTION_TESTS_EXIT=1
+
+=== BACKEND_COMPILE ===
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] -----------------< it.fantacalciointelligence:backend >-----------------
+[INFO] Building backend 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.5.0:resources (default-resources) @ backend ---
+[INFO] Copying 3 resources from src\main\resources to target\classes
+[INFO] Copying 70 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.15.0:compile (default-compile) @ backend ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  2.782 s
+[INFO] Finished at: 2026-09-02T17:51:41+02:00
+[INFO] ------------------------------------------------------------------------
+BACKEND_COMPILE_EXIT=0
+
+=== FRONTEND_TARGETED_TESTS ===
+
+> fantacalcio-intelligence-frontend@0.1.0 test
+> vitest --run src/pages/AuctionPage.test.tsx src/layouts/AppShell.test.tsx
+
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.11 [39m[90mC:/Users/user/OneDrive/Desktop/Fantafoot/fantacalcio-intelligence/frontend[39m
+
+ [31mÔØ»[39m src/pages/AuctionPage.test.tsx [2m([22m[2m4 tests[22m[2m | [22m[31m4 failed[39m[2m)[22m[33m 3152[2mms[22m[39m
+[31m     [31m├ù[31m mostra FantaScore, tier, target, tetto e decisione operativa[39m[33m 641[2mms[22m[39m
+[31m     [31m├ù[31m passa a STOP quando il prezzo supera il tetto massimo[39m[33m 404[2mms[22m[39m
+[31m     [31m├ù[31m cerca giocatori e non espone la vecchia CTA Live Auction[39m[33m 1049[2mms[22m[39m
+[31m     [31m├ù[31m mantiene i nullable come dato non disponibile[39m[33m 1050[2mms[22m[39m
+ [32mÔ£ô[39m src/layouts/AppShell.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[33m 1665[2mms[22m[39m
+     [33m[2mÔ£ô[22m[39m accetta input e invia con Enter mostrando un risultato navigabile [33m 367[2mms[22m[39m
+     [33m[2mÔ£ô[22m[39m supporta il pulsante, loading e zero risultati [33m 324[2mms[22m[39m
+npm.cmd : 
+In riga:328 car:13
++             & $npm test -- `
++             ~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified:  
+   (:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandE 
+   rror
+ 
+
+FRONTEND_TARGETED_TESTS_EXIT=1
+
+=== TYPECHECK ===
+
+> fantacalcio-intelligence-frontend@0.1.0 typecheck
+> tsc -b --pretty false
+
+TYPECHECK_EXIT=0
+
+=== LINT ===
+
+> fantacalcio-intelligence-frontend@0.1.0 lint
+> eslint . --max-warnings 0
+
+LINT_EXIT=0
+
+=== BUILD ===
+
+> fantacalcio-intelligence-frontend@0.1.0 build
+> tsc -b && vite build
+
+[36mvite v8.2.2 [32mbuilding client environment for production...[36m[39m
+transforming...
+Ô£ô 1989 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                       0.61 kB Ôöé gzip:   0.34 kB
+dist/assets/BackButton-CQlotm2g.css                   0.46 kB Ôöé gzip:   0.26 kB
+dist/assets/AdminPage-BPax7CVS.css                    2.41 kB Ôöé gzip:   0.75 kB
+dist/assets/FeaturePage-Bw_1vyQU.css                  3.10 kB Ôöé gzip:   1.04 kB
+dist/assets/Intelligence-aQCZUjeT.css                 3.12 kB Ôöé gzip:   1.04 kB
+dist/assets/AuctionPage-CExefucX.css                  5.36 kB Ôöé gzip:   1.49 kB
+dist/assets/index-QW6ewS2w.css                       32.47 kB Ôöé gzip:   7.21 kB
+dist/assets/StatusPage-CXudE7Bt.js                    0.34 kB Ôöé gzip:   0.25 kB
+dist/assets/Intelligence.module-BxinMgaH.js           0.39 kB Ôöé gzip:   0.21 kB
+dist/assets/ComingSoonPage-DkS7V98v.js                0.59 kB Ôöé gzip:   0.35 kB
+dist/assets/FeaturePage.module-CGjck9qI.js            0.59 kB Ôöé gzip:   0.29 kB
+dist/assets/BackButton-DUhE1Ttr.js                    0.63 kB Ôöé gzip:   0.45 kB
+dist/assets/useMutation-DSPuBkL0.js                   2.25 kB Ôöé gzip:   0.95 kB
+dist/assets/HistoricalPlayerDetailPage-BJtt0aCI.js    3.46 kB Ôöé gzip:   1.23 kB
+dist/assets/ScoutingPage-B_Lgy-3t.js                  4.26 kB Ôöé gzip:   1.54 kB
+dist/assets/CalendarPage-DTyidmzt.js                  4.27 kB Ôöé gzip:   1.60 kB
+dist/assets/PlayerDetailPage-B356cCHm.js              4.29 kB Ôöé gzip:   1.55 kB
+dist/assets/HistoricalPlayersPage-CHnRu_is.js         5.40 kB Ôöé gzip:   1.77 kB
+dist/assets/PlayersPage-BtPcouNu.js                   6.15 kB Ôöé gzip:   2.07 kB
+dist/assets/LineupPage-B3FthyE0.js                    7.17 kB Ôöé gzip:   2.26 kB
+dist/assets/SquadPage-Cy_T_M5U.js                     8.48 kB Ôöé gzip:   2.55 kB
+dist/assets/LiveAuctionPage-BdVf56Qq.js               9.62 kB Ôöé gzip:   2.97 kB
+dist/assets/DesignSystemPage-BlFamsHy.js              9.66 kB Ôöé gzip:   2.73 kB
+dist/assets/AuctionPage-DKX2gYA1.js                  13.76 kB Ôöé gzip:   4.30 kB
+dist/assets/AdminPage-opoJeBy1.js                    14.30 kB Ôöé gzip:   4.23 kB
+dist/assets/chunk-62JRHF6Z-D7DyR7Id.js              100.19 kB Ôöé gzip:  33.31 kB
+dist/assets/index-CG4UvDJM.js                       339.76 kB Ôöé gzip: 102.04 kB
+
+[32mÔ£ô built in 1.18s[39m
+BUILD_EXIT=0
+BACKEND_READY=True
+
+=== AUCTION API CERT ===
+RANKING_TOTAL=456
+RANKING_ARRAY=456
+VERGARA_IN_RANKING=1
+VERGARA=397|Vergara|Napoli|C|59.70
+
+=== FULL_FRONTEND_TESTS ===
+
+> fantacalcio-intelligence-frontend@0.1.0 test
+> vitest --run
+
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.11 [39m[90mC:/Users/user/OneDrive/Desktop/Fantafoot/fantacalcio-intelligence/frontend[39m
+
+ [31mÔØ»[39m src/pages/AuctionPage.test.tsx [2m([22m[2m4 tests[22m[2m | [22m[31m4 failed[39m[2m)[22m[33m 3387[2mms[22m[39m
+[31m     [31m├ù[31m mostra FantaScore, tier, target, tetto e decisione operativa[39m[33m 836[2mms[22m[39m
+[31m     [31m├ù[31m passa a STOP quando il prezzo supera il tetto massimo[39m[33m 372[2mms[22m[39m
+[31m     [31m├ù[31m cerca giocatori e non espone la vecchia CTA Live Auction[39m[33m 1083[2mms[22m[39m
+[31m     [31m├ù[31m mantiene i nullable come dato non disponibile[39m[33m 1088[2mms[22m[39m
+ [32mÔ£ô[39m src/app/bootstrap/App.test.tsx [2m([22m[2m12 tests[22m[2m)[22m[33m 7498[2mms[22m[39m
+     [33m[2mÔ£ô[22m[39m renderizza la dashboard foundation con landmark e navigazione attiva [33m 679[2mms[22m[39m
+     [33m[2mÔ£ô[22m[39m mostra stato backend offline senza far collassare gli altri widget [33m 3186[2mms[22m[39m
+     [33m[2mÔ£ô[22m[39m rende navigabili le sezioni non ancora disponibili [33m 1631[2mms[22m[39m
+     [33m[2mÔ£ô[22m[39m renderizza /design-system [33m 402[2mms[22m[39m
+     [33m[2mÔ£ô[22m[39m porta lÔÇÖutente autenticato alla Live Auction e spiega la rosa mancante [33m 501[2mms[22m[39m
+     [33m[2mÔ£ô[22m[39m mostra un errore specifico per credenziali non valide [33m 379[2mms[22m[39m
+ [32mÔ£ô[39m src/features/intelligence/IntelligencePages.test.tsx [2m([22m[2m15 tests[22m[2m)[22m[33m 3750[2mms[22m[39m
+     [33m[2mÔ£ô[22m[39m renderizza titolari, panchina, modulo e reasoning reali [33m 634[2mms[22m[39m

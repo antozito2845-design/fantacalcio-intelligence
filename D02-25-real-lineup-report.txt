@@ -1,0 +1,224 @@
+===== D02.25 — REAL LINEUP INTELLIGENCE =====
+Data: 2026-08-26 (prima fase) / 2026-08-26 (seconda fase di verifica e hardening)
+Repo: alpionsobellini15-web/fantacalcio-intelligence (worktree: arena/01a03d47-fantacalcio-intelligence)
+Nota: nessun accesso a produzione, nessun deploy, nessun commit/push/PR. Solo analisi del codice
+nel repository più esecuzione locale dei test frontend eseguibili in sandbox.
+
+STATUS=PARTIAL — fase 2 completata per diagnosi e patch minime; frontend FULLY VERIFIED
+(vitest 105/105, typecheck PASS, build PASS); backend PATCHED ma NON eseguito né compilato:
+l'ambiente sandbox non ha JDK/Maven/PostgreSQL e le destinazioni repo.maven.apache.org /
+deb.debian.org non sono raggiungibili → BACKEND_TESTS=BLOCKED (nessun PASS dichiarato).
+
+======================== FASE 1 — DIAGNOSI (invariata) ========================
+
+ROOT_CAUSE_CONFIDENCE=HIGH per il difetto di presentazione/voido causale della UI; MEDIUM per
+l'identificazione del trigger esatto in produzione (non verificabile senza log/DB di produzione).
+
+ROOT_CAUSE=La stringa "Formazione non disponibile" è emessa dalla LineupPage SOLO nel ramo
+`query.isError` di GET /api/v1/lineups/recommended, cioè come catch-all per QUALSIASI esito
+non riuscito: HTTP 404/400/500, rete/timeout o risposta non conforme allo schema Zod. La pagina
+scartava l'errore (status, kind, message del backend) e mostrava sempre lo stesso messaggio +
+"Riprova", senza distinguere rosa non riconosciuta, errore del motore, servizio non raggiungibile
+o mapping DTO errato. Cause concorrenti: (1) la LineupPage NON inoltrava `season` (il backend
+ri-risolve la stagione "corrente" via CurrentSeasonResolver) mentre la rosa è risolta dal
+frontend secondo la stagione della league configuration → disallineamento rosa-vs-stagione = 404
+ambiguo; (2) mismatch DTO reale: api/contracts/dashboard.ts dichiarava fixtureDifficulty e
+selectionScore non-nullable mentre il backend restituisce null quando manca evidenza reale;
+(3) endpoint NON protetto (permitAll) - vedi fase 2; (4) rosa vuota/insufficiente già gestita.
+
+CURRENT_BEHAVIOR / EXPECTED_BEHAVIOR: vedi sezione FASE 2 (definitive).
+
+API_FLOW=LineupPage/Dashboard → api client → GET /api/v1/lineups/recommended?season&matchday&squadId
+(+Basic Auth da fase 2) → RecommendedLineupController → RecommendedLineupService.recommend →
+resolveSquadId (owner-scoped da fase 2) → buildRecommendation → loadCandidates (players della rosa
++ registrazioni ACTIVE + performance B66_FEATURES_V3 LEFT JOIN + availability LEFT JOIN) →
+B69FixtureMatchupService.findClubMatchups (fixtures + club_strength_ratings → difficoltà P/D/C/A)
+→ B68LineupScorer.score (segnali mancanti restano NULL, mai 0/50; hard-unavailable esclusi) →
+7 moduli, selezione per ruolo per selectionScore desc → starters/bench/substitutions/roles/warnings
+→ RecommendedLineupResponse → zod (features/intelligence/api.ts + api/contracts/dashboard.ts) →
+UI (pitch, panchina, motivazioni, warning).
+
+DATA_REQUIREMENTS=(1) esattamente una season con current_season=TRUE (V60); (2) rosa attiva
+owner-scoped; (3) fantasy_squad_players con season_id coerente col parametro season inviato
+(altra stagione → 404); (4) registrazione ACTIVE per ogni giocatore; (5) facoltativi:
+player_performance_feature_profiles B66_FEATURES_V3, player_availabilities per matchday,
+fixtures+club_strength_ratings per i club della rosa; (6) senza alcun segnale il candidato è
+non-actionable → starters vuoti, complete=false (empty state REALE, non errore).
+
+DATA_REQUIREMENTS_AGG=Verificato in fase 2: al 26/08 nel DB di riferimento (report D02.13)
+player_availabilities=23 righe (dati test) e player_availability_history=0; club_strength_ratings=20;
+fixtures=380; season_clubs=21. Nessun dato nuovo inserito.
+
+======================== FASE 2 — VERIFICA E HARDENING ========================
+
+DIAGNOSTICHE COMPLETATE=
+1. SICUREZZA IDOR/BOLA su GET /api/v1/lineups/recommended: CONFERMATO E PATCHATO.
+   Evidenza pre-patch: SecurityConfiguration dichiarava "/api/v1/lineups/**" permitAll;
+   RecommendedLineupController non riceveva Authentication; RecommendedLineupService.resolveSquadId
+   filtrava solo active=TRUE + EXISTS squad_players per stagione, SENZA owner_username, sia con
+   squadId esplicito sia nella risoluzione "prima rosa attiva" (squadId null → esponeva la prima
+   rosa attiva del DB a qualunque chiamante). Nessun test backend esistente copriva l'endpoint
+   (grep "/api/v1/lineups" in backend/src/test = 0 risultati). Patch minima: endpoint ora
+   `authenticated()` (ricale su anyRequest().authenticated()); controller inoltra principal;
+   service: nuovo overload ownership-aware `recommend(season, matchday, squadId, unavailable,
+   username, administrator)` con resolveSquadId owner-scoped (admin può leggere qualsiasi rosa,
+   come SquadService.assertAccess); la 4-arg legacy resta SOLO per test/callers interni, non più
+   raggiungibile da HTTP. Comportamento: anonimo → 401; utente B con squadId di A → 404 (stesso
+   messaggio di inesistente, anti-IDOR); owner → 200; squadId null → rosa attiva del PRINCIPAL
+   (non più prima rosa globale). Frontend aggiornato per inviare Basic Auth (intelligenceApi,
+   dashboardApi, LineupPage, RealDashboardPage) + 2 test di regressione HTTP backend aggiunti
+   (SquadOwnershipHttpIntegrationTest, NON eseguiti per ambiente).
+2. COERENZA STAGIONE: CONFERMATO RISCHIO RESIDUO + FIX DI COERENZA FRONTEND.
+   Vincoli: (a) current_season esattamente uno (V60 unique index); (b) la stagione della rosa
+   (GET /squad) = season_id della league_configuration (baseSquadQuery); (c) season_id dei
+   fantasy_squad_players = stagione della league al momento dell'add (findActiveSquadRow →
+   addPlayer usa squad.season_id); (d) il motore richiede che il parametro season matchi i
+   season_id dei giocatori (resolveSquadId EXISTS). Coerenza per costruzione: (b)=(c) salvo
+   cambiamento ADMIN di league_configuration.season_id (PUT /api/v1/league/configuration) senza
+   migrare i giocatori → mismatch (b)≠(c) → 404. FIX: le due UI ora usano la stagione della ROSA
+   (`squad.data.season`, con fallback currentSeason solo nella dashboard), unica fonte che il
+   motore accetta; la stagione "corrente" (current_season) è usa solo come default quando il
+   parametro manca. Nessuna modifica a migrazioni/DB: il rischio residuo (PUT admin su
+   league_configuration o promozione stagione con rosa preesistente) è documentato in
+   REMAINING_RISKS e richiede una decisione su guardia (fuori scope minimo).
+3. NULLPOINTER in createReason (fixture!=null, roleMatchup==null): NON RIPRODUCIBILE come NPE,
+   MA difetto adiacente CONFERMATO E PATCHATO. B69FixtureMatchupService.toResponse genera sempre
+   4 righe ruolo (P/D/C/A) e fantasy_role è vincolato al CHECK ('P','D','C','A'): roleMatchup
+   null è strutturalmente impossibile. Però roleMatchup.difficultyScore() È null quando il club
+   ha fixture ma club_strength_ratings assente (B69RoleMatchupScorer → available vuoto → score
+   null, tier NO_EVIDENCE): la motivazione conteneva "difficoltà null/100". Patch minima: guard
+   su roleMatchup==null OR difficultyScore==null → "difficoltà non disponibile". Nessun NPE
+   aggiunto/rimosso, nessun cambio di contratti.
+4. PROFILI B66_FEATURES_V3: PARZIALMENTE SUPPORTATO IN REPO, NESSUN IMPORT CERTIFICATO V3.
+   Evidenza: build_b66_player_performance_features.py genera V3 (VERSION="B66_FEATURES_V3") in
+   data/statistics/features/b66-player-performance-import.csv (499 righe = header + 498 profili,
+   tutte V3); test_b66_player_performance_features.py asserisce {B66_FEATURES_V3};
+   RecommendedLineupService e B67AuctionPriceModelService consumano B66_FEATURES_V3.
+   MA gli unici SQL certificati sono: certified_b66_player_performance_import.sql (valida
+   B66_FEATURES_V1) e certified_b66_player_performance_v2_import.sql (legge -v2.csv, valida V2);
+   certified_b66_recovery_statistics_import.sql aggiorna solo player_competition_season_statistics.
+   NON esiste alcun import certificato per V3: eseguire lo script V1 sul CSV V3 attuale fallirebbe
+   il gate "algorithm_version <> 'B66_FEATURES_V1'". Nessun import DB eseguito (vietato/nessun DB)
+   e nessuno script nuovo creato: la creazione di un import certificato V3 va decisa in un blocco
+   dedicato con accesso a un DB di test (non è un fix minimo verificabile qui).
+5. COMPORTAMENTO CON DATI REALI (verifica statica, flussi):
+   - rosa vuota (creata ma senza giocatori): frontend non invoca il motore (totalPlayers<11) e
+     mostra "Rosa incompleta" + CTA; se il motore venisse chiamato comunque, resolveSquadId
+     fallirebbe (EXISTS squad_players) → 404. OK.
+   - rosa insufficiente (1..10 giocatori): stesso gate frontend; backend diretto → completa
+     selectedPlayers<11, complete=false, warnings reparti. OK.
+   - rosa sufficiente (>=11): motore invocato; se alcuni candidati non sono actionable
+     (nessun segnale) vengono esclusi: starters<11 + warning; se 0 actionable → empty state con
+     selectedPlayers/missingPlayers/roles/warnings (fase 1). OK.
+   - availability mancante: status NULL → "UNKNOWN" → non hard-unavailable → punteggio con i
+     segnali disponibili (performance/fixture); warning solo se non actionable. OK.
+   - fixture mancante: fixture null → fixtureDifficulty null → score con i segnali residui;
+     avversario "Partita non disponibile" e difficoltà assente (ora "non disponibile" dopo patch
+     fase 2). OK.
+   - LIMITE VERIFICATO: se un giocatore della rosa ha un club NON presente in season_clubs per la
+     stagione, B69FixtureMatchupService.findClubMatchups lancia ResourceNotFoundException e
+     l'INTERA richiesta diventa 404 (non parziale). In pratica V54 popola season_clubs dalle
+     registrazioni, quindi coperto; rischio residuo documentato.
+6. WIDGET LINEUP DASHBOARD: IN SCOPO D02.25 — PATCHATO (messaggio generico rimosso per il solo
+   pannello formazione). WidgetState ora accetta errorText; il pannello "Formazione consigliata"
+   mostra la causa reale (404 roster/not-found, invalid-response, server, network/timeout, HTTP
+   status). Gli altri widget della dashboard mantengono il testo generico (fuori scope D02.25).
+
+RISCHI CONFERMATI=
+- IDOR/BOLA su GET /api/v1/lineups/recommended (patchato, test backend aggiunti - NON eseguiti).
+- Risoluzione "prima rosa attiva" senza owner quando squadId assente (patchato con owner-scoped).
+- Stagione della rosa vs season_id dei giocatori può divergere solo dopo cambio ADMIN della
+  league_configuration (non patchato: necessita guardia/decisione DB, fuori scope minimo).
+- "difficoltà null/100" nella motivazione quando fixture presente ma club_strength_ratings
+  assente (patchato).
+- B66_FEATURES_V3: nessun import certificato nel repo (gap processuale/dati, NON patchato:
+  nessun DB di test disponibile e nessun dato nuovo può essere creato).
+- Club di un giocatore assente da season_clubs → 404 totale del lineup (rischio basso: V54
+  popola da registrazioni; non patchato).
+
+RISCHI NON RIPRODUCIBILI=
+- NullPointerException reale in createReason con fixture!=null e roleMatchup==null: NON
+  riproducibile (toResponse genera sempre P/D/C/A; CHECK fantacalcio_role limita i valori).
+- Endpoint protetto ma con risposta 401/403: NON era la causa del messaggio (era permitAll;
+  ora è authenticated per scelta di hardening).
+- Risposta vuota del motore (200 con starters=[]) trattata come errore: NON riproducibile;
+  era già gestita come empty state (fase 1 l'ha resa esplicita con i motivi reali).
+
+FILES_CHANGED=
+FASE 1 + FASE 2 (tutti nel worktree, nessun commit):
+- backend/src/main/java/it/fantacalciointelligence/backend/config/SecurityConfiguration.java
+  (fase 2): /api/v1/lineups/** rimosso da permitAll → authenticated.
+- backend/src/main/java/it/fantacalciointelligence/backend/lineup/RecommendedLineupController.java
+  (fase 2): Authentication iniettato, chiamata ownership-aware al service.
+- backend/src/main/java/it/fantacalciointelligence/backend/lineup/RecommendedLineupService.java
+  (fase 2): overload ownership-aware recommend(...username, administrator); buildRecommendation
+  estratta; resolveSquadId owner-scoped; guard roleMatchup/difficultyScore in createReason.
+- backend/src/test/java/it/fantacalciointelligence/backend/squad/SquadOwnershipHttpIntegrationTest.java
+  (fase 2): test HTTP anonimo 401 / cross-user 404 / owner 200 + cleanup legacy-owner.
+- frontend/src/api/contracts/dashboard.ts (fase 1): fixtureDifficulty/selectionScore nullable.
+- frontend/src/features/intelligence/api.ts (fase 1+2): invalid-response; lineup con season e
+  Basic Auth.
+- frontend/src/pages/LineupPage.tsx (fase 1+2): stagione rosa, Basic Auth, errori distinti,
+  empty state con motivi reali.
+- frontend/src/api/dashboardApi.ts (fase 2): lineup con Basic Auth.
+- frontend/src/pages/RealDashboardPage.tsx (fase 2): stagione della rosa al posto di
+  current_season, Basic Auth, errore del widget con causa reale.
+- frontend/src/features/intelligence/IntelligencePages.test.tsx (fase 1+2): asserzioni
+  stagione/rosa/Basic Auth, 404/invalid-response/empty state.
+- frontend/src/features/intelligence/api.test.ts (fase 1, NUOVO; aggiornato fase 2).
+- frontend/src/api/dashboardApi.test.ts (fase 1, NUOVO; aggiornato fase 2).
+- frontend/src/pages/RealDashboardPage.test.tsx (fase 2, NUOVO): Basic Auth, stagione rosa,
+  causa reale del motore nel widget.
+- frontend/.env (gitignored, NON versionato): ricreato per eseguire test/build, SOLO valori
+  pubblici già in .env.example (VITE_API_BASE_URL=/api/v1, telemetria vuota). Nessun secret.
+- D02-25-real-lineup-report.txt (questo file, NUOVO).
+Nessuna migration Flyway toccata; nessun report storico cancellato; nessun file backend di
+terze parti/DB modificato.
+
+BACKEND_TESTS=BLOCKED — NON dichiarati PASS. L'ambiente non ha JDK, Maven e PostgreSQL;
+repo.maven.apache.org e deb.debian.org inaccessibili (solo GitHub e registry npm raggiungibili):
+impossibile eseguire ./mvnw clean test / package e impossibile compilare i sorgenti Java.
+Le modifiche backend (SecurityConfiguration, Controller, Service, test HTTP) sono state
+verificate SOLO staticamente: bilanciamento parentesi/graffe OK (67/67, 434/434), firme
+coerenti con i call-site esistenti (test 3-arg/4-arg service invariati), pattern allineati a
+SquadController/SquadService (Authentication, isAdmin, 404 anti-IDOR). Suite esistente
+(report precedenti: 620 test, di cui RecommendedLineupServiceTest 9/9, B68LineupScorerTest 8/8,
+SquadServiceTest 10, SquadOwnershipHttpIntegrationTest 3+1 nuovo, SquadConcurrencyIntegrationTest 5)
+da rieseguire integralmente su macchina con toolchain.
+
+FRONTEND_TESTS=npx vitest run → 19 test files, 105/105 PASSED (fase 1: 18 file/103; fase 2:
++1 file RealDashboardPage.test.tsx con 2 test = 19/105). Targeted fase 2 (RealDashboardPage,
+IntelligencePages, intelligence/api, dashboardApi) = 4 file/21 PASSED. Nessun fallimento.
+TYPECHECK=npm run typecheck (tsc -b --pretty false) → PASS (0 errori).
+BUILD=npm run build (tsc -b && vite build) → PASS; dist generato; 0 errori.
+LINT (informato, non richiesto): 2 errori pre-esistenti in frontend/src/layouts/GlobalSearch.tsx
+(react-hooks/set-state-in-effect; @typescript-eslint/no-misused-promises), file non toccati;
+0 errori nei file modificati.
+
+MOCK_DATA_ADDED=NO
+PRODUCTION_CHANGED=NO
+DEPLOY_PERFORMED=NO
+COMMIT_CREATED=NO
+PUSH_PERFORMED=NO
+
+REMAINING_RISKS=1) Backend patch NON compilato/eseguito (BLOCKED): richiede run `./mvnw.cmd
+clean test` su macchina con JDK 21/Maven/PostgreSQL test. 2) La 4-arg recommend resta pubblica
+per test/callers interni senza owner check: non raggiungibile via HTTP; da rimuovere/rendere
+package-private in un blocco futuro. 3) LeagueConfigurationService.update può cambiare season_id
+senza migrare fantasy_squad_players → 404 lineup; serve guardia DB/API (fuori scope minimo,
+nessuna migration). 4) B66_FEATURES_V3 senza import certificato: verificare il DB reale (read-only)
+prima di dichiarare la pipeline di performance completa. 5) Player con club assente da
+season_clubs → 404 totale (basso). 6) Dashboard widget: gli altri pannelli mantengono il
+messaggio generico (fuori D02.25).
+
+NEXT_STEP=1) Macchina con toolchain: `.\mvnw.cmd clean test` (attesi 621+ test con il nuovo
+test HTTP lineup) e `.\mvnw.cmd package`; correggere eventuali errori di compilazione del test
+nuovo (firme MockMvc/JSONPath) prima di qualunque altra mossa. 2) Verifica read-only DB test:
+owner_username della rosa usata dai test, season_id dei fantasy_squad_players, V3 profiles.
+3) Verifica HTTP reale (dev/test): anonimo 401; owner-b su squadId owner-a 404; owner 200;
+matchday senza fixtures → 200 con empty state e warning; club senza club_strength_ratings →
+motivazione "difficoltà non disponibile". 4) Isolare la decisione su: (a) guardia per cambio
+season_id della league_configuration; (b) import certificato B66_FEATURES_V3; (c) eventuale
+rimozione dell'overload service 4-arg. 5) Nessun dato fake, fixture, statistica o rosa.
+
+===== END =====

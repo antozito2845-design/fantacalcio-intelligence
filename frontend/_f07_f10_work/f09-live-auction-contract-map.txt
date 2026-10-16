@@ -1,0 +1,6 @@
+F09 LIVE AUCTION CONTRACT MAP — 2026-08-22
+
+Namespace /api/v1/auction/sessions is authenticated; owner/admin access is enforced in AuctionSessionAccessService.
+POST /sessions body {squadId>0} -> SessionResponse. POST /{id}/activate, /complete -> SessionResponse. POST /{id}/nomination body {playerId,currentPrice} -> SessionResponse. POST /{id}/purchases body {playerId,buyerType,paidPrice?,idempotencyKey} -> PurchaseResponse. POST /{id}/decision body {proposedBid,currentMatchday?,horizon?,alternativeLimit?} -> decision response. GET /{id} -> SessionResponse. GET /{id}/state -> StateResponse with budget, purchases, player availability.
+Errors: 400 validation, 401, 403 owner, 404, 409 state/conflict/idempotency, 429, 5xx. Mutations are never automatically retried.
+Frontend polling: GET state every 10 seconds only on the live route and only while document.visibilityState=visible. No websocket/SSE exists; no realtime is simulated. Session recovery uses /auction/live/{sessionId} after re-login because Basic Auth is memory-only.

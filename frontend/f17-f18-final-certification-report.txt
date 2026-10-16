@@ -1,0 +1,209 @@
+FANTACALCIO INTELLIGENCE — F17-F18 FINAL CERTIFICATION & DEPLOY READINESS
+Certification date: 2026-08-22 (Europe/Rome)
+Scope: frontend only
+Workspace: C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence
+
+EXECUTIVE RESULT
+F17: PASS
+F18: PASS
+FRONTEND_FULL_CERTIFICATION: PASS
+DEPLOY_READINESS: PASS
+PROJECT_STATE: READY_FOR_DEPLOYMENT
+DEPLOY_BLOCKERS: 0
+
+SCOPE AND CHANGE CONTROL
+- Backend source/configuration/data were inspected read-only where required and were not modified by this certification.
+- The repository already contained extensive backend/data changes before F17-F18; they were preserved untouched.
+- No commit, push, deployment, dependency installation, database write, auction-session creation, or production mutation was performed.
+- Backend was started with the existing dev profile only for runtime integration, then the exact Maven/Java processes launched for this certification were stopped. Port 8080 was confirmed no longer listening.
+- Existing frontend development servers were not stopped or altered.
+
+CORRECTIVE HARDENING COMPLETED
+1. Added a global React FatalErrorBoundary around App in src/main.tsx.
+   - Safe, non-technical Italian fallback.
+   - role=alert and labelled heading.
+   - Explicit reload recovery action.
+   - No credential, stack-trace, debug, or raw exception disclosure.
+   - Dedicated unit test verifies fallback and suppression of technical error text.
+2. Added explicit aria-label values to real AppShell navigation links.
+   - Fixes missing accessible names when the tablet sidebar visually hides labels.
+   - Runtime recheck at 768 px confirms Dashboard, Giocatori and Calendario each retain an accessible name.
+
+FILES MODIFIED BY F17-F18
+- src/main.tsx
+- src/layouts/AppShell.tsx
+- src/components/feedback/FatalErrorBoundary.tsx
+- src/components/feedback/FatalErrorBoundary.module.css
+- src/components/feedback/FatalErrorBoundary.test.tsx
+- f17-f18-final-certification-report.txt
+
+QUALITY GATES (BACKEND OFF)
+TYPECHECK: PASS — tsc -b --pretty false, zero errors.
+LINT: PASS — eslint . --max-warnings 0, zero errors/warnings.
+TESTS: PASS — Vitest 13 files, 75 tests passed, 0 failed.
+BUILD: PASS — Vite 8.2.2, 1,979 modules transformed.
+FORMAT_CHECK: PASS — all matched files conform to Prettier.
+DEPENDENCY_AUDIT: PASS — npm audit --omit=dev reports 0 info, low, moderate, high, or critical vulnerabilities; 12 production dependencies audited.
+PRODUCTION_ARTIFACTS: PASS — dist/index.html 0.53 kB (0.30 kB gzip), CSS 36.21 kB (8.03 kB gzip), JS 482.10 kB (142.16 kB gzip).
+SOURCE_MAPS: PASS — no production .map artifacts emitted.
+
+RUNTIME INTEGRATION SMOKE (BACKEND ON)
+RUNTIME_INTEGRATION_SMOKE: PASS
+- Real backend: Spring Boot dev profile on localhost:8080; frontend through Vite localhost:5173 and /api/v1 proxy.
+- Dashboard: PASS — real system status UP, season 2026/2027, 498 catalogued players and 20 clubs observed.
+- /players: PASS — real catalogue rendered.
+- /players/44: PASS — real Abankwah detail rendered.
+- /auction: PASS — real auction intelligence rendered.
+- /lineup: PASS — public/degraded and authenticated behavior remained usable.
+- /calendar: PASS — real matchday and club controls rendered.
+- /scouting: PASS — valid empty-state rendered where the backend returned no arrivals.
+- /squad: PASS — unauthenticated direct access redirects to /login; authenticated SPA route renders "La tua rosa".
+- /auction/live: PASS — authenticated SPA route renders safe empty/start/recover state; no fake session was created.
+- /profile: PASS — guarded when anonymous and renders "Profilo autenticato" after login.
+- /admin: PASS — guarded when anonymous and renders "Data operations" for the dev admin account.
+- Unknown route: PASS — "Pagina non trovata" fallback rendered without horizontal overflow.
+- Login: PASS — valid Basic credentials accepted; invalid credentials are covered by automated test.
+- Logout: PASS — returns to public dashboard, clears query/auth state, and subsequent /squad access redirects to /login.
+- Refresh/direct navigation: PASS — protected access is lost and redirected to login, confirming volatile in-memory auth.
+- Runtime console after final code: 0 errors, 0 warnings, 0 uncaught exceptions, 0 React warnings.
+
+ROUTING AND AUTHORIZATION MATRIX
+- Public: /, /players, /players/:id, /auction, /lineup, /calendar, /scouting, /design-system, /login, /access-denied and wildcard 404.
+- Authenticated: /profile, /auction/live, /auction/live/:sessionId, /squad.
+- Admin: /admin, /admin/status.
+- PublicOnlyRoute prevents redundant login access after authentication.
+- ProtectedRoute redirects anonymous users to /login.
+- AdminRoute distinguishes authenticated non-admin access through /access-denied.
+- All declared paths resolve to an intentional page, guard, or 404 fallback.
+
+AUTH AND SENSITIVE DATA
+SENSITIVE_AUTH_PERSISTENCE: PASS
+- Username/password and the generated Basic Authorization value live only in React memory.
+- No localStorage, sessionStorage, IndexedDB, cookie, URL parameter, source constant, environment variable, log, or query-cache persistence was found.
+- Logout clears credentials, username/admin state, system-status state, and the TanStack Query cache.
+- Global HTTP 401 handling invokes logout.
+- Basic Auth production condition: HTTPS is mandatory; this is an explicit deployment requirement.
+
+API CLIENT AND ERROR SEMANTICS
+UNAUTHORIZED_DIRECT_FETCH_USAGE: PASS — the only source fetch call is inside src/api/client/httpClient.ts.
+API_BOUNDARY_VALIDATION: PASS — meaningful response payloads are parsed/safe-parsed through Zod at API boundaries. The squads unknown-array response is used only as an authentication success probe and is not consumed as business data.
+- Central client supports JSON, non-JSON, empty/204 responses, abort, timeout, and network failures.
+- Status semantics cover 400, 401, 403, 404, 409, 422, 429, and 5xx with stable application errors.
+- Authorization is produced dynamically by the in-memory auth callback.
+- No raw exception or backend detail is exposed by the new fatal fallback.
+
+QUERY ARCHITECTURE
+QUERY_ARCHITECTURE: PASS
+- TanStack Query remains the single server-state architecture.
+- Central query-key factories and scoped ad-hoc keys are distinct; no collision was found.
+- Dependent queries use enabled guards.
+- Squad/admin mutations invalidate the relevant query families.
+- Logout clears cached authenticated server data.
+- No business server state was duplicated into durable client storage.
+
+DATA INTEGRITY AND SOURCE HYGIENE
+NO_FAKE_BUSINESS_DATA: PASS
+- No mock/demo/fabricated business objects were found in production source.
+- MSW fixtures exist only under test code.
+- Valid backend empty states are displayed instead of invented players, sessions, prices, squads, or scouting arrivals.
+MSW_ACTIVE_IN_PRODUCTION: PASS — NO; MSW is imported only by test setup/tests.
+- No console.log, debugger, TODO, FIXME, HACK, ts-ignore, ts-nocheck, any, or double-cast pattern was found in frontend source.
+- One pre-existing file-level react-refresh eslint exception remains in AuthContext; it is scoped and documented as technical debt.
+
+ENVIRONMENT AND PRODUCTION CONFIGURATION
+FRONTEND_SECRETS: PASS — none found.
+PRODUCTION_ENV_READY: PASS
+- VITE_API_BASE_URL is validated with Zod and set to the same-origin path /api/v1 in development, test, and example configuration.
+- VITE_DEV_PROXY_TARGET is dev-server-only and defaults to http://localhost:8080.
+- Production requires the host/reverse proxy to route /api/v1 to the backend.
+- No credential or secret is exposed through VITE_* variables.
+
+PRODUCTION HOSTING CHECKLIST (REQUIRED, NON-BLOCKING CONFIGURATION)
+1. Serve the generated dist directory over HTTPS only.
+2. Configure SPA history fallback to index.html for direct navigation and reloads, excluding /api/v1 and static assets.
+3. Reverse-proxy /api/v1 to the Spring Boot backend or set VITE_API_BASE_URL to the approved backend URL before build.
+4. Set backend CORS_ALLOWED_ORIGINS to the exact HTTPS frontend origin(s). Production backend configuration rejects empty/wildcard origins.
+5. Forward Authorization and Content-Type headers; never log or cache Authorization values.
+6. Apply HSTS, Content-Security-Policy (including frame-ancestors), X-Content-Type-Options, Referrer-Policy and Permissions-Policy.
+7. Use immutable long-lived caching for hashed assets and no-cache/must-revalidate for index.html.
+8. Preserve backend CORS support for GET/POST/PUT/PATCH/DELETE/OPTIONS and the approved Authorization, Content-Type, Accept and Cache-Control headers.
+
+UI, RESPONSIVE AND ACCESSIBILITY
+DARK_MODE: PASS — dark is the default and all audited routes remain readable/usable.
+LIGHT_MODE: PASS — dashboard toggle sets the light theme and exposes the inverse accessible action.
+RESPONSIVE: PASS
+- 390x844: dashboard, players and calendar render without horizontal document overflow.
+- 768x900: dashboard, players and calendar render without horizontal document overflow; compact navigation names remain accessible after correction.
+- 1440x900: dashboard, players and calendar render without horizontal document overflow.
+ACCESSIBILITY: PASS
+- Semantic main, banner, complementary and named navigation landmarks present.
+- Primary pages have one meaningful h1 in runtime samples.
+- Form controls used in login/calendar expose accessible names.
+- Decorative icons are aria-hidden; icon buttons expose labels.
+- Fatal state uses role=alert and a labelled heading.
+- Keyboard Escape handling and focus return are present for the mobile menu.
+
+RUNTIME HEALTH
+CONSOLE_ERRORS: PASS — 0 in final runtime session.
+REACT_WARNINGS: PASS — 0 in final runtime session.
+UNCAUGHT_EXCEPTIONS: PASS — 0 in final runtime session.
+FATAL_ERROR_UX: PASS — global boundary plus automated failure-path test.
+
+BACKEND CONTRACT AND CHANGE CONTROL
+BACKEND_MODIFIED: NO
+BLOCKING_BACKEND_GAPS: NONE
+- Production CORS is environment-driven, rejects wildcard/empty origins, and supports the frontend's required methods/headers.
+- Basic Auth is contract-compatible; deployment must enforce HTTPS.
+- No backend change is required for frontend deployment readiness.
+
+F01-F16 REGRESSION
+F01_F16_REGRESSION: PASS
+- Existing route, auth, API, query, real-data, theme, responsive and error-state behavior remains covered.
+- Test baseline increased from 74 to 75 with the fatal-boundary regression test.
+- No previously certified capability was removed or redesigned.
+
+TECHNICAL DEBT REGISTER
+TECHNICAL_DEBT_COUNT: 5
+1. LOW — package.json has no dedicated preview script; the production artifact can still be served by any static host.
+2. LOW — the main JS bundle is monolithic (482.10 kB uncompressed / 142.16 kB gzip); future route-level lazy loading can improve first-load performance.
+3. LOW — AuthContext keeps one scoped react-refresh/only-export-components eslint exception due to context/provider colocation.
+4. LOW — FatalErrorBoundary intentionally has no production telemetry integration; safe local recovery exists, while a future privacy-reviewed observability provider could add diagnostics.
+5. LOW — backend/mvnw.cmd retains the pre-existing PowerShell Get-Item.Target anomaly. The wrapper was not modified during frontend certification. It does not block the certified application or frontend deployment readiness, but should be repaired before relying on the Maven Wrapper for production operational workflows and repeatable backend lifecycle commands.
+
+DEPLOY BLOCKER ASSESSMENT
+DEPLOY_BLOCKERS: 0
+- HTTPS, exact CORS origin, SPA fallback, reverse proxy, security headers and cache policy are mandatory deployment configuration, not unresolved code defects.
+- No missing secret, fake data, production MSW activation, direct-fetch bypass, auth persistence, failing gate, runtime exception, or blocking backend contract gap remains.
+
+FINAL CERTIFICATION
+F17: PASS
+F18: PASS
+TYPECHECK: PASS
+LINT: PASS
+TESTS: PASS (75/75)
+BUILD: PASS
+FORMAT_CHECK: PASS
+RUNTIME_INTEGRATION_SMOKE: PASS
+NO_FAKE_BUSINESS_DATA: PASS
+SENSITIVE_AUTH_PERSISTENCE: PASS
+UNAUTHORIZED_DIRECT_FETCH_USAGE: PASS
+API_BOUNDARY_VALIDATION: PASS
+QUERY_ARCHITECTURE: PASS
+MSW_ACTIVE_IN_PRODUCTION: NO
+FRONTEND_SECRETS: NONE
+PRODUCTION_ENV_READY: PASS
+DARK_MODE: PASS
+LIGHT_MODE: PASS
+RESPONSIVE: PASS
+ACCESSIBILITY: PASS
+CONSOLE_ERRORS: 0
+REACT_WARNINGS: 0
+UNCAUGHT_EXCEPTIONS: 0
+BACKEND_MODIFIED: NO
+BLOCKING_BACKEND_GAPS: NONE
+F01_F16_REGRESSION: PASS
+TECHNICAL_DEBT_COUNT: 5
+DEPLOY_BLOCKERS: 0
+FRONTEND_FULL_CERTIFICATION: PASS
+DEPLOY_READINESS: PASS
+PROJECT_STATE: READY_FOR_DEPLOYMENT

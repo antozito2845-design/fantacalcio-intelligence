@@ -1,0 +1,1565 @@
+================================================================================
+D02.25 — REAL LINEUP INTELLIGENCE
+PACCHETTO DI REVISIONE COMPLETO (documento di sola lettura)
+================================================================================
+Data di creazione del documento: 2026-08-26
+Worktree: /home/user/fantacalcio-intelligence
+Branch: arena/01a03d47-fantacalcio-intelligence
+Repository: https://github.com/alpionsobellini15-web/fantacalcio-intelligence
+Ultimo commit del repository: c245829 chore: import current project baseline
+
+CONTENUTO DEL DOCUMENTO
+  1. Stato Git attuale (file modificati/aggiunti)
+  2. Statistiche del diff
+  3. Diff completo dei file tracked modificati (backend + frontend)
+  4. Contenuto integrale dei file NUOVI (untracked): test frontend
+  5. Contenuto integrale del report D02-25-real-lineup-report.txt
+  6. Elenco definitivo dei file cambiati
+  7. Conferme di integrità (nessuna migration/DB/produzione/remote/commit)
+  8. Separazione: modifiche frontend / modifiche backend / test aggiunti /
+     test eseguiti / test bloccati / rischi ancora aperti
+
+NOTA: nessuna modifica al codice è stata eseguita per generare questo
+documento; il contenuto è stato prodotto con soli comandi di lettura
+(git status, git diff, git log, git diff --no-index, cat).
+
+================================================================================
+1. STATO GIT ATTUALE (git status --short)
+================================================================================
+ M backend/src/main/java/it/fantacalciointelligence/backend/config/SecurityConfiguration.java
+ M backend/src/main/java/it/fantacalciointelligence/backend/lineup/RecommendedLineupController.java
+ M backend/src/main/java/it/fantacalciointelligence/backend/lineup/RecommendedLineupService.java
+ M backend/src/test/java/it/fantacalciointelligence/backend/squad/SquadOwnershipHttpIntegrationTest.java
+ M frontend/src/api/contracts/dashboard.ts
+ M frontend/src/api/dashboardApi.ts
+ M frontend/src/features/intelligence/IntelligencePages.test.tsx
+ M frontend/src/features/intelligence/api.ts
+ M frontend/src/pages/LineupPage.tsx
+ M frontend/src/pages/RealDashboardPage.tsx
+?? D02-25-real-lineup-report.txt
+?? D02-25-review-package.txt
+?? frontend/src/api/dashboardApi.test.ts
+?? frontend/src/features/intelligence/api.test.ts
+?? frontend/src/pages/RealDashboardPage.test.tsx
+
+================================================================================
+2. STATISTICHE DEL DIFF (git diff --stat)
+================================================================================
+ .../backend/config/SecurityConfiguration.java      |   6 +-
+ .../lineup/RecommendedLineupController.java        |  14 +-
+ .../backend/lineup/RecommendedLineupService.java   | 199 ++++++++++++++++++++-
+ .../squad/SquadOwnershipHttpIntegrationTest.java   |  43 ++++-
+ frontend/src/api/contracts/dashboard.ts            |   5 +-
+ frontend/src/api/dashboardApi.ts                   |   8 +-
+ .../intelligence/IntelligencePages.test.tsx        |  75 +++++++-
+ frontend/src/features/intelligence/api.ts          |  33 +++-
+ frontend/src/pages/LineupPage.tsx                  | 105 ++++++++++-
+ frontend/src/pages/RealDashboardPage.tsx           |  38 +++-
+ 10 files changed, 492 insertions(+), 34 deletions(-)
+
+================================================================================
+3. DIFF COMPLETO — FILE TRACKED MODIFICATI (git diff)
+================================================================================
+diff --git a/backend/src/main/java/it/fantacalciointelligence/backend/config/SecurityConfiguration.java b/backend/src/main/java/it/fantacalciointelligence/backend/config/SecurityConfiguration.java
+index 4da32cc..4ca879b 100644
+--- a/backend/src/main/java/it/fantacalciointelligence/backend/config/SecurityConfiguration.java
++++ b/backend/src/main/java/it/fantacalciointelligence/backend/config/SecurityConfiguration.java
+@@ -112,6 +112,11 @@ public class SecurityConfiguration {
+                         // ====================================================
+                         // Public read/use APIs
+                         // ====================================================
++                        // NOTE: /api/v1/lineups/** is intentionally NOT in this
++                        // public list: it exposes the owner-scoped roster of an
++                        // authenticated user. It falls through to
++                        // anyRequest().authenticated() and the service enforces
++                        // squad ownership.
+ 
+                         .requestMatchers(
+                                 "/api/v1/system/status",
+@@ -123,7 +128,6 @@ public class SecurityConfiguration {
+                                 "/api/v1/league/**",
+                                 "/api/v1/fixtures/**",
+                                 "/api/v1/pairings/**",
+-                                "/api/v1/lineups/**",
+                                 "/api/v1/scouting",
+                                 "/api/v1/scouting/**",
+                                 "/actuator/health",
+diff --git a/backend/src/main/java/it/fantacalciointelligence/backend/lineup/RecommendedLineupController.java b/backend/src/main/java/it/fantacalciointelligence/backend/lineup/RecommendedLineupController.java
+index f3e9e5a..7c250b2 100644
+--- a/backend/src/main/java/it/fantacalciointelligence/backend/lineup/RecommendedLineupController.java
++++ b/backend/src/main/java/it/fantacalciointelligence/backend/lineup/RecommendedLineupController.java
+@@ -1,5 +1,6 @@
+ package it.fantacalciointelligence.backend.lineup;
+ 
++import org.springframework.security.core.Authentication;
+ import org.springframework.web.bind.annotation.GetMapping;
+ import org.springframework.web.bind.annotation.RequestMapping;
+ import org.springframework.web.bind.annotation.RequestParam;
+@@ -33,13 +34,22 @@ public class RecommendedLineupController {
+                     required = false,
+                     defaultValue = ""
+             )
+-            String unavailablePlayerIds
++            String unavailablePlayerIds,
++
++            Authentication authentication
+     ) {
+         return service.recommend(
+                 season,
+                 matchday,
+                 squadId,
+-                unavailablePlayerIds
++                unavailablePlayerIds,
++                authentication.getName(),
++                isAdmin(authentication)
+         );
+     }
++
++    private boolean isAdmin(Authentication authentication) {
++        return authentication.getAuthorities().stream()
++                .anyMatch(authority -> "ROLE_ADMIN".equals(authority.getAuthority()));
++    }
+ }
+diff --git a/backend/src/main/java/it/fantacalciointelligence/backend/lineup/RecommendedLineupService.java b/backend/src/main/java/it/fantacalciointelligence/backend/lineup/RecommendedLineupService.java
+index 1dbfe18..ad3af4c 100644
+--- a/backend/src/main/java/it/fantacalciointelligence/backend/lineup/RecommendedLineupService.java
++++ b/backend/src/main/java/it/fantacalciointelligence/backend/lineup/RecommendedLineupService.java
+@@ -62,19 +62,49 @@ public class RecommendedLineupService {
+         );
+     }
+ 
++    /**
++     * Ownership-aware HTTP path: the squad is always resolved for the
++     * authenticated principal (or an administrator) and never for another
++     * owner. This is the only path used by RecommendedLineupController.
++     */
+     @Transactional(readOnly = true)
+     public RecommendedLineupResponse recommend(
+             String season,
+             int matchday,
+             Long requestedSquadId,
+-            String unavailablePlayerIds
++            String unavailablePlayerIds,
++            String username,
++            boolean administrator
+     ) {
+ 
+-        if (matchday < 1 || matchday > 38) {
+-            throw new IllegalArgumentException(
+-                    "La giornata deve essere compresa tra 1 e 38"
+-            );
+-        }
++        Long squadId =
++                resolveSquadId(
++                        season,
++                        requestedSquadId,
++                        username,
++                        administrator
++                );
++
++        return buildRecommendation(
++                season,
++                matchday,
++                squadId,
++                unavailablePlayerIds
++        );
++    }
++
++    /**
++     * Compatibility path for internal callers and backend tests.
++     * It deliberately does NOT enforce ownership: it is not reachable
++     * through the HTTP controller anymore.
++     */
++    @Transactional(readOnly = true)
++    public RecommendedLineupResponse recommend(
++            String season,
++            int matchday,
++            Long requestedSquadId,
++            String unavailablePlayerIds
++    ) {
+ 
+         Long squadId =
+                 resolveSquadId(
+@@ -82,6 +112,27 @@ public class RecommendedLineupService {
+                         requestedSquadId
+                 );
+ 
++        return buildRecommendation(
++                season,
++                matchday,
++                squadId,
++                unavailablePlayerIds
++        );
++    }
++
++    private RecommendedLineupResponse buildRecommendation(
++            String season,
++            int matchday,
++            Long squadId,
++            String unavailablePlayerIds
++    ) {
++
++        if (matchday < 1 || matchday > 38) {
++            throw new IllegalArgumentException(
++                    "La giornata deve essere compresa tra 1 e 38"
++            );
++        }
++
+         List<PlayerCandidate> candidates =
+                 loadCandidates(
+                         season,
+@@ -377,6 +428,132 @@ public class RecommendedLineupService {
+                 );
+     }
+ 
++    /**
++     * Ownership-aware squad resolution used by the HTTP path:
++     * a requested squadId must belong to the authenticated principal,
++     * and without squadId only the principal's own active squad is used.
++     * Administrators may resolve any squad, mirroring SquadService.
++     */
++    private Long resolveSquadId(
++            String season,
++            Long requestedSquadId,
++            String username,
++            boolean administrator
++    ) {
++
++        if (requestedSquadId != null) {
++
++            return jdbcClient.sql("""
++                    SELECT squad.id
++
++                    FROM fantasy_squads squad
++
++                    WHERE squad.id = :squadId
++                      AND squad.active = TRUE
++
++                      AND (
++                          :administrator = TRUE
++                          OR LOWER(squad.owner_username)
++                             = LOWER(:username)
++                      )
++
++                      AND EXISTS (
++                          SELECT 1
++
++                          FROM fantasy_squad_players squad_player
++
++                          JOIN seasons season
++                              ON season.id =
++                                  squad_player.season_id
++
++                          WHERE squad_player.squad_id =
++                                  squad.id
++
++                            AND season.code = :season
++                      )
++                    """)
++                    .param(
++                            "squadId",
++                            requestedSquadId
++                    )
++                    .param(
++                            "username",
++                            username
++                    )
++                    .param(
++                            "administrator",
++                            administrator
++                    )
++                    .param(
++                            "season",
++                            season
++                    )
++                    .query(Long.class)
++                    .optional()
++                    .orElseThrow(() ->
++                            new ResourceNotFoundException(
++                                    "Rosa attiva non trovata: "
++                                            + requestedSquadId
++                                            + " per la stagione "
++                                            + season
++                            )
++                    );
++        }
++
++        return jdbcClient.sql("""
++                SELECT squad.id
++
++                FROM fantasy_squads squad
++
++                WHERE squad.active = TRUE
++
++                  AND (
++                      :administrator = TRUE
++                      OR LOWER(squad.owner_username)
++                         = LOWER(:username)
++                  )
++
++                  AND EXISTS (
++                      SELECT 1
++
++                      FROM fantasy_squad_players squad_player
++
++                      JOIN seasons season
++                          ON season.id =
++                              squad_player.season_id
++
++                      WHERE squad_player.squad_id =
++                              squad.id
++
++                        AND season.code = :season
++                  )
++
++                ORDER BY squad.id
++                LIMIT 1
++                """)
++                .param(
++                        "username",
++                        username
++                )
++                .param(
++                        "administrator",
++                        administrator
++                )
++                .param(
++                        "season",
++                        season
++                )
++                .query(Long.class)
++                .optional()
++                .orElseThrow(() ->
++                        new ResourceNotFoundException(
++                                "Nessuna rosa attiva trovata "
++                                        + "per la stagione "
++                                        + season
++                        )
++                );
++    }
++
+     private List<PlayerCandidate> loadCandidates(
+             String season,
+             int matchday,
+@@ -1273,8 +1450,14 @@ public class RecommendedLineupService {
+ 
+             evidence.add(
+                     "difficolt\u00E0 "
+-                            + roleMatchup.difficultyScore()
+-                            + "/100"
++                            + (
++                                    roleMatchup == null
++                                            || roleMatchup.difficultyScore()
++                                                    == null
++                                            ? "non disponibile"
++                                            : roleMatchup.difficultyScore()
++                                                    + "/100"
++                            )
+             );
+ 
+             evidence.add(
+diff --git a/backend/src/test/java/it/fantacalciointelligence/backend/squad/SquadOwnershipHttpIntegrationTest.java b/backend/src/test/java/it/fantacalciointelligence/backend/squad/SquadOwnershipHttpIntegrationTest.java
+index 8ff3d6b..c04dd09 100644
+--- a/backend/src/test/java/it/fantacalciointelligence/backend/squad/SquadOwnershipHttpIntegrationTest.java
++++ b/backend/src/test/java/it/fantacalciointelligence/backend/squad/SquadOwnershipHttpIntegrationTest.java
+@@ -33,7 +33,7 @@ class SquadOwnershipHttpIntegrationTest {
+     void fixture() {
+         jdbc.sql("DELETE FROM fantasy_squads WHERE owner_username IN ('owner-a','owner-b','disabled-owner')")
+                 .update();
+-        jdbc.sql("DELETE FROM app_users WHERE username IN ('owner-a','owner-b','disabled-owner')")
++        jdbc.sql("DELETE FROM app_users WHERE username IN ('owner-a','owner-b','disabled-owner','legacy-owner')")
+                 .update();
+         createUser("owner-a", true);
+         createUser("owner-b", true);
+@@ -97,6 +97,47 @@ class SquadOwnershipHttpIntegrationTest {
+                 .andExpect(status().isNotFound());
+     }
+ 
++    @Test
++    void lineupRequiresAuthenticationAndEnforcesSquadOwnership() throws Exception {
++        // Test-seeded active squad with 23 players, owner 'legacy-owner'.
++        Long ownedSquadId = jdbc.sql("""
++                SELECT squad.id
++                FROM fantasy_squads squad
++                WHERE squad.owner_username = 'legacy-owner'
++                  AND squad.active = TRUE
++                ORDER BY squad.id
++                LIMIT 1
++                """)
++                .query(Long.class)
++                .optional()
++                .orElseThrow();
++        createUser("legacy-owner", true);
++
++        // Anonymous callers can no longer read a roster.
++        mockMvc.perform(get("/api/v1/lineups/recommended")
++                        .param("matchday", "1")
++                        .param("season", "2026/2027")
++                        .param("squadId", ownedSquadId.toString()))
++                .andExpect(status().isUnauthorized());
++
++        // Another user receives the same 404 as a non-existent squad (anti-IDOR).
++        mockMvc.perform(get("/api/v1/lineups/recommended")
++                        .with(httpBasic("owner-b", "password-owner-b"))
++                        .param("matchday", "1")
++                        .param("season", "2026/2027")
++                        .param("squadId", ownedSquadId.toString()))
++                .andExpect(status().isNotFound());
++
++        // The owner can read the recommendation.
++        mockMvc.perform(get("/api/v1/lineups/recommended")
++                        .with(httpBasic("legacy-owner", "password-legacy-owner"))
++                        .param("matchday", "1")
++                        .param("season", "2026/2027")
++                        .param("squadId", ownedSquadId.toString()))
++                .andExpect(status().isOk())
++                .andExpect(jsonPath("$.squadId").value(ownedSquadId));
++    }
++
+     private void createSquad(String username, String name) throws Exception {
+         mockMvc.perform(post("/api/v1/squads")
+                         .with(httpBasic(username, "password-" + username))
+diff --git a/frontend/src/api/contracts/dashboard.ts b/frontend/src/api/contracts/dashboard.ts
+index 872c438..b46d1a3 100644
+--- a/frontend/src/api/contracts/dashboard.ts
++++ b/frontend/src/api/contracts/dashboard.ts
+@@ -96,8 +96,9 @@ export const lineupPlayerSchema = z.object({
+   role: z.string(),
+   opponent: z.string(),
+   home: z.boolean(),
+-  fixtureDifficulty: z.number(),
+-  selectionScore: z.number(),
++  // The real engine omits missing signals as null; it never invents a neutral value.
++  fixtureDifficulty: z.number().nullable(),
++  selectionScore: z.number().nullable(),
+   availabilityStatus: z.string().nullable(),
+   reason: z.string(),
+ });
+diff --git a/frontend/src/api/dashboardApi.ts b/frontend/src/api/dashboardApi.ts
+index 866b613..9fdf93a 100644
+--- a/frontend/src/api/dashboardApi.ts
++++ b/frontend/src/api/dashboardApi.ts
+@@ -50,10 +50,16 @@ export const dashboardApi = {
+     ),
+   fixtures: (season?: string, matchday = 1) =>
+     getValidated(query(`/fixtures/matchday/${matchday}`, { season }), fixtureSchema.array()),
+-  lineup: (season?: string, matchday = 1, squadId?: number) =>
++  lineup: (
++    season?: string,
++    matchday = 1,
++    squadId?: number,
++    getAuthorization?: () => string | undefined,
++  ) =>
+     getValidated(
+       query('/lineups/recommended', { season, matchday, squadId }),
+       recommendedLineupSchema,
++      getAuthorization,
+     ),
+   scouting: (season?: string) =>
+     getValidated(query('/scouting/arrivals', { season }), scoutingArrivalSchema.array()),
+diff --git a/frontend/src/features/intelligence/IntelligencePages.test.tsx b/frontend/src/features/intelligence/IntelligencePages.test.tsx
+index 545da58..cf4ddc5 100644
+--- a/frontend/src/features/intelligence/IntelligencePages.test.tsx
++++ b/frontend/src/features/intelligence/IntelligencePages.test.tsx
+@@ -167,10 +167,42 @@ describe('F11 Lineup', () => {
+     expect(screen.getByText('4-3-3')).toBeVisible();
+     expect(screen.getAllByText(/Motivazione reale/).length).toBeGreaterThan(0);
+   });
+-  it('mostra empty state senza titolari', async () => {
++  it('inoltra stagione, rosa e Basic Auth reali al motore', async () => {
++    let target: URL | undefined;
++    let authorization: string | null = null;
++    server.use(
++      http.get('/api/v1/lineups/recommended', ({ request }) => {
++        target = new URL(request.url);
++        authorization = request.headers.get('authorization');
++        return HttpResponse.json(lineup);
++      }),
++    );
++    window.history.replaceState({}, '', '/lineup');
++    render(<App />);
++    expect((await screen.findAllByText('Titolare reale')).length).toBeGreaterThan(0);
++    expect(target?.searchParams.get('season')).toBe('2026-2027');
++    expect(target?.searchParams.get('matchday')).toBe('1');
++    expect(target?.searchParams.get('squadId')).toBe('1');
++    expect(authorization).toBe('Basic test-only');
++  });
++  it('mostra empty state con motivi reali del backend', async () => {
+     server.use(
+       http.get('/api/v1/lineups/recommended', () =>
+-        HttpResponse.json({ ...lineup, starters: [], bench: [], selectedPlayers: 0 }),
++        HttpResponse.json({
++          ...lineup,
++          complete: false,
++          starters: [],
++          bench: [],
++          selectedPlayers: 0,
++          missingPlayers: 11,
++          roles: {
++            P: { required: 1, selected: 0, missing: 1 },
++            D: { required: 4, selected: 0, missing: 4 },
++            C: { required: 3, selected: 0, missing: 3 },
++            A: { required: 3, selected: 0, missing: 3 },
++          },
++          warnings: ['Evidenza reale insufficiente'],
++        }),
+       ),
+     );
+     window.history.replaceState({}, '', '/lineup');
+@@ -178,6 +210,43 @@ describe('F11 Lineup', () => {
+     expect(
+       await screen.findByRole('heading', { name: 'Nessuna formazione disponibile' }),
+     ).toBeVisible();
++    expect(screen.getByText(/mancano 11 giocatori classificabili/)).toBeVisible();
++    expect(screen.getByText(/Reparti scoperti: P \(1\) · D \(4\) · C \(3\) · A \(3\)/)).toBeVisible();
++    expect(screen.getByText('Evidenza reale insufficiente')).toBeVisible();
++    expect(screen.getByRole('link', { name: /Completa la rosa/ })).toBeVisible();
++  });
++  it('distingue la rosa non riconosciuta dal motore', async () => {
++    server.use(
++      http.get('/api/v1/lineups/recommended', () =>
++        HttpResponse.json(
++          {
++            timestamp: '2026-08-26T10:00:00Z',
++            status: 404,
++            error: 'Not Found',
++            message: 'Rosa attiva non trovata: 1 per la stagione 2026/2027',
++            path: '/api/v1/lineups/recommended',
++          },
++          { status: 404 },
++        ),
++      ),
++    );
++    window.history.replaceState({}, '', '/lineup');
++    render(<App />);
++    expect(await screen.findByRole('link', { name: 'Verifica la rosa' })).toBeVisible();
++    expect(screen.getByText(/non riconosce la rosa per la stagione/)).toBeVisible();
++  });
++  it('distingue una risposta non conforme al contratto', async () => {
++    server.use(
++      http.get('/api/v1/lineups/recommended', () =>
++        HttpResponse.json({ ...lineup, formationScore: 'alto' }),
++      ),
++    );
++    window.history.replaceState({}, '', '/lineup');
++    render(<App />);
++    expect(
++      await screen.findByText(/La risposta del backend non è conforme al contratto/),
++    ).toBeVisible();
++    expect(screen.getByRole('button', { name: 'Riprova' })).toBeEnabled();
+   });
+   it('mostra errore e retry', async () => {
+     server.use(
+@@ -185,7 +254,7 @@ describe('F11 Lineup', () => {
+     );
+     window.history.replaceState({}, '', '/lineup');
+     render(<App />);
+-    expect(await screen.findByText(/Formazione non disponibile/)).toBeVisible();
++    expect(await screen.findByText(/Errore interno del motore di calcolo/)).toBeVisible();
+     expect(screen.getByRole('button', { name: 'Riprova' })).toBeEnabled();
+   });
+   it('non invoca il motore e invita a completare una rosa sotto gli undici', async () => {
+diff --git a/frontend/src/features/intelligence/api.ts b/frontend/src/features/intelligence/api.ts
+index 428064b..1629472 100644
+--- a/frontend/src/features/intelligence/api.ts
++++ b/frontend/src/features/intelligence/api.ts
+@@ -1,5 +1,6 @@
+ import { z } from 'zod';
+ import { httpRequest } from '@/api/client/httpClient';
++import { AppError } from '@/api/errors/AppError';
+ 
+ const number = z.number();
+ const nullableNumber = number.nullable();
+@@ -108,14 +109,38 @@ function qs(values: Record<string, string | number | undefined>) {
+   });
+   return p.toString();
+ }
+-async function parse<T>(path: string, schema: z.ZodType<T>, signal?: AbortSignal) {
+-  return schema.parse(await httpRequest<unknown>(path, { signal }));
++async function parse<T>(
++  path: string,
++  schema: z.ZodType<T>,
++  signal?: AbortSignal,
++  getAuthorization?: () => string | undefined,
++) {
++  const body = await httpRequest<unknown>(path, { signal, getAuthorization });
++  const parsed = schema.safeParse(body);
++  if (!parsed.success) {
++    throw new AppError('Il servizio ha restituito dati non conformi al contratto', {
++      kind: 'invalid-response',
++      cause: parsed.error,
++    });
++  }
++  return parsed.data;
+ }
+ export const intelligenceApi = {
+   seasons: (signal?: AbortSignal) => parse('/seasons', seasonSchema.array(), signal),
+   clubs: (signal?: AbortSignal) => parse('/clubs', clubSchema.array(), signal),
+-  lineup: (matchday: number, squadId?: number, signal?: AbortSignal) =>
+-    parse(`/lineups/recommended?${qs({ matchday, squadId })}`, lineupSchema, signal),
++  lineup: (
++    matchday: number,
++    season?: string,
++    squadId?: number,
++    getAuthorization?: () => string | undefined,
++    signal?: AbortSignal,
++  ) =>
++    parse(
++      `/lineups/recommended?${qs({ season, matchday, squadId })}`,
++      lineupSchema,
++      signal,
++      getAuthorization,
++    ),
+   fixtures: (matchday: number, signal?: AbortSignal) =>
+     parse(`/fixtures/matchday/${matchday}`, fixtureSchema.array(), signal),
+   matchups: (club: string, fromMatchday: number, toMatchday: number, signal?: AbortSignal) =>
+diff --git a/frontend/src/pages/LineupPage.tsx b/frontend/src/pages/LineupPage.tsx
+index 6161482..305bb2f 100644
+--- a/frontend/src/pages/LineupPage.tsx
++++ b/frontend/src/pages/LineupPage.tsx
+@@ -22,6 +22,69 @@ function Player({ player }: { player: LineupPlayer }) {
+     </article>
+   );
+ }
++
++function lineupErrorContent(error: unknown): { title: string; detail: string } {
++  if (!(error instanceof AppError)) {
++    return {
++      title: 'Formazione non disponibile',
++      detail: 'La risposta del backend non è conforme al contratto della formazione.',
++    };
++  }
++  switch (error.kind) {
++    case 'not-found':
++      return {
++        title: 'Formazione non disponibile',
++        detail: `Il motore non riconosce la rosa per la stagione richiesta: ${error.message}.`,
++      };
++    case 'invalid-response':
++      return {
++        title: 'Formazione non disponibile',
++        detail: 'La risposta del backend non è conforme al contratto della formazione.',
++      };
++    case 'network':
++    case 'timeout':
++      return {
++        title: 'Formazione non disponibile',
++        detail: 'Il servizio di calcolo non è raggiungibile da questo browser.',
++      };
++    case 'server':
++      return {
++        title: 'Formazione non disponibile',
++        detail: 'Errore interno del motore di calcolo.',
++      };
++    default:
++      return {
++        title: 'Formazione non disponibile',
++        detail: error.status
++          ? `Richiesta non riuscita (HTTP ${error.status}): ${error.message}`
++          : error.message,
++      };
++  }
++}
++
++function LineupErrorState({
++  error,
++  onRetry,
++}: {
++  error: unknown;
++  onRetry: () => void;
++}) {
++  const content = lineupErrorContent(error);
++  return (
++    <section className={`${shared.panel} ${shared.status} ${shared.error}`}>
++      <h2>{content.title}</h2>
++      <p>{content.detail}</p>
++      {error instanceof AppError && error.kind === 'not-found' && (
++        <Link className={shared.button} to="/squad">
++          Verifica la rosa
++        </Link>
++      )}
++      <button className={shared.button} onClick={onRetry}>
++        Riprova
++      </button>
++    </section>
++  );
++}
+ export function LineupPage() {
+   const auth = useAuth();
+   const [url, setUrl] = useSearchParams();
+@@ -33,7 +96,14 @@ export function LineupPage() {
+   });
+   const query = useQuery({
+     queryKey: queryKeys.lineup(squad.data?.season, matchday, squad.data?.id),
+-    queryFn: ({ signal }) => intelligenceApi.lineup(matchday, squad.data?.id, signal),
++    queryFn: ({ signal }) =>
++      intelligenceApi.lineup(
++        matchday,
++        squad.data?.season,
++        squad.data?.id,
++        auth.getAuthorization,
++        signal,
++      ),
+     enabled: auth.status === 'authenticated' && squad.isSuccess && squad.data.totalPlayers >= 11,
+     retry: false,
+   });
+@@ -95,16 +165,35 @@ export function LineupPage() {
+         ) : query.isPending ? (
+           <section className={`${shared.panel} ${shared.status}`}>Calcolo formazione…</section>
+         ) : query.isError ? (
+-          <section className={`${shared.panel} ${shared.status} ${shared.error}`}>
+-            Formazione non disponibile.{' '}
+-            <button className={shared.button} onClick={() => void query.refetch()}>
+-              Riprova
+-            </button>
+-          </section>
++          <LineupErrorState error={query.error} onRetry={() => void query.refetch()} />
+         ) : query.data.starters.length === 0 ? (
+           <section className={`${shared.panel} ${shared.status}`}>
+             <h2>Nessuna formazione disponibile</h2>
+-            <p>La rosa non contiene candidati classificabili per questa giornata.</p>
++            <p>
++              {query.data.complete
++                ? 'Il motore non ha prodotto titolari per questa giornata.'
++                : `Il motore ha selezionato ${query.data.selectedPlayers} su 11: mancano ${query.data.missingPlayers} giocatori classificabili con evidenza reale.`}
++            </p>
++            {Object.entries(query.data.roles).some(([, summary]) => summary.missing > 0) && (
++              <p>
++                Reparti scoperti:{' '}
++                {Object.entries(query.data.roles)
++                  .filter(([, summary]) => summary.missing > 0)
++                  .map(([role, summary]) => `${role} (${summary.missing})`)
++                  .join(' · ')}
++                .
++              </p>
++            )}
++            {query.data.warnings.length > 0 && (
++              <ul className={shared.list}>
++                {query.data.warnings.map((warning) => (
++                  <li key={warning}>{warning}</li>
++                ))}
++              </ul>
++            )}
++            <Link className={shared.button} to="/squad">
++              Completa la rosa con giocatori reali
++            </Link>
+           </section>
+         ) : (
+           <>
+diff --git a/frontend/src/pages/RealDashboardPage.tsx b/frontend/src/pages/RealDashboardPage.tsx
+index c05d5e6..84fa377 100644
+--- a/frontend/src/pages/RealDashboardPage.tsx
++++ b/frontend/src/pages/RealDashboardPage.tsx
+@@ -17,16 +17,19 @@ import {
+ } from '@/components/data-display';
+ import { Badge, Card, IconButton, Panel, StatusBadge } from '@/components/ui';
+ import { AppShell } from '@/layouts/AppShell';
++import { AppError } from '@/api/errors/AppError';
+ import styles from './DesignSystemPage.module.css';
+ 
+ function WidgetState({
+   loading,
+   error,
++  errorText,
+   empty,
+   children,
+ }: {
+   loading: boolean;
+   error: boolean;
++  errorText?: string;
+   empty?: boolean;
+   children: ReactNode;
+ }) {
+@@ -34,13 +37,32 @@ function WidgetState({
+   if (error)
+     return (
+       <p className={`${styles.widgetState} ${styles.widgetError}`}>
+-        Dati temporaneamente non disponibili.
++        {errorText ?? 'Dati temporaneamente non disponibili.'}
+       </p>
+     );
+   if (empty) return <p className={styles.widgetState}>Nessun dato disponibile.</p>;
+   return <>{children}</>;
+ }
+ 
++function lineupErrorText(error: unknown): string {
++  if (!(error instanceof AppError)) return 'Dati temporaneamente non disponibili.';
++  switch (error.kind) {
++    case 'not-found':
++      return `Rosa non riconosciuta dal motore: ${error.message}`;
++    case 'invalid-response':
++      return 'Il servizio ha restituito dati non conformi al contratto della formazione.';
++    case 'server':
++      return 'Errore interno del motore di calcolo.';
++    case 'network':
++    case 'timeout':
++      return 'Il servizio di calcolo non è raggiungibile.';
++    default:
++      return error.status
++        ? `Richiesta non riuscita (HTTP ${error.status}).`
++        : error.message;
++  }
++}
++
+ function difficulty(value: string): Difficulty {
+   const normalized = value.toUpperCase();
+   if (normalized.includes('EASY') || normalized.includes('FACILE')) return 'EASY';
+@@ -82,9 +104,16 @@ export function RealDashboardPage() {
+     retry: false,
+   });
+   const lineup = useQuery({
+-    queryKey: queryKeys.lineup(currentSeason, 1, squad.data?.id),
+-    queryFn: () => dashboardApi.lineup(currentSeason, 1, squad.data?.id),
+-    enabled: Boolean(currentSeason) && squad.isSuccess && squad.data.totalPlayers >= 11,
++    queryKey: queryKeys.lineup(squad.data?.season ?? currentSeason, 1, squad.data?.id),
++    queryFn: () =>
++      dashboardApi.lineup(
++        squad.data?.season ?? currentSeason,
++        1,
++        squad.data?.id,
++        auth.getAuthorization,
++      ),
++    enabled:
++      Boolean(currentSeason) && squad.isSuccess && squad.data.totalPlayers >= 11,
+   });
+   const scouting = useQuery({
+     queryKey: queryKeys.scouting(currentSeason),
+@@ -220,6 +249,7 @@ export function RealDashboardPage() {
+               <WidgetState
+                 loading={lineup.isLoading}
+                 error={lineup.isError}
++                errorText={lineupErrorText(lineup.error)}
+                 empty={lineup.data?.starters.length === 0}
+               >
+                 <div className={styles.lineup} aria-label="Formazione consigliata reale">
+
+================================================================================
+4A. FILE NUOVO — frontend/src/features/intelligence/api.test.ts
+================================================================================
+diff --git a/frontend/src/features/intelligence/api.test.ts b/frontend/src/features/intelligence/api.test.ts
+new file mode 100644
+index 0000000..877cbee
+--- /dev/null
++++ b/frontend/src/features/intelligence/api.test.ts
+@@ -0,0 +1,106 @@
++import { describe, expect, it } from 'vitest';
++import { http, HttpResponse } from 'msw';
++import { server } from '@/test/server';
++import { AppError } from '@/api/errors/AppError';
++import { intelligenceApi, lineupSchema } from './api';
++
++const lineup = {
++  season: '2026-2027',
++  matchday: 1,
++  squadId: 1,
++  formation: '4-3-3',
++  complete: true,
++  selectedPlayers: 11,
++  missingPlayers: 0,
++  formationScore: 80,
++  roles: {
++    P: { required: 1, selected: 1, missing: 0 },
++    D: { required: 4, selected: 4, missing: 0 },
++    C: { required: 3, selected: 3, missing: 0 },
++    A: { required: 3, selected: 3, missing: 0 },
++  },
++  starters: [
++    {
++      playerId: 1,
++      playerName: 'Titolare reale',
++      club: 'Club test',
++      role: 'P',
++      opponent: 'Avversario test',
++      home: true,
++      fixtureDifficulty: 42,
++      selectionScore: 80,
++      availabilityStatus: 'AVAILABLE',
++      reason: 'Motivazione reale dal backend.',
++    },
++  ],
++  bench: [],
++  maxSubstitutions: 3,
++  usedSubstitutions: 0,
++  remainingSubstitutions: 3,
++  substitutions: [],
++  warnings: [],
++};
++
++describe('intelligenceApi lineups', () => {
++  it('inoltra stagione, giornata, rosa e Basic Auth al motore', async () => {
++    let target: URL | undefined;
++    let authorization: string | null = null;
++    server.use(
++      http.get('/api/v1/lineups/recommended', ({ request }) => {
++        target = new URL(request.url);
++        authorization = request.headers.get('authorization');
++        return HttpResponse.json(lineup);
++      }),
++    );
++    const data = await intelligenceApi.lineup(
++      3,
++      '2026/2027',
++      42,
++      () => 'Basic test-only',
++    );
++    expect(data.season).toBe('2026-2027');
++    expect(target?.searchParams.get('season')).toBe('2026/2027');
++    expect(target?.searchParams.get('matchday')).toBe('3');
++    expect(target?.searchParams.get('squadId')).toBe('42');
++    expect(authorization).toBe('Basic test-only');
++  });
++
++  it('accetta i segnali reali assenti (null)', async () => {
++    server.use(
++      http.get('/api/v1/lineups/recommended', () =>
++        HttpResponse.json({
++          ...lineup,
++          starters: [
++            {
++              ...lineup.starters[0],
++              fixtureDifficulty: null,
++              selectionScore: null,
++              availabilityStatus: null,
++            },
++          ],
++        }),
++      ),
++    );
++    const data = await intelligenceApi.lineup(1, '2026/2027', 1);
++    const starter = data.starters[0];
++    expect(starter?.selectionScore).toBeNull();
++    expect(starter?.fixtureDifficulty).toBeNull();
++    expect(starter?.availabilityStatus).toBeNull();
++  });
++
++  it('classifica come invalid-response una risposta non conforme al contratto', async () => {
++    server.use(
++      http.get('/api/v1/lineups/recommended', () =>
++        HttpResponse.json({ season: '2026-2027' }),
++      ),
++    );
++    await expect(intelligenceApi.lineup(1)).rejects.toBeInstanceOf(AppError);
++    await expect(intelligenceApi.lineup(1)).rejects.toMatchObject({
++      kind: 'invalid-response',
++    });
++  });
++
++  it('rifiuta un contratto lineup malformato', () => {
++    expect(() => lineupSchema.parse({ season: '2026-2027' })).toThrow();
++  });
++});
+
+================================================================================
+4B. FILE NUOVO — frontend/src/api/dashboardApi.test.ts
+================================================================================
+diff --git a/frontend/src/api/dashboardApi.test.ts b/frontend/src/api/dashboardApi.test.ts
+new file mode 100644
+index 0000000..5c260bc
+--- /dev/null
++++ b/frontend/src/api/dashboardApi.test.ts
+@@ -0,0 +1,63 @@
++import { describe, expect, it } from 'vitest';
++import { http, HttpResponse } from 'msw';
++import { server } from '@/test/server';
++import { AppError } from '@/api/errors/AppError';
++import { dashboardApi } from './dashboardApi';
++
++describe('dashboardApi lineup contract', () => {
++  it('accetta i segnali reali assenti (null) e inoltra Basic Auth', async () => {
++    let authorization: string | null = null;
++    server.use(
++      http.get('/api/v1/lineups/recommended', ({ request }) => {
++        authorization = request.headers.get('authorization');
++        return HttpResponse.json({
++          season: '2026-2027',
++          matchday: 1,
++          squadId: 1,
++          formation: '4-3-3',
++          complete: true,
++          selectedPlayers: 11,
++          missingPlayers: 0,
++          formationScore: 80,
++          starters: [
++            {
++              playerId: 1,
++              playerName: 'Titolare reale',
++              club: 'Club test',
++              role: 'P',
++              opponent: 'Avversario test',
++              home: true,
++              fixtureDifficulty: null,
++              selectionScore: null,
++              availabilityStatus: 'UNKNOWN',
++              reason: 'Evidenza reale dal backend.',
++            },
++          ],
++          warnings: [],
++        });
++      }),
++    );
++    const data = await dashboardApi.lineup(
++      '2026-2027',
++      1,
++      1,
++      () => 'Basic test-only',
++    );
++    const starter = data.starters[0];
++    expect(starter?.selectionScore).toBeNull();
++    expect(starter?.fixtureDifficulty).toBeNull();
++    expect(authorization).toBe('Basic test-only');
++  });
++
++  it('classifica come invalid-response una risposta non conforme al contratto', async () => {
++    server.use(
++      http.get('/api/v1/lineups/recommended', () =>
++        HttpResponse.json({ season: '2026-2027' }),
++      ),
++    );
++    await expect(dashboardApi.lineup('2026-2027', 1, 1)).rejects.toBeInstanceOf(AppError);
++    await expect(dashboardApi.lineup('2026-2027', 1, 1)).rejects.toMatchObject({
++      kind: 'invalid-response',
++    });
++  });
++});
+
+================================================================================
+4C. FILE NUOVO — frontend/src/pages/RealDashboardPage.test.tsx
+================================================================================
+diff --git a/frontend/src/pages/RealDashboardPage.test.tsx b/frontend/src/pages/RealDashboardPage.test.tsx
+new file mode 100644
+index 0000000..457b0c0
+--- /dev/null
++++ b/frontend/src/pages/RealDashboardPage.test.tsx
+@@ -0,0 +1,150 @@
++import { cleanup, render, screen } from '@testing-library/react';
++import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
++import { MemoryRouter } from 'react-router-dom';
++import { QueryClientProvider } from '@tanstack/react-query';
++import { http, HttpResponse } from 'msw';
++import { server } from '@/test/server';
++import { createAppQueryClient } from '@/app/providers/queryClient';
++import { RealDashboardPage } from './RealDashboardPage';
++
++vi.mock('@/auth/useAuth', () => ({
++  useAuth: () => ({
++    status: 'authenticated',
++    username: 'utente-test',
++    isAdmin: false,
++    getAuthorization: () => 'Basic test-only',
++    login: vi.fn(),
++    logout: vi.fn(),
++  }),
++}));
++
++const squad = {
++  id: 7,
++  name: 'Rosa reale dashboard',
++  season: '2026-2027',
++  initialBudget: 1000,
++  spentBudget: 100,
++  remainingBudget: 900,
++  totalPlayers: 25,
++  maximumPlayers: 25,
++  roles: {},
++  players: [],
++};
++
++const lineup = {
++  season: '2026-2027',
++  matchday: 1,
++  squadId: 7,
++  formation: '4-3-3',
++  complete: true,
++  selectedPlayers: 11,
++  missingPlayers: 0,
++  formationScore: 80,
++  starters: [
++    {
++      playerId: 1,
++      playerName: 'Titolare reale dashboard',
++      club: 'Club test',
++      role: 'P',
++      opponent: 'Avversario test',
++      home: true,
++      fixtureDifficulty: 42,
++      selectionScore: 80,
++      availabilityStatus: 'AVAILABLE',
++      reason: 'Motivazione reale dal backend.',
++    },
++  ],
++  warnings: [],
++};
++
++function renderPage() {
++  const queryClient = createAppQueryClient();
++  render(
++    <QueryClientProvider client={queryClient}>
++      <MemoryRouter>
++        <RealDashboardPage />
++      </MemoryRouter>
++    </QueryClientProvider>,
++  );
++}
++
++beforeEach(() => {
++  server.use(
++    http.get('/api/v1/system/status', () =>
++      HttpResponse.json({
++        status: 'UP',
++        application: 'FI',
++        version: '1.0',
++        environment: 'test',
++        checkedAt: '2026-08-26T10:00:00Z',
++      }),
++    ),
++    http.get('/api/v1/seasons', () =>
++      HttpResponse.json([
++        { id: 1, code: '2026-2027', startYear: 2026, endYear: 2027, current: true },
++      ]),
++    ),
++    http.get('/api/v1/clubs', () => HttpResponse.json([])),
++    http.get('/api/v1/players', () =>
++      HttpResponse.json({ content: [], page: 0, size: 5, totalElements: 0, totalPages: 0 }),
++    ),
++    http.get('/api/v1/auction/intelligence-rankings', () =>
++      HttpResponse.json({
++        season: '2026-2027',
++        budget: 500,
++        teams: 8,
++        defenseModifier: true,
++        role: null,
++        club: null,
++        maximumPrice: null,
++        recommendation: null,
++        excludeUnavailable: true,
++        totalPlayers: 0,
++        players: [],
++      }),
++    ),
++    http.get('/api/v1/fixtures/matchday/1', () => HttpResponse.json([])),
++    http.get('/api/v1/scouting/arrivals', () => HttpResponse.json([])),
++    http.get('/api/v1/squad', () => HttpResponse.json(squad)),
++  );
++});
++
++afterEach(() => {
++  cleanup();
++});
++
++describe('Dashboard lineup widget D02.25', () => {
++  it('inoltra stagione della rosa e Basic Auth al motore', async () => {
++    let target: URL | undefined;
++    let authorization: string | null = null;
++    server.use(
++      http.get('/api/v1/lineups/recommended', ({ request }) => {
++        target = new URL(request.url);
++        authorization = request.headers.get('authorization');
++        return HttpResponse.json(lineup);
++      }),
++    );
++    renderPage();
++    expect(await screen.findByText(/Titolare reale dashboard/)).toBeVisible();
++    expect(target?.searchParams.get('season')).toBe('2026-2027');
++    expect(target?.searchParams.get('matchday')).toBe('1');
++    expect(target?.searchParams.get('squadId')).toBe('7');
++    expect(authorization).toBe('Basic test-only');
++  });
++
++  it('mostra la causa reale quando il motore fallisce', async () => {
++    server.use(
++      http.get('/api/v1/lineups/recommended', () => new HttpResponse(null, { status: 500 })),
++    );
++    renderPage();
++    expect(
++      // The app retries server errors twice (default backoff), so the error
++      // state appears after the retries complete.
++      await screen.findByText(
++        'Errore interno del motore di calcolo.',
++        {},
++        { timeout: 6000 },
++      ),
++    ).toBeVisible();
++  });
++});
+
+================================================================================
+4D. FILE NUOVO — D02-25-real-lineup-report.txt (contenuto integrale, vedi punto 5)
+================================================================================
+(Il file D02-25-real-lineup-report.txt è untracked: il suo contentuo è riportato
+ per intero al punto 5 di questo documento, quindi non viene duplicato qui.)
+
+================================================================================
+5. CONTENUTO INTEGRALE — D02-25-real-lineup-report.txt
+================================================================================
+===== D02.25 — REAL LINEUP INTELLIGENCE =====
+Data: 2026-08-26 (prima fase) / 2026-08-26 (seconda fase di verifica e hardening)
+Repo: alpionsobellini15-web/fantacalcio-intelligence (worktree: arena/01a03d47-fantacalcio-intelligence)
+Nota: nessun accesso a produzione, nessun deploy, nessun commit/push/PR. Solo analisi del codice
+nel repository più esecuzione locale dei test frontend eseguibili in sandbox.
+
+STATUS=PARTIAL — fase 2 completata per diagnosi e patch minime; frontend FULLY VERIFIED
+(vitest 105/105, typecheck PASS, build PASS); backend PATCHED ma NON eseguito né compilato:
+l'ambiente sandbox non ha JDK/Maven/PostgreSQL e le destinazioni repo.maven.apache.org /
+deb.debian.org non sono raggiungibili → BACKEND_TESTS=BLOCKED (nessun PASS dichiarato).
+
+======================== FASE 1 — DIAGNOSI (invariata) ========================
+
+ROOT_CAUSE_CONFIDENCE=HIGH per il difetto di presentazione/voido causale della UI; MEDIUM per
+l'identificazione del trigger esatto in produzione (non verificabile senza log/DB di produzione).
+
+ROOT_CAUSE=La stringa "Formazione non disponibile" è emessa dalla LineupPage SOLO nel ramo
+`query.isError` di GET /api/v1/lineups/recommended, cioè come catch-all per QUALSIASI esito
+non riuscito: HTTP 404/400/500, rete/timeout o risposta non conforme allo schema Zod. La pagina
+scartava l'errore (status, kind, message del backend) e mostrava sempre lo stesso messaggio +
+"Riprova", senza distinguere rosa non riconosciuta, errore del motore, servizio non raggiungibile
+o mapping DTO errato. Cause concorrenti: (1) la LineupPage NON inoltrava `season` (il backend
+ri-risolve la stagione "corrente" via CurrentSeasonResolver) mentre la rosa è risolta dal
+frontend secondo la stagione della league configuration → disallineamento rosa-vs-stagione = 404
+ambiguo; (2) mismatch DTO reale: api/contracts/dashboard.ts dichiarava fixtureDifficulty e
+selectionScore non-nullable mentre il backend restituisce null quando manca evidenza reale;
+(3) endpoint NON protetto (permitAll) - vedi fase 2; (4) rosa vuota/insufficiente già gestita.
+
+CURRENT_BEHAVIOR / EXPECTED_BEHAVIOR: vedi sezione FASE 2 (definitive).
+
+API_FLOW=LineupPage/Dashboard → api client → GET /api/v1/lineups/recommended?season&matchday&squadId
+(+Basic Auth da fase 2) → RecommendedLineupController → RecommendedLineupService.recommend →
+resolveSquadId (owner-scoped da fase 2) → buildRecommendation → loadCandidates (players della rosa
++ registrazioni ACTIVE + performance B66_FEATURES_V3 LEFT JOIN + availability LEFT JOIN) →
+B69FixtureMatchupService.findClubMatchups (fixtures + club_strength_ratings → difficoltà P/D/C/A)
+→ B68LineupScorer.score (segnali mancanti restano NULL, mai 0/50; hard-unavailable esclusi) →
+7 moduli, selezione per ruolo per selectionScore desc → starters/bench/substitutions/roles/warnings
+→ RecommendedLineupResponse → zod (features/intelligence/api.ts + api/contracts/dashboard.ts) →
+UI (pitch, panchina, motivazioni, warning).
+
+DATA_REQUIREMENTS=(1) esattamente una season con current_season=TRUE (V60); (2) rosa attiva
+owner-scoped; (3) fantasy_squad_players con season_id coerente col parametro season inviato
+(altra stagione → 404); (4) registrazione ACTIVE per ogni giocatore; (5) facoltativi:
+player_performance_feature_profiles B66_FEATURES_V3, player_availabilities per matchday,
+fixtures+club_strength_ratings per i club della rosa; (6) senza alcun segnale il candidato è
+non-actionable → starters vuoti, complete=false (empty state REALE, non errore).
+
+DATA_REQUIREMENTS_AGG=Verificato in fase 2: al 26/08 nel DB di riferimento (report D02.13)
+player_availabilities=23 righe (dati test) e player_availability_history=0; club_strength_ratings=20;
+fixtures=380; season_clubs=21. Nessun dato nuovo inserito.
+
+======================== FASE 2 — VERIFICA E HARDENING ========================
+
+DIAGNOSTICHE COMPLETATE=
+1. SICUREZZA IDOR/BOLA su GET /api/v1/lineups/recommended: CONFERMATO E PATCHATO.
+   Evidenza pre-patch: SecurityConfiguration dichiarava "/api/v1/lineups/**" permitAll;
+   RecommendedLineupController non riceveva Authentication; RecommendedLineupService.resolveSquadId
+   filtrava solo active=TRUE + EXISTS squad_players per stagione, SENZA owner_username, sia con
+   squadId esplicito sia nella risoluzione "prima rosa attiva" (squadId null → esponeva la prima
+   rosa attiva del DB a qualunque chiamante). Nessun test backend esistente copriva l'endpoint
+   (grep "/api/v1/lineups" in backend/src/test = 0 risultati). Patch minima: endpoint ora
+   `authenticated()` (ricale su anyRequest().authenticated()); controller inoltra principal;
+   service: nuovo overload ownership-aware `recommend(season, matchday, squadId, unavailable,
+   username, administrator)` con resolveSquadId owner-scoped (admin può leggere qualsiasi rosa,
+   come SquadService.assertAccess); la 4-arg legacy resta SOLO per test/callers interni, non più
+   raggiungibile da HTTP. Comportamento: anonimo → 401; utente B con squadId di A → 404 (stesso
+   messaggio di inesistente, anti-IDOR); owner → 200; squadId null → rosa attiva del PRINCIPAL
+   (non più prima rosa globale). Frontend aggiornato per inviare Basic Auth (intelligenceApi,
+   dashboardApi, LineupPage, RealDashboardPage) + 2 test di regressione HTTP backend aggiunti
+   (SquadOwnershipHttpIntegrationTest, NON eseguiti per ambiente).
+2. COERENZA STAGIONE: CONFERMATO RISCHIO RESIDUO + FIX DI COERENZA FRONTEND.
+   Vincoli: (a) current_season esattamente uno (V60 unique index); (b) la stagione della rosa
+   (GET /squad) = season_id della league_configuration (baseSquadQuery); (c) season_id dei
+   fantasy_squad_players = stagione della league al momento dell'add (findActiveSquadRow →
+   addPlayer usa squad.season_id); (d) il motore richiede che il parametro season matchi i
+   season_id dei giocatori (resolveSquadId EXISTS). Coerenza per costruzione: (b)=(c) salvo
+   cambiamento ADMIN di league_configuration.season_id (PUT /api/v1/league/configuration) senza
+   migrare i giocatori → mismatch (b)≠(c) → 404. FIX: le due UI ora usano la stagione della ROSA
+   (`squad.data.season`, con fallback currentSeason solo nella dashboard), unica fonte che il
+   motore accetta; la stagione "corrente" (current_season) è usa solo come default quando il
+   parametro manca. Nessuna modifica a migrazioni/DB: il rischio residuo (PUT admin su
+   league_configuration o promozione stagione con rosa preesistente) è documentato in
+   REMAINING_RISKS e richiede una decisione su guardia (fuori scope minimo).
+3. NULLPOINTER in createReason (fixture!=null, roleMatchup==null): NON RIPRODUCIBILE come NPE,
+   MA difetto adiacente CONFERMATO E PATCHATO. B69FixtureMatchupService.toResponse genera sempre
+   4 righe ruolo (P/D/C/A) e fantasy_role è vincolato al CHECK ('P','D','C','A'): roleMatchup
+   null è strutturalmente impossibile. Però roleMatchup.difficultyScore() È null quando il club
+   ha fixture ma club_strength_ratings assente (B69RoleMatchupScorer → available vuoto → score
+   null, tier NO_EVIDENCE): la motivazione conteneva "difficoltà null/100". Patch minima: guard
+   su roleMatchup==null OR difficultyScore==null → "difficoltà non disponibile". Nessun NPE
+   aggiunto/rimosso, nessun cambio di contratti.
+4. PROFILI B66_FEATURES_V3: PARZIALMENTE SUPPORTATO IN REPO, NESSUN IMPORT CERTIFICATO V3.
+   Evidenza: build_b66_player_performance_features.py genera V3 (VERSION="B66_FEATURES_V3") in
+   data/statistics/features/b66-player-performance-import.csv (499 righe = header + 498 profili,
+   tutte V3); test_b66_player_performance_features.py asserisce {B66_FEATURES_V3};
+   RecommendedLineupService e B67AuctionPriceModelService consumano B66_FEATURES_V3.
+   MA gli unici SQL certificati sono: certified_b66_player_performance_import.sql (valida
+   B66_FEATURES_V1) e certified_b66_player_performance_v2_import.sql (legge -v2.csv, valida V2);
+   certified_b66_recovery_statistics_import.sql aggiorna solo player_competition_season_statistics.
+   NON esiste alcun import certificato per V3: eseguire lo script V1 sul CSV V3 attuale fallirebbe
+   il gate "algorithm_version <> 'B66_FEATURES_V1'". Nessun import DB eseguito (vietato/nessun DB)
+   e nessuno script nuovo creato: la creazione di un import certificato V3 va decisa in un blocco
+   dedicato con accesso a un DB di test (non è un fix minimo verificabile qui).
+5. COMPORTAMENTO CON DATI REALI (verifica statica, flussi):
+   - rosa vuota (creata ma senza giocatori): frontend non invoca il motore (totalPlayers<11) e
+     mostra "Rosa incompleta" + CTA; se il motore venisse chiamato comunque, resolveSquadId
+     fallirebbe (EXISTS squad_players) → 404. OK.
+   - rosa insufficiente (1..10 giocatori): stesso gate frontend; backend diretto → completa
+     selectedPlayers<11, complete=false, warnings reparti. OK.
+   - rosa sufficiente (>=11): motore invocato; se alcuni candidati non sono actionable
+     (nessun segnale) vengono esclusi: starters<11 + warning; se 0 actionable → empty state con
+     selectedPlayers/missingPlayers/roles/warnings (fase 1). OK.
+   - availability mancante: status NULL → "UNKNOWN" → non hard-unavailable → punteggio con i
+     segnali disponibili (performance/fixture); warning solo se non actionable. OK.
+   - fixture mancante: fixture null → fixtureDifficulty null → score con i segnali residui;
+     avversario "Partita non disponibile" e difficoltà assente (ora "non disponibile" dopo patch
+     fase 2). OK.
+   - LIMITE VERIFICATO: se un giocatore della rosa ha un club NON presente in season_clubs per la
+     stagione, B69FixtureMatchupService.findClubMatchups lancia ResourceNotFoundException e
+     l'INTERA richiesta diventa 404 (non parziale). In pratica V54 popola season_clubs dalle
+     registrazioni, quindi coperto; rischio residuo documentato.
+6. WIDGET LINEUP DASHBOARD: IN SCOPO D02.25 — PATCHATO (messaggio generico rimosso per il solo
+   pannello formazione). WidgetState ora accetta errorText; il pannello "Formazione consigliata"
+   mostra la causa reale (404 roster/not-found, invalid-response, server, network/timeout, HTTP
+   status). Gli altri widget della dashboard mantengono il testo generico (fuori scope D02.25).
+
+RISCHI CONFERMATI=
+- IDOR/BOLA su GET /api/v1/lineups/recommended (patchato, test backend aggiunti - NON eseguiti).
+- Risoluzione "prima rosa attiva" senza owner quando squadId assente (patchato con owner-scoped).
+- Stagione della rosa vs season_id dei giocatori può divergere solo dopo cambio ADMIN della
+  league_configuration (non patchato: necessita guardia/decisione DB, fuori scope minimo).
+- "difficoltà null/100" nella motivazione quando fixture presente ma club_strength_ratings
+  assente (patchato).
+- B66_FEATURES_V3: nessun import certificato nel repo (gap processuale/dati, NON patchato:
+  nessun DB di test disponibile e nessun dato nuovo può essere creato).
+- Club di un giocatore assente da season_clubs → 404 totale del lineup (rischio basso: V54
+  popola da registrazioni; non patchato).
+
+RISCHI NON RIPRODUCIBILI=
+- NullPointerException reale in createReason con fixture!=null e roleMatchup==null: NON
+  riproducibile (toResponse genera sempre P/D/C/A; CHECK fantacalcio_role limita i valori).
+- Endpoint protetto ma con risposta 401/403: NON era la causa del messaggio (era permitAll;
+  ora è authenticated per scelta di hardening).
+- Risposta vuota del motore (200 con starters=[]) trattata come errore: NON riproducibile;
+  era già gestita come empty state (fase 1 l'ha resa esplicita con i motivi reali).
+
+FILES_CHANGED=
+FASE 1 + FASE 2 (tutti nel worktree, nessun commit):
+- backend/src/main/java/it/fantacalciointelligence/backend/config/SecurityConfiguration.java
+  (fase 2): /api/v1/lineups/** rimosso da permitAll → authenticated.
+- backend/src/main/java/it/fantacalciointelligence/backend/lineup/RecommendedLineupController.java
+  (fase 2): Authentication iniettato, chiamata ownership-aware al service.
+- backend/src/main/java/it/fantacalciointelligence/backend/lineup/RecommendedLineupService.java
+  (fase 2): overload ownership-aware recommend(...username, administrator); buildRecommendation
+  estratta; resolveSquadId owner-scoped; guard roleMatchup/difficultyScore in createReason.
+- backend/src/test/java/it/fantacalciointelligence/backend/squad/SquadOwnershipHttpIntegrationTest.java
+  (fase 2): test HTTP anonimo 401 / cross-user 404 / owner 200 + cleanup legacy-owner.
+- frontend/src/api/contracts/dashboard.ts (fase 1): fixtureDifficulty/selectionScore nullable.
+- frontend/src/features/intelligence/api.ts (fase 1+2): invalid-response; lineup con season e
+  Basic Auth.
+- frontend/src/pages/LineupPage.tsx (fase 1+2): stagione rosa, Basic Auth, errori distinti,
+  empty state con motivi reali.
+- frontend/src/api/dashboardApi.ts (fase 2): lineup con Basic Auth.
+- frontend/src/pages/RealDashboardPage.tsx (fase 2): stagione della rosa al posto di
+  current_season, Basic Auth, errore del widget con causa reale.
+- frontend/src/features/intelligence/IntelligencePages.test.tsx (fase 1+2): asserzioni
+  stagione/rosa/Basic Auth, 404/invalid-response/empty state.
+- frontend/src/features/intelligence/api.test.ts (fase 1, NUOVO; aggiornato fase 2).
+- frontend/src/api/dashboardApi.test.ts (fase 1, NUOVO; aggiornato fase 2).
+- frontend/src/pages/RealDashboardPage.test.tsx (fase 2, NUOVO): Basic Auth, stagione rosa,
+  causa reale del motore nel widget.
+- frontend/.env (gitignored, NON versionato): ricreato per eseguire test/build, SOLO valori
+  pubblici già in .env.example (VITE_API_BASE_URL=/api/v1, telemetria vuota). Nessun secret.
+- D02-25-real-lineup-report.txt (questo file, NUOVO).
+Nessuna migration Flyway toccata; nessun report storico cancellato; nessun file backend di
+terze parti/DB modificato.
+
+BACKEND_TESTS=BLOCKED — NON dichiarati PASS. L'ambiente non ha JDK, Maven e PostgreSQL;
+repo.maven.apache.org e deb.debian.org inaccessibili (solo GitHub e registry npm raggiungibili):
+impossibile eseguire ./mvnw clean test / package e impossibile compilare i sorgenti Java.
+Le modifiche backend (SecurityConfiguration, Controller, Service, test HTTP) sono state
+verificate SOLO staticamente: bilanciamento parentesi/graffe OK (67/67, 434/434), firme
+coerenti con i call-site esistenti (test 3-arg/4-arg service invariati), pattern allineati a
+SquadController/SquadService (Authentication, isAdmin, 404 anti-IDOR). Suite esistente
+(report precedenti: 620 test, di cui RecommendedLineupServiceTest 9/9, B68LineupScorerTest 8/8,
+SquadServiceTest 10, SquadOwnershipHttpIntegrationTest 3+1 nuovo, SquadConcurrencyIntegrationTest 5)
+da rieseguire integralmente su macchina con toolchain.
+
+FRONTEND_TESTS=npx vitest run → 19 test files, 105/105 PASSED (fase 1: 18 file/103; fase 2:
++1 file RealDashboardPage.test.tsx con 2 test = 19/105). Targeted fase 2 (RealDashboardPage,
+IntelligencePages, intelligence/api, dashboardApi) = 4 file/21 PASSED. Nessun fallimento.
+TYPECHECK=npm run typecheck (tsc -b --pretty false) → PASS (0 errori).
+BUILD=npm run build (tsc -b && vite build) → PASS; dist generato; 0 errori.
+LINT (informato, non richiesto): 2 errori pre-esistenti in frontend/src/layouts/GlobalSearch.tsx
+(react-hooks/set-state-in-effect; @typescript-eslint/no-misused-promises), file non toccati;
+0 errori nei file modificati.
+
+MOCK_DATA_ADDED=NO
+PRODUCTION_CHANGED=NO
+DEPLOY_PERFORMED=NO
+COMMIT_CREATED=NO
+PUSH_PERFORMED=NO
+
+REMAINING_RISKS=1) Backend patch NON compilato/eseguito (BLOCKED): richiede run `./mvnw.cmd
+clean test` su macchina con JDK 21/Maven/PostgreSQL test. 2) La 4-arg recommend resta pubblica
+per test/callers interni senza owner check: non raggiungibile via HTTP; da rimuovere/rendere
+package-private in un blocco futuro. 3) LeagueConfigurationService.update può cambiare season_id
+senza migrare fantasy_squad_players → 404 lineup; serve guardia DB/API (fuori scope minimo,
+nessuna migration). 4) B66_FEATURES_V3 senza import certificato: verificare il DB reale (read-only)
+prima di dichiarare la pipeline di performance completa. 5) Player con club assente da
+season_clubs → 404 totale (basso). 6) Dashboard widget: gli altri pannelli mantengono il
+messaggio generico (fuori D02.25).
+
+NEXT_STEP=1) Macchina con toolchain: `.\mvnw.cmd clean test` (attesi 621+ test con il nuovo
+test HTTP lineup) e `.\mvnw.cmd package`; correggere eventuali errori di compilazione del test
+nuovo (firme MockMvc/JSONPath) prima di qualunque altra mossa. 2) Verifica read-only DB test:
+owner_username della rosa usata dai test, season_id dei fantasy_squad_players, V3 profiles.
+3) Verifica HTTP reale (dev/test): anonimo 401; owner-b su squadId owner-a 404; owner 200;
+matchday senza fixtures → 200 con empty state e warning; club senza club_strength_ratings →
+motivazione "difficoltà non disponibile". 4) Isolare la decisione su: (a) guardia per cambio
+season_id della league_configuration; (b) import certificato B66_FEATURES_V3; (c) eventuale
+rimozione dell'overload service 4-arg. 5) Nessun dato fake, fixture, statistica o rosa.
+
+===== END =====
+
+
+================================================================================
+6. ELENCO DEFINITIVO DEI FILE CAMBIATI
+================================================================================
+File MODIFICATI (tracked) — 10:
+  1. backend/src/main/java/it/fantacalciointelligence/backend/config/SecurityConfiguration.java
+  2. backend/src/main/java/it/fantacalciointelligence/backend/lineup/RecommendedLineupController.java
+  3. backend/src/main/java/it/fantacalciointelligence/backend/lineup/RecommendedLineupService.java
+  4. backend/src/test/java/it/fantacalciointelligence/backend/squad/SquadOwnershipHttpIntegrationTest.java
+  5. frontend/src/api/contracts/dashboard.ts
+  6. frontend/src/api/dashboardApi.ts
+  7. frontend/src/features/intelligence/IntelligencePages.test.tsx
+  8. frontend/src/features/intelligence/api.ts
+  9. frontend/src/pages/LineupPage.tsx
+  10. frontend/src/pages/RealDashboardPage.tsx
+
+File NUOVI (untracked) — 4:
+  11. D02-25-real-lineup-report.txt
+  12. frontend/src/api/dashboardApi.test.ts
+  13. frontend/src/features/intelligence/api.test.ts
+  14. frontend/src/pages/RealDashboardPage.test.tsx
+
+File creato ma GITIGNORED (non versionato, non compare in git status):
+  - frontend/.env — solo valori pubblici non-segreti già presenti in
+    .env.example (VITE_API_BASE_URL=/api/v1, VITE_FATAL_TELEMETRY_ENDPOINT vuota).
+    Nessun secret, token o password. Creato esclusivamente per consentire
+    l'esecuzione locale di test/typecheck/build.
+
+Statistiche: 10 file tracked, +492 / -34 righe; git diff --check: pulito.
+
+================================================================================
+7. CONFERME DI INTEGRITÀ
+================================================================================
+- MIGRAZIONI FLYWAY: NESSUNA modifica. `git status --short
+  -- backend/src/main/resources/db/migration` restituisce un elenco VUOTO.
+- DATABASE: nessuna istruzione di scrittura eseguita; nessun import;
+  nessun dato fake/fixture/giocatore/rosa/statistica creato.
+- PRODUZIONE: nessun accesso; PRODUCTION_CHANGED=NO.
+- CONFIGURAZIONI REMOTE: nessuna modifica a Nginx, VM, firewall, Tailscale,
+  systemd o infrastructure/; remote invariato: origin
+  https://github.com/alpionsobellini15-web/fantacalcio-intelligence.git
+- COMMIT: NESSUNO creato (ultimo commit invariato: c245829).
+- PUSH: NESSUNO eseguito. PULL REQUEST: NESSUNA (gh pr list vuoto).
+- MERGE: NESSUNO. DEPLOY: NESSUNO.
+- SECRET: nessun valore letto, stampato o incluso (vincoli rispettati); i
+  test usano solo l'header letterale test-only 'Basic test-only'.
+
+================================================================================
+8. SEPARAZIONE DEL LAVORO
+================================================================================
+--- 8.1 MODIFICHE FRONTEND (produzione) ---
+- frontend/src/api/contracts/dashboard.ts
+  fixtureDifficulty e selectionScore resi nullable: il backend reale
+  restituisce null quando manca evidenza (mai 0/50 inventati).
+- frontend/src/features/intelligence/api.ts
+  le risposte non conformi allo schema Zod sono classificate come
+  AppError kind='invalid-response' (prima: ZodError non distinguibile);
+  intelligenceApi.lineup ora inoltra stagione della rosa e Basic Auth.
+- frontend/src/pages/LineupPage.tsx
+  usa la stagione della rosa; invia Basic Auth; errore distinto per
+  not-found / invalid-response / network-timeout / server con messaggio
+  reale e CTA "Verifica la rosa" su 404; empty state arricchito con
+  selectedPlayers, missingPlayers, reparti scoperti e warnings reali.
+- frontend/src/api/dashboardApi.ts
+  dashboardApi.lineup ora inoltra getAuthorization (Basic Auth).
+- frontend/src/pages/RealDashboardPage.tsx
+  il widget formazione usa la stagione della rosa (prima usava solo
+  current_season), invia Basic Auth e mostra la CAUSA REALE in caso di
+  errore (errorText) invece del messaggio generico; gli altri widget
+  restano invariati (fuori scope D02.25).
+
+--- 8.2 MODIFICHE BACKEND (produzione) ---
+- backend/src/main/java/it/fantacalciointelligence/backend/config/SecurityConfiguration.java
+  "/api/v1/lineups/**" rimosso dall'elenco permitAll: l'endpoint ora
+  richiede autenticazione (ricade su anyRequest().authenticated()).
+- backend/src/main/java/it/fantacalciointelligence/backend/lineup/RecommendedLineupController.java
+  iniettato org.springframework.security.core.Authentication; la chiamata
+  al service passa authentication.getName() e isAdmin(authentication).
+- backend/src/main/java/it/fantacalciointelligence/backend/lineup/RecommendedLineupService.java
+  * nuovo overload ownership-aware recommend(season, matchday, squadId,
+    unavailablePlayerIds, username, administrator) usato SOLO dal controller;
+  * metodo buildRecommendation estratto (logica condivisa);
+  * resolveSquadId ownership-aware: squadId esplicito deve appartenere al
+    principal (admin può leggere qualsiasi rosa, come SquadService);
+    senza squadId usa SOLO la rosa attiva del principal (prima esponeva la
+    prima rosa attiva globale);
+  * guard in createReason: roleMatchup==null OR difficultyScore==null ->
+    "difficoltà non disponibile" (eliminata la stringa "difficoltà null/100"
+    e ogni possibilità di NPE su roleMatchup).
+  * la sovrascrittura 4-arg legacy (senza owner check) resta SOLO per test e
+    callers interni e NON è più raggiungibile via HTTP.
+
+--- 8.3 TEST AGGIUNTI ---
+Backend (1 nuovo test + cleanup, NON eseguiti per ambiente):
+- backend/src/test/java/it/fantacalciointelligence/backend/squad/SquadOwnershipHttpIntegrationTest.java
+  * nuovo test lineupRequiresAuthenticationAndEnforcesSquadOwnership:
+    anonimo -> 401; utente B con squadId della rosa di A -> 404 (anti-IDOR);
+    owner -> 200 con squadId restituito;
+  * cleanup: la fixture ora elimina anche app_users 'legacy-owner'.
+
+Frontend (3 nuovi file, tutti eseguiti e VERDI):
+- frontend/src/features/intelligence/api.test.ts (4 test): inoltro
+  stagione/giornata/rosa/Basic Auth; accettazione segnali null;
+  classificazione invalid-response; contratto malformato rifiutato.
+- frontend/src/api/dashboardApi.test.ts (2 test): null accettati + Basic
+  Auth inoltrata; invalid-response.
+- frontend/src/pages/RealDashboardPage.test.tsx (2 test): widget formazione
+  invia stagione della rosa e Basic Auth; mostra la causa reale su 500.
+- frontend/src/features/intelligence/IntelligencePages.test.tsx (esteso):
+  Basic Auth, 404 distinto, invalid-response distinto, empty state con
+  motivi reali del backend, errore server con messaggio esplicito.
+
+--- 8.4 TEST ESEGUITI (frontend, tutti PASS con evidenza) ---
+- npx vitest run -> 19 test files, 105/105 PASSED
+- Targeted (RealDashboardPage, IntelligencePages, intelligence/api,
+  dashboardApi) -> 4 file, 21/21 PASSED
+- npm run typecheck (tsc -b --pretty false) -> PASS, 0 errori
+- npm run build (tsc -b && vite build) -> PASS, dist generato, 0 errori
+- git diff --check -> pulito
+
+--- 8.5 TEST BLOCCATI (non dichiarati PASS) ---
+- Backend: ./mvnw clean test / package -> BLOCKED. La sandbox non dispone di
+  JDK, Maven e PostgreSQL; repo.maven.apache.org e deb.debian.org non sono
+  raggiungibili (solo GitHub e registry npm). Verifica SOLO statica:
+  bilanciamento graffe/parentesi OK (67/67, 434/434), firme coerenti con i
+  call-site esistenti, pattern allineati a SquadController/SquadService.
+
+--- 8.6 RISCHI ANCORA APERTI ---
+1. Patch backend NON compilata né eseguita (BLOCKED): richiesto
+   ./mvnw.cmd clean test su macchina con JDK 21/Maven/PostgreSQL test.
+2. Overload 4-arg recommend(...) resta pubblico senza owner check
+   (non raggiungibile via HTTP; rimuoverlo/rendere package-private).
+3. LeagueConfigurationService.update può cambiare season_id della league
+   configuration senza migrare fantasy_squad_players -> possibile 404
+   lineup; serve guardia DB/API (nessuna migration aggiunta).
+4. B66_FEATURES_V3: il CSV V3 (498 profili) esiste e il codice lo consuma,
+   ma NON esiste alcuno script di import certificato V3 (gli script
+   certificati coprono solo V1/V2). Verifica read-only su DB + decisione
+   dedicata; nessun dato importato.
+5. Giocatore con club assente da season_clubs -> 404 totale della richiesta
+   lineup (probabilità bassa: V54 popola da registrazioni).
+6. Dashboard: gli altri widget mantengono il messaggio generico
+   ("Dati temporaneamente non disponibili") - fuori scope D02.25.
+
+================================================================================
+FINE DEL PACCHETTO DI REVISIONE
+================================================================================

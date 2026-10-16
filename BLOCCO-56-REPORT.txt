@@ -1,0 +1,133 @@
+BLOCCO 56 - ADVANCED ROLE / BONUS INTELLIGENCE V2
+Report finale - 2026-08-13
+
+1. COMMIT INIZIALE
+f4f275b feat: add strategic data enrichment layer
+
+2. WORKING TREE INIZIALE
+Pulita. git status --short senza output; git diff --check pulito.
+
+3. AUDIT AVAILABLE / PARTIAL / MISSING
+BONUS OPPORTUNITY: AVAILABLE/PARTIAL per gerarchie piazzati, xG/xA, minuti, starts e
+starter probability; MISSING reale per shots/SOT/box touches/key passes/SCA/GCA finche
+non arriva un feed B59. UNKNOWN legacy non costituisce accesso piazzati.
+ROLE ADVANTAGE: AVAILABLE per fantasy role Fantacalcio; PARTIAL per posizione reale,
+confidence, minutes e bonus; MISSING per role usage granulare/attacking involvement affidabile.
+AERIAL THREAT: schema AVAILABLE ma dati reali generalmente MISSING; duelli generici sono
+solo PARTIAL. Heading offensivo e box/set-piece presence sono soglia necessaria.
+UPSIDE: AVAILABLE/PARTIAL per B50/B51, evaluations, starter probability e registration;
+MISSING per trend minuti e concorrenza ruolo certificati.
+
+4. ARCHITETTURA
+Package strategicintelligence separato: quattro calcolatori piccoli, resolver conflitti,
+DTO input/output comune e StrategicIntelligenceService aggregatore. Calcolo read-only,
+deterministico, senza N+1 e senza side effect.
+
+5. EVIDENCE THRESHOLD
+Ogni output espone score nullable, status, confidence, category, evidenceSummary,
+sourceReferences, reasons e missingInputs. Bonus richiede almeno due dimensioni o accesso
+piazzati esplicito con usage; Role richiede fantasy role + posizione non UNKNOWN; Aerial
+richiede heading offensivo e, per score AVAILABLE, presenza box/set piece + minuti > 0;
+Upside richiede potential + due conferme indipendenti + registration ACTIVE.
+
+6. BONUS OPPORTUNITY V2
+Dimensioni: PENALTY_ACCESS, DIRECT_FREE_KICK_ACCESS, SET_PIECE_CREATION,
+OPEN_PLAY_GOAL_THREAT, OPEN_PLAY_ASSIST_THREAT. PRIMARY pesa piu di SECONDARY;
+UNKNOWN non vale assenza ne accesso. Per90 consumati solo se gia supportati da minuti.
+
+7. ROLE ADVANTAGE V2
+Categorie STRONG_ADVANTAGE, MODERATE_ADVANTAGE, NEUTRAL, POTENTIAL_DISADVANTAGE,
+INSUFFICIENT_EVIDENCE. D/RWB-LWB-RW-LW e C/AM-RW-LW-SS sono segnali, non mapping a 100;
+confidence posizione, usage e Bonus V2 modulano risultato. player_roles non modificato.
+
+8. AERIAL THREAT V1
+Headed shots/goals/xG e box/set-piece presence dominano. Duelli generici da soli producono
+PARTIAL con score NULL. Altezza completamente esclusa dallo score.
+
+9. UPSIDE V2
+Potential, starter probability, market gap, role advantage e bonus sono conferme separate.
+Risk riduce score e confidence. Eta non e presente nel modello e da sola non puo produrre
+HIGH_UPSIDE. Nessun prezzo B51 viene scritto o modificato.
+
+10. SOURCE CONFLICT POLICY
+StrategicEvidenceResolver seleziona solo valori concordi; un conflitto restituisce valore
+selezionato NULL e conflict=true. I calcolatori espongono SOURCE_CONFLICT_SURFACED e
+riducono confidence. Nessuna priority globale.
+
+11. FRESHNESS POLICY
+observed_at/imported_at/source_updated_at restano disponibili come provenance B55.
+Nessuna soglia temporale arbitraria introdotta in V1; freshness deve essere fornita dal
+consumer/source resolver futuro e surfaced come evidence, senza cancellare storico.
+
+12. STRATEGIC PROFILE AGGREGATO
+Profilo multidimensionale con i quattro segnali, evidence completeness, missing critical
+inputs, source summary e conflicts. Nessun overall score unico.
+
+13. DATABASE/MIGRATION DECISION
+Nessuna migration. I segnali sono derivati read-only e non duplicano B55/B49/B50/B51.
+
+14. API DECISION
+Nessun endpoint pubblico: senza feed reali B55 sufficiente produrrebbe prevalentemente
+INSUFFICIENT_EVIDENCE. Il servizio applicativo e pronto per adapter/read API in B58.
+
+15. B49/B50/B51/B54 INTEGRITY
+Nessun file o formula B49, B50, B51 o B54 modificato. Full regression verde certifica
+price, ranking, QUALITY/VALUE/FIT, targetPrice e contextualMax invariati.
+
+16. FILE CREATI/MODIFICATI
+- backend/src/main/java/.../strategicintelligence/ (14 file: input, output, enum,
+  quattro calcolatori, resolver, profilo e aggregatore)
+- StrategicObservationResponse e StrategicDataInspectionService estesi in lettura con
+  metriche B55 gia presenti nello schema.
+- AdvancedStrategicIntelligenceTest.java
+- BLOCCO-56-REPORT.txt
+
+17. TEST AGGIUNTI
+21 test B56: penalty hierarchy/UNKNOWN/evidence, role advantage/confidence/immutabilita,
+aerial rigoroso, upside/risk/registration, conflitti e determinismo.
+
+18. TARGETED TESTS
+AdvancedStrategicIntelligenceTest + StrategicDataObservationIntegrationTest:
+28 test, 0 failures, 0 errors, 0 skipped, BUILD SUCCESS.
+
+19. FULL REGRESSION
+mvn -Dmaven.repo.local=C:\Users\user\.m2\repository clean test
+Tests run: 278, Failures: 0, Errors: 0, Skipped: 1, BUILD SUCCESS.
+Wrapper non modificato; usato Maven locale equivalente per il problema ambientale noto.
+
+20. REAL DATA CERTIFICATION
+Non eseguita: nessun feed reale certificato per set pieces avanzati, shots/box touches o
+aerial/header. Nessun dato DEV fake inserito. INSUFFICIENT_EVIDENCE e risultato atteso.
+
+21. GIT DIFF --CHECK
+Pulito prima della regressione e nel controllo finale. Solo warning informativi LF/CRLF
+su due file esistenti, nessun whitespace error.
+
+22. GIT DIFF --STAT
+2 file tracked modificati, 11 inserimenti. I nuovi file untracked non sono inclusi da
+git diff --stat finche non staged; nessuno staging e stato eseguito.
+
+23. GIT STATUS --SHORT
+M backend/src/main/java/it/fantacalciointelligence/backend/strategic/StrategicDataInspectionService.java
+M backend/src/main/java/it/fantacalciointelligence/backend/strategic/StrategicObservationResponse.java
+?? BLOCCO-56-REPORT.txt
+?? backend/src/main/java/it/fantacalciointelligence/backend/strategicintelligence/
+?? backend/src/test/java/it/fantacalciointelligence/backend/strategicintelligence/
+Nessuno staging.
+
+24. RISCHI/GAP RESIDUI
+Mancano feed B59, adapter DB-to-input batch e freshness rationale per metrica. Le formule
+V1 sono policy rule-based iniziali e dovranno essere calibrate su dati reali certificati.
+
+25. B57
+Può definire consumer/use case successivo senza alterare gli score core esistenti.
+
+26. B58
+Integrare il profilo come informazione read-only in ranking/squad construction, caricando
+input in batch e mantenendo invariato il comportamento quando evidence e insufficiente.
+
+27. B59
+Definire e importare feed certificati per piazzati, shots/box touches e heading/aerial;
+aggiungere freshness e metric-specific source selection testate.
+
+Nessun commit, push o staging eseguito.

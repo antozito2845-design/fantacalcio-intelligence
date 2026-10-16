@@ -1,0 +1,93 @@
+.role,
+.difficulty,
+.confidence,
+.trend {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: var(--font-size-body-sm);
+  font-weight: 750;
+}
+.role {
+  inline-size: 1.65rem;
+  block-size: 1.65rem;
+  justify-content: center;
+  border-radius: 0.45rem;
+  color: #031019;
+  border: 1px solid rgb(255 255 255 / 18%);
+  box-shadow:
+    0 5px 12px rgb(0 0 0 / 13%),
+    inset 0 1px rgb(255 255 255 / 18%);
+}
+.P {
+  background: var(--color-role-goalkeeper);
+}
+.D {
+  background: var(--color-role-defender);
+}
+.C {
+  background: var(--color-role-midfielder);
+}
+.A {
+  background: var(--color-role-attacker);
+}
+.dot {
+  inline-size: 0.55rem;
+  block-size: 0.55rem;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 13%, transparent);
+}
+.EASY,
+.high,
+.positive {
+  color: var(--color-success);
+}
+.MEDIUM,
+.medium {
+  color: var(--color-warning);
+}
+.HARD,
+.low,
+.negative {
+  color: var(--color-danger);
+}
+.UNKNOWN,
+.neutral {
+  color: var(--color-text-muted);
+}
+.confidence,
+.price,
+.metricValue {
+  font-variant-numeric: tabular-nums;
+}
+.confidence {
+  padding: 0.25rem 0.5rem;
+  border: 1px solid currentColor;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, currentColor 9%, transparent);
+}
+.trend svg {
+  stroke-width: 2.5;
+}
+.price {
+  color: var(--color-text-primary);
+  white-space: nowrap;
+}
+.metric {
+  display: grid;
+  gap: 0.35rem;
+}
+.metricLabel {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-label);
+}
+.metricValue {
+  font-size: var(--font-size-metric-lg);
+  font-weight: 780;
+  line-height: var(--line-tight);
+}
+.metricHelper {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-metadata);
+}

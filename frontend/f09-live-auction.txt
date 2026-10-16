@@ -1,0 +1,2 @@
+F09 LIVE AUCTION — PASS
+Protected owner/admin launcher, real session create/recovery route, real state/budget/current nomination UI. Polling 10s only while visible. No simulated realtime. Backend exposes real activate/complete/nomination/purchase/decision actions; current UI intentionally limits mutations to safe create and read/recovery.

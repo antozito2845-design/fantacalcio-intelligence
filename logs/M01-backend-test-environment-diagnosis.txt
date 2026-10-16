@@ -1,0 +1,403 @@
+
+========================================================================
+M01 BACKEND - TEST ENVIRONMENT DIAGNOSIS
+========================================================================
+
+========================================================================
+1. GIT STATUS
+========================================================================
+
+>>> git status --short
+ M frontend/src/features/core/SquadManagementFlows.test.tsx
+ M frontend/src/layouts/GlobalSearch.tsx
+?? FANTAFOOT-FINAL-STATE.txt
+?? FANTAFOOT-FULL-AUDIT.txt
+?? FANTAFOOT-TARGETED-AUDIT.txt
+?? project-audit-current.txt
+?? project-file-list.txt
+EXIT=0
+
+========================================================================
+2. JAVA
+========================================================================
+
+>>> java -version
+openjdk version "21.0.11" 2026-04-21 LTS
+OpenJDK Runtime Environment Temurin-21.0.11+10 (build 21.0.11+10-LTS)
+OpenJDK 64-Bit Server VM Temurin-21.0.11+10 (build 21.0.11+10-LTS, mixed mode, sharing)
+EXIT=0
+
+========================================================================
+3. MAVEN WRAPPER
+========================================================================
+
+>>> cmd /c mvnw.cmd -version
+Apache Maven 3.9.16 (2bdd9fddda4b155ebf8000e807eb73fd829a51d5)
+Maven home: C:\Users\user\.m2\wrapper\dists\apache-maven-3.9.16\0daed3be3ebd1c706f0e69e8b07c6b73f5cc4ea3dfce72a8d0ec2e849ca2ddb0
+Java version: 21.0.11, vendor: Eclipse Adoptium, runtime: C:\Program Files\Eclipse Adoptium\jdk-21.0.11.10-hotspot
+Default locale: it_IT, platform encoding: UTF-8
+OS name: "windows 11", version: "10.0", arch: "amd64", family: "windows"
+EXIT=0
+
+========================================================================
+4. BACKEND CONFIG FILES
+========================================================================
+
+FILE: backend\src\main\resources\application-dev.properties
+  12: spring.datasource.url=${DATABASE_URL:jdbc:postgresql://localhost:5432/fantacalcio_intelligence}
+  13: spring.datasource.username=${DATABASE_USERNAME:fantacalcio_app}
+  14: spring.datasource.password=<REDACTED>
+  18: app.security.admin.username=${ADMIN_USERNAME:admin}
+  19: app.security.admin.password=<REDACTED>
+  21: app.security.user.username=${APP_USER_USERNAME:user}
+  22: app.security.user.password=<REDACTED>
+
+FILE: backend\src\main\resources\application-prod.properties
+  16: spring.datasource.url=${DATABASE_URL}
+  17: spring.datasource.username=${DATABASE_USERNAME}
+  18: spring.datasource.password=<REDACTED>
+  23: spring.flyway.clean-disabled=true
+  24: spring.flyway.validate-on-migrate=true
+  25: spring.flyway.baseline-on-migrate=false
+  29: app.security.admin.username=${ADMIN_USERNAME}
+  30: app.security.admin.password=<REDACTED>
+  31: app.security.user.username=${APP_USER_USERNAME}
+  32: app.security.user.password=<REDACTED>
+
+FILE: backend\src\main\resources\application.properties
+  11: spring.datasource.url=${DATABASE_URL}
+  12: spring.datasource.username=${DATABASE_USERNAME}
+  13: spring.datasource.password=<REDACTED>
+  19: spring.flyway.enabled=true
+  20: spring.flyway.locations=classpath:db/migration
+  33: app.security.admin.username=${ADMIN_USERNAME}
+  34: app.security.admin.password=<REDACTED>
+  36: app.security.user.username=${APP_USER_USERNAME}
+  37: app.security.user.password=<REDACTED>
+
+FILE: backend\src\test\resources\application.properties
+   1: spring.datasource.url=jdbc:postgresql://localhost:5432/fantacalcio_intelligence_test
+   2: spring.datasource.username=fantacalcio_app
+   3: spring.datasource.password=<REDACTED>
+   4: spring.datasource.hikari.maximum-pool-size=2
+   9: spring.flyway.enabled=true
+  10: spring.flyway.locations=classpath:db/migration
+  21: app.security.admin.username=admin-test
+  22: app.security.admin.password=<REDACTED>
+  24: app.security.user.username=user-test
+  25: app.security.user.password=<REDACTED>
+
+========================================================================
+5. TEST ANNOTATIONS / PROFILES
+========================================================================
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\auction\AuctionPricePersistenceServiceIntegrationTest.java
+  16: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\auction\B67AuctionPricePersistenceIntegrationTest.java
+  16: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\auctionlive\LiveAuctionStrategyServiceTest.java
+  27: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\auctionranking\AuctionRankingServiceTest.java
+  28: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\auctionstate\AuctionContextAdapterIntegrationTest.java
+  22: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\auctionstate\AuctionIdempotencyConcurrencyIntegrationTest.java
+  23: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\auctionstate\AuctionPurchaseConcurrencyIntegrationTest.java
+  21: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\auctionstate\AuctionSessionActiveOwnershipIntegrationTest.java
+  16: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\auctionstate\AuctionSessionMutationOwnershipIntegrationTest.java
+  19: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\auctionstate\AuctionSessionOwnershipIntegrationTest.java
+  18: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\auctionstate\AuctionStateLifecycleIntegrationTest.java
+  19: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\auctionstate\AuctionStatePathAndErrorApiTest.java
+  20: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\auctionstate\AuctionStateSecurityTest.java
+  26: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\auctionstate\AuctionStateValidationApiTest.java
+  16: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\auctionstrategy\IntelligentAuctionStrategyServiceTest.java
+  26: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\availability\PlayerAvailabilityControllerSecurityTest.java
+  18: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\availability\PlayerAvailabilityServiceTest.java
+  19: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\BackendApplicationTests.java
+   6: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\calendarintelligence\B69RoleAwareFixtureWindowServiceTest.java
+  17: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\calendarintelligence\CalendarCandidateServiceIntegrationTest.java
+  11: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\catalog\readiness\CatalogReadinessServiceTest.java
+  16: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\config\AdminEndpointSecurityTest.java
+  29: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\config\MutationAuthorizationSecurityTest.java
+  18: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\config\ProductionProfileSmokeTest.java
+  16: @SpringBootTest(properties = {
+  26: @ActiveProfiles("prod")
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\config\RateLimitBasicAuthenticationIntegrationTest.java
+  13: @SpringBootTest(properties = {
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\config\SecurityConfigurationTest.java
+  21: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\config\UserBootstrapProvisioningIntegrationTest.java
+  16: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentServiceTest.java
+  13: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\evaluation\PlayerEvaluationGenerationServiceTest.java
+  13: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\fixture\B69FixtureMatchupServiceTest.java
+  16: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\fixture\importer\FixtureImportControllerSecurityTest.java
+  13: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\fixture\importer\FixtureImportServiceTest.java
+  14: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\fixture\strength\ClubStrengthGenerationServiceTest.java
+  14: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\freshness\DataFreshnessControllerSecurityTest.java
+  14: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\freshness\DataFreshnessServiceTest.java
+  17: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\identity\enrichment\IdentityEnrichmentImportServiceTest.java
+  17: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\identity\enrichment\transfermarkt\TransfermarktProvenancePersistenceServiceTest.java
+  17: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\importer\admin\ImportBatchAdminControllerTest.java
+  19: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\importer\admin\ImportBatchAdminServiceTest.java
+  15: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\importer\PlayerImportServiceTest.java
+  19: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\ingestion\AutomationRunServiceIntegrationTest.java
+  14: @SpringBootTest(
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\ingestion\B71AutomationRetryPolicyIntegrationTest.java
+  11: @SpringBootTest(
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\ingestion\SourceIngestionRecoveryConcurrencyTest.java
+  19: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\ingestion\SourceIngestionSecurityTest.java
+  15: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\ingestion\SourceIngestionServiceIntegrationTest.java
+  38: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceProfileSourcePolicyTest.java
+  15: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceServiceTest.java
+  27: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\lineup\RecommendedLineupServiceTest.java
+  12: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\liveauction\LiveAuctionControllerSecurityTest.java
+  22: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\player\PlayerCatalogControllerTest.java
+  21: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\reconciliation\identity\PlayerIdentityResolutionServiceTest.java
+  13: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\reconciliation\identity\VerifiedSourceIdentityLinkTest.java
+  13: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\reconciliation\PlayerReconciliationBatchSnapshotTest.java
+  14: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\reconciliation\PlayerReconciliationServiceTest.java
+  18: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\reconciliation\preview\ReconciliationPreviewServiceTest.java
+  11: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\reconciliation\review\ReconciliationReviewServiceTest.java
+  11: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\refresh\DataRefreshControllerSecurityTest.java
+  17: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\refresh\DataRefreshRecoveryConcurrencyTest.java
+  18: @SpringBootTest(properties = "app.data-refresh.stale-threshold=1s")
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\refresh\DataRefreshServiceTest.java
+  18: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\registration\RegistrationStatusEligibilityTest.java
+  29: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\scouting\B70ArrivalScoutingIntegrationTest.java
+  19: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\scouting\B70NewListoneArrivalIntegrationTest.java
+  18: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\scouting\B70PendingScoutingArrivalIntegrationTest.java
+  19: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\scouting\ForeignPlayerScoutingServiceTest.java
+  18: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\season\CurrentSeasonHttpIntegrationTest.java
+  21: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\seasonclub\SeasonClubMembershipIntegrationTest.java
+  13: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\squad\SquadConcurrencyIntegrationTest.java
+  17: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\squad\SquadOwnershipHttpIntegrationTest.java
+  22: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\squad\SquadServiceTest.java
+  17: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\squadanalysis\SquadAnalysisServiceTest.java
+  17: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\squadconstruction\SquadConstructionServiceTest.java
+  19: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\statistics\importer\PlayerStatisticsImportControllerSecurityTest.java
+  17: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\statistics\importer\PlayerStatisticsImportServiceTest.java
+  20: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\strategic\StrategicDataObservationIntegrationTest.java
+  19: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\transfer\detection\TransferDetectionServiceTest.java
+  11: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\transfer\TransferVerificationConcurrencyTest.java
+  18: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\transfer\TransferVerificationSecurityTest.java
+  20: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\transfer\TransferVerificationServiceTest.java
+  21: @SpringBootTest
+
+FILE: backend\src\test\java\it\fantacalciointelligence\backend\validation\RequestValidationHttpIntegrationTest.java
+  19: @SpringBootTest
+
+========================================================================
+6. POM DATABASE / TEST DEPENDENCIES
+========================================================================
+  43: 			<artifactId>spring-boot-starter-flyway</artifactId>
+  58: 			<groupId>org.flywaydb</groupId>
+  59: 			<artifactId>flyway-database-postgresql</artifactId>
+  63: 			<groupId>org.postgresql</groupId>
+  64: 			<artifactId>postgresql</artifactId>
+  79: 			<artifactId>spring-boot-starter-flyway-test</artifactId>
+  98: <groupId>com.h2database</groupId>
+  99: <artifactId>h2</artifactId>
+
+========================================================================
+7. LOCAL POSTGRES TOOLS
+========================================================================
+
+>>> where.exe psql
+C:\Program Files\PostgreSQL\17\bin\psql.exe
+EXIT=0
+
+>>> where.exe pg_isready
+C:\Program Files\PostgreSQL\17\bin\pg_isready.exe
+EXIT=0
+
+>>> where.exe createdb
+C:\Program Files\PostgreSQL\17\bin\createdb.exe
+EXIT=0
+
+========================================================================
+8. ENVIRONMENT VARIABLES - NAMES ONLY
+========================================================================
+DATABASE_PASSWORD=<VALUE_REDACTED>
+
+========================================================================
+9. DATABASE PROCESS CHECK
+========================================================================
+
+>>> powershell.exe -NoProfile -Command Get-Service *postgres* -ErrorAction SilentlyContinue | Select-Object Name,Status,DisplayName | Format-Table -AutoSize
+
+Name               Status DisplayName              
+----               ------ -----------              
+postgresql-x64-17 Running postgresql-x64-17 - Po...
+EXIT=0
+
+========================================================================
+10. MAVEN TEST DISCOVERY - NO TEST EXECUTION
+========================================================================
+
+>>> cmd /c mvnw.cmd -q -DskipTests test
+EXIT=0
+
+========================================================================
+11. FINAL STATUS
+========================================================================
+
+>>> git status --short
+ M frontend/src/features/core/SquadManagementFlows.test.tsx
+ M frontend/src/layouts/GlobalSearch.tsx
+?? FANTAFOOT-FINAL-STATE.txt
+?? FANTAFOOT-FULL-AUDIT.txt
+?? FANTAFOOT-TARGETED-AUDIT.txt
+?? project-audit-current.txt
+?? project-file-list.txt
+EXIT=0
+
+========================================================================
+SUMMARY
+========================================================================
+MODE=READ_ONLY
+BACKEND_TESTS_EXECUTED=NO
+DATABASE_MUTATIONS_REQUESTED=NO
+LOG_FILE=C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\logs\M01-backend-test-environment-diagnosis.txt

@@ -1,0 +1,273 @@
+
+==============================================================================
+M02 - PLAYER CATALOG RUNTIME DIAGNOSIS
+==============================================================================
+
+==============================================================================
+1. GIT STATUS
+==============================================================================
+
+>>> git status --short
+ M frontend/src/features/core/SquadManagementFlows.test.tsx
+ M frontend/src/layouts/GlobalSearch.tsx
+?? FANTAFOOT-FINAL-STATE.txt
+?? FANTAFOOT-FULL-AUDIT.txt
+?? FANTAFOOT-TARGETED-AUDIT.txt
+?? project-audit-current.txt
+?? project-file-list.txt
+EXIT=0
+
+==============================================================================
+2. CATALOG IMPLEMENTATION SEARCH
+==============================================================================
+
+FILE: backend\src\main\java\it\fantacalciointelligence\backend\availability\PlayerAvailabilityController.java
+  46:     @GetMapping("/players/{playerId}/history")
+  65:     @PutMapping("/players/{playerId}")
+
+FILE: backend\src\main\java\it\fantacalciointelligence\backend\config\SecurityConfiguration.java
+  29:             RateLimitFilter rateLimitFilter
+  64:                                 "/api/v1/imports/players/csv",
+  65:                                 "/api/v1/reconciliation/players"
+ 125:                                 "/api/v1/players",
+ 126:                                 "/api/v1/players/**",
+ 145:                 .addFilterBefore(rateLimitFilter, BasicAuthenticationFilter.class)
+
+FILE: backend\src\main\java\it\fantacalciointelligence\backend\development\PlayerDevelopmentAssessmentController.java
+  35:             "/api/v1/players/{playerId}/development"
+
+FILE: backend\src\main\java\it\fantacalciointelligence\backend\importer\admin\ImportBatchAdminService.java
+   5: import java.time.OffsetDateTime;
+  36:     private static final int DEFAULT_PAGE_SIZE = 20;
+  37:     private static final int MAX_PAGE_SIZE = 100;
+  48:     public ImportBatchPageResponse findBatches(
+  52:             int page,
+  53:             int size
+  55:         int safePage = validatePage(page);
+  56:         int safeSize = validateSize(size);
+ 124:                 "limit",
+ 125:                 safeSize
+ 129:                 "offset",
+ 130:                 safePage * safeSize
+ 162:                         LIMIT :limit
+ 163:                         OFFSET :offset
+ 172:         int totalPages =
+ 173:                 calculateTotalPages(
+ 175:                         safeSize
+ 178:         return new ImportBatchPageResponse(
+ 180:                 safePage,
+ 181:                 safeSize,
+ 183:                 totalPages
+ 190:             int errorPage,
+ 191:             int errorSize
+ 199:         int safeErrorPage =
+ 200:                 validatePage(errorPage);
+ 202:         int safeErrorSize =
+ 203:                 validateSize(errorSize);
+ 280:                         LIMIT :limit
+ 281:                         OFFSET :offset
+ 288:                                 "limit",
+ 289:                                 safeErrorSize
+ 292:                                 "offset",
+ 293:                                 safeErrorPage
+ 294:                                         * safeErrorSize
+ 301:         int totalErrorPages =
+ 302:                 calculateTotalPages(
+ 304:                         safeErrorSize
+ 310:                 safeErrorPage,
+ 311:                 safeErrorSize,
+ 313:                 totalErrorPages
+ 335:                         OffsetDateTime.class
+ 339:                         OffsetDateTime.class
+ 343:                         OffsetDateTime.class
+ 347:                         OffsetDateTime.class
+ 430:     private int validatePage(int page) {
+ 431:         if (page < 0) {
+ 437:         return page;
+ 440:     private int validateSize(int size) {
+ 441:         if (size <= 0) {
+ 442:             return DEFAULT_PAGE_SIZE;
+ 445:         if (size > MAX_PAGE_SIZE) {
+ 446:             return MAX_PAGE_SIZE;
+ 449:         return size;
+ 452:     private int calculateTotalPages(
+ 454:             int size
+ 461:                 (double) totalElements / size
+
+FILE: backend\src\main\java\it\fantacalciointelligence\backend\importer\PlayerImportController.java
+  12: @RequestMapping("/api/v1/imports/players")
+
+FILE: backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceController.java
+  20:             "/api/v1/players/{playerId}/intelligence"
+
+FILE: backend\src\main\java\it\fantacalciointelligence\backend\intelligence\PlayerIntelligenceProfileController.java
+  16:     @GetMapping("/api/v1/players/{playerId}/intelligence-profile")
+
+FILE: backend\src\main\java\it\fantacalciointelligence\backend\player\PlayerCatalogController.java
+   5: import it.fantacalciointelligence.backend.common.PageResponse;
+   8: @RequestMapping("/api/v1/players")
+  23:     public PageResponse<PlayerCatalogResponse> findPlayers(
+  37:             int page,
+  40:             int size
+  47:                 page,
+  48:                 size
+
+FILE: backend\src\main\java\it\fantacalciointelligence\backend\player\PlayerCatalogResponse.java
+
+FILE: backend\src\main\java\it\fantacalciointelligence\backend\player\PlayerCatalogService.java
+  11: import it.fantacalciointelligence.backend.common.PageResponse;
+  25:     public PageResponse<PlayerCatalogResponse> findPlayers(
+  30:             int page,
+  31:             int size
+  33:         int safePage = Math.max(page, 0);
+  34:         int safeSize = Math.min(Math.max(size, 1), 100);
+  35:         int offset = safePage * safeSize;
+  46:         params.put("limit", safeSize);
+  47:         params.put("offset", offset);
+ 149:                 LIMIT :limit
+ 150:                 OFFSET :offset
+ 198:         int totalPages = (int) Math.ceil(
+ 199:                 (double) totalElements / safeSize
+ 202:         return new PageResponse<>(
+ 204:                 safePage,
+ 205:                 safeSize,
+ 207:                 totalPages
+
+FILE: backend\src\main\java\it\fantacalciointelligence\backend\reconciliation\PlayerReconciliationController.java
+  17:     @PostMapping("/players")
+
+FILE: backend\src\main\java\it\fantacalciointelligence\backend\scouting\ForeignPlayerScoutingController.java
+  27:             "/api/v1/admin/scouting/players/{playerId}"
+  58:             "/api/v1/scouting/players/{playerId}"
+
+FILE: backend\src\main\java\it\fantacalciointelligence\backend\squad\SquadController.java
+  23:     @PostMapping("/players")
+  34:     @DeleteMapping("/players/{playerId}")
+  43:     @PatchMapping("/players/{playerId}")
+
+FILE: backend\src\main\java\it\fantacalciointelligence\backend\squad\SquadManagementController.java
+  58:     @PostMapping("/{squadId}/players")
+  75:     @DeleteMapping("/{squadId}/players/{playerId}")
+  91:     @PatchMapping("/{squadId}/players/{playerId}")
+
+==============================================================================
+3. FRONTEND PAGINATION SEARCH
+==============================================================================
+
+FILE: frontend\src\features\core\PlayerFlows.test.tsx
+  41:         const page = new URL(request.url).searchParams.get('page') ?? '0';
+  42:         requestedPages.push(page);
+  44:           content: [catalogPlayer(Number(page) + 1, page === '0' ? 'Prima pagina' : 'Seconda pagina')],
+  45:           page: Number(page),
+  48:           totalPages: 2,
+  56:     await userEvent.click(screen.getByRole('button', { name: 'Successiva' }));
+  59:     await waitFor(() => expect(window.location.search).toContain('page=1'));
+  61:     await userEvent.click(screen.getByRole('button', { name: 'Precedente' }));
+
+FILE: frontend\src\pages\PlayersPage.tsx
+  20:   const page = Number(url.get('page') ?? 0);
+  29:         next.set('page', '0');
+  36:     queryKey: ['players', { search: url.get('search') ?? '', role, club, page }],
+  43:           page,
+  72:     if (key !== 'page') next.set('page', '0');
+  77:       <div className={styles.page}>
+ 191:               <div className={styles.pager}>
+ 194:                   disabled={page === 0}
+ 195:                   onClick={() => update('page', String(page - 1))}
+ 197:                   Precedente
+ 200:                   {page + 1} / {Math.max(query.data.totalPages, 1)}
+ 204:                   disabled={page + 1 >= query.data.totalPages}
+ 205:                   onClick={() => update('page', String(page + 1))}
+ 207:                   Successiva
+
+==============================================================================
+4. LOCAL BACKEND PORT CHECK
+==============================================================================
+
+>>> powershell.exe -NoProfile -Command Get-NetTCPConnection -LocalPort 8080 -State Listen -ErrorAction SilentlyContinue | Select-Object LocalAddress,LocalPort,OwningProcess | Format-Table -AutoSize
+EXIT=1
+
+==============================================================================
+5. BACKEND HTTP PROBE
+==============================================================================
+
+URL=http://localhost:8080/actuator/health
+HTTP_STATUS=None
+CONTENT_TYPE=None
+BODY_RAW=URLError(ConnectionRefusedError(10061, 'Impossibile stabilire la connessione. Rifiuto persistente del computer di destinazione', None, 10061, None))
+
+URL=http://localhost:8080/api/v1/system/status
+HTTP_STATUS=None
+CONTENT_TYPE=None
+BODY_RAW=URLError(ConnectionRefusedError(10061, 'Impossibile stabilire la connessione. Rifiuto persistente del computer di destinazione', None, 10061, None))
+BACKEND_REACHABLE=NO
+
+==============================================================================
+6. PLAYER CATALOG PAGE 0 / PAGE 1
+==============================================================================
+SKIPPED=Backend is not currently reachable
+RUNTIME_PAGINATION_CERTIFIED=NOT_TESTED
+
+==============================================================================
+8. EXISTING PAGINATION TESTS
+==============================================================================
+
+FILE: frontend\src\app\bootstrap\App.test.tsx
+  25:       HttpResponse.json({ content: [], page: 0, size: 5, totalElements: 0, totalPages: 0 }),
+  87:         HttpResponse.json({ content: [], page: 0, size: 5, totalElements: 612, totalPages: 123 }),
+ 100:         HttpResponse.json({ content: [], page: 0, size: 5, totalElements: 321, totalPages: 65 }),
+
+FILE: frontend\src\features\admin\AdminPage.test.tsx
+ 132:         totalPages: 1,
+
+FILE: frontend\src\features\admin\api.test.ts
+  34:           totalPages: 1,
+
+FILE: frontend\src\features\core\api.test.ts
+   6: const emptyPage = { content: [], page: 0, size: 25, totalElements: 0, totalPages: 0 };
+
+FILE: frontend\src\features\core\PlayerFlows.test.tsx
+  37:   it('naviga dalla prima alla seconda pagina e torna alla prima', async () => {
+  38:     const requestedPages: string[] = [];
+  42:         requestedPages.push(page);
+  44:           content: [catalogPlayer(Number(page) + 1, page === '0' ? 'Prima pagina' : 'Seconda pagina')],
+  48:           totalPages: 2,
+  56:     await userEvent.click(screen.getByRole('button', { name: 'Successiva' }));
+  57:     expect((await screen.findAllByText('Seconda pagina')).length).toBeGreaterThan(0);
+  63:     expect(requestedPages).toEqual(expect.arrayContaining(['0', '1']));
+
+FILE: frontend\src\features\core\SquadManagementFlows.test.tsx
+ 160:           totalPages: 1,
+ 203:           totalPages: 1,
+
+FILE: frontend\src\features\intelligence\IntelligencePages.test.tsx
+ 310:     await userEvent.click(screen.getByRole('button', { name: 'Successiva' }));
+
+FILE: frontend\src\layouts\AppShell.test.tsx
+  87:   totalPages: content.length ? 1 : 0,
+
+FILE: frontend\src\pages\RealDashboardPage.test.tsx
+  89:       HttpResponse.json({ content: [], page: 0, size: 5, totalElements: 0, totalPages: 0 }),
+
+==============================================================================
+9. FINAL GIT STATUS
+==============================================================================
+
+>>> git status --short
+ M frontend/src/features/core/SquadManagementFlows.test.tsx
+ M frontend/src/layouts/GlobalSearch.tsx
+?? FANTAFOOT-FINAL-STATE.txt
+?? FANTAFOOT-FULL-AUDIT.txt
+?? FANTAFOOT-TARGETED-AUDIT.txt
+?? project-audit-current.txt
+?? project-file-list.txt
+EXIT=0
+
+==============================================================================
+M02 RUNTIME SUMMARY
+==============================================================================
+BACKEND_REACHABLE=NO
+RUNTIME_PAGINATION_CERTIFIED=NOT_TESTED
+MODE=READ_ONLY
+FILES_MODIFIED_BY_AUDIT=NONE
+LOG_FILE=C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\logs\M02-player-catalog-runtime-diagnosis.txt

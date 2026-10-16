@@ -1,0 +1,204 @@
+BLOCCO 57 - CALENDAR COMBINATION INTELLIGENCE V2
+Report finale - 2026-08-13
+
+1. COMMIT INIZIALE
+de84a3c feat: add advanced strategic intelligence
+
+2. WORKING TREE INIZIALE
+Pulita. git status --short e git diff --check senza output.
+
+3. AUDIT FIXTURES/CALENDAR/PAIRING
+Auditati fixtures, club_strength_ratings, fixture import batch/rows, FixtureImportService,
+FixtureDifficultyService, PlayerPairingService, pairing controller, B54 CalendarCombinationEngine,
+registrations, roles Fantacalcio, seasons e test calendario. Il pairing legacy combina B51,
+qualita e media difficulty e carica fixture per player; resta invariato per compatibilita.
+
+4. AVAILABLE / PARTIAL / MISSING
+AVAILABLE: fixture reali importate, matchday 1..38, home/away, kickoff, status, risultati,
+season isolation, club/registration/role/active flags, rating club 0..100, import provenance.
+PARTIAL: difficulty richiede entrambi i rating club; kickoff puo essere NULL; postponed e
+rescheduled sono rappresentati tramite status/kickoff aggiornabile ma non esiste uno stato
+RESCHEDULED distinto. MISSING: probabilita clean sheet/gol e qualunque forecast; non inventati.
+
+5. DIFFICULTY SCALE REALE
+Scala numerica 0..100 calcolata dai rating: EASY/FACILE < 50, MEDIUM/MEDIA 50..<70,
+HARD/DIFFICILE >=70. Rating/difficulty mancante => UNKNOWN, mai MEDIUM.
+
+6. ARCHITETTURA
+Nuovo package calendarintelligence: FixtureWindowService batch, CalendarCandidateService,
+profili club, normalizer difficulty, scorer puro pair/triple, result evidence-aware e
+CalendarCombinationService per generazione deterministica.
+
+7. FIXTURE WINDOW / HORIZON
+fromMatchday 1..38; horizon configurabile 1..10 (supporta 3/5/8/10), troncato solo al
+termine naturale della stagione. Nessuna fixture passata viene reinterpretata; il caller
+sceglie il matchday iniziale del current use case.
+
+8. COMPLEMENTARITY MODEL
+Score interpretabile: favorable coverage 45%, complementarity EASY/HARD 25%, assenza di
+hard overlap 25%, stabilita/assenza hard streak 5%; triple includono una penalita esplicita
+di ridondanza quando tutte le opzioni sono EASY insieme. Confidence = data completeness.
+
+9. PAIR MODEL
+Club IDs canonici ordinati; A+B=B+A. Output: score nullable, status/confidence, coverage,
+hard overlap/rate, complementary days, missing days, window, preferred option e reasons.
+
+10. TRIPLE MODEL
+Valutazione giornaliera complessiva, non media delle pair. Misura almeno una EASY,
+tutti HARD, complementarita e ridondanza. Permutation invariant e senza duplicati.
+
+11. GOALKEEPER POLICY
+Priorita a favorable coverage e hard overlap. Preferred club per giornata viene esposto
+solo quando esiste esattamente una EASY e tutte le alternative sono HARD; UNKNOWN/missing
+non produce un titolare inventato. Nessuna clean-sheet probability.
+
+12. DEFENDER POLICY
+Il calendar signal e autonomo e informativo; non usa modificatore ne altera B54 FIT.
+
+13. MIDFIELDER POLICY
+Funziona senza B56. Nessun file o score B56 modificato; B56 potra essere solo metadata futuro.
+
+14. ATTACKER POLICY
+Alternanza favorevole premiata, simultaneous HARD e hard streak penalizzati. Nessuna
+assunzione che EASY implichi gol.
+
+15. POSTPONED / MISSING HANDLING
+POSTPONED, CANCELLED, fixture assente e difficulty UNKNOWN entrano in missingMatchdays.
+Con meno di due giornate complete o completeness <60%: score NULL e INSUFFICIENT_EVIDENCE.
+
+16. EVIDENCE / CONFIDENCE
+Status AVAILABLE a finestra completa, PARTIAL sopra la soglia minima, altrimenti
+INSUFFICIENT_EVIDENCE. Confidence 0..100 uguale alla percentuale di giornate utilizzabili.
+
+17. SAME-CLUB HANDLING
+Il profilo appartiene al club ed e costruito una sola volta. Giocatori dello stesso club
+riusano lo stesso profilo; combinazioni club duplicate sono respinte, senza penalita inventata.
+
+18. SEASON / ACTIVE RULES
+CalendarCandidateService filtra season richiesta, player/club active, registration ACTIVE
+e ruolo FANTACALCIO. Test PostgreSQL certifica isolamento stagione e conservazione INACTIVE.
+
+19. PERFORMANCE / NO N+1
+Candidate load singolo; FixtureWindowService usa una query batch per tutti i club; profili
+in memoria; nessuna query per pair/triple. Test Mockito verifica un solo fixture load.
+
+20. COMPLEXITY GUARD
+Pool massimo esplicito: 30 club per pair, 18 per triple. Superamento => errore leggibile;
+nessun cap o prefilter silenzioso.
+
+21. DETERMINISTIC TIE-BREAK
+Score desc (NULL last), confidence desc, club IDs canonici asc. Nessun random.
+
+22. B54 INTEGRATION DECISION
+B54 CalendarCombinationEngine non modificato. B57 e additivo e disponibile per adapter B58;
+QUALITY/VALUE/FIT, targetPrice, contextualMax e Auction Priority invariati.
+
+23. B56 INTEGRATION DECISION
+B56 non modificato e non entra nel calendar score.
+
+24. API DECISION
+Nessun endpoint pubblico aggiunto: prima si mantiene un servizio read-only interno e si
+rinvia esposizione/paginazione al consumer B58.
+
+25. FILE CREATI/MODIFICATI
+- backend/src/main/java/.../calendarintelligence/ (9 file)
+- backend/src/test/java/.../calendarintelligence/ (3 file)
+- BLOCCO-57-REPORT.txt
+Nessun file B49/B50/B51/B54/B56 modificato.
+
+26. TEST AGGIUNTI
+26 test nuovi: 18 scorer/difficulty/missing/role policies, 5 batch/complexity, 3 PostgreSQL
+season/ACTIVE/role integrity.
+
+27. TARGETED TESTS
+28 test inclusi i 2 regression test B54 CalendarCombinationEngine: 0 failures, 0 errors,
+0 skipped, BUILD SUCCESS.
+
+28. REAL / SANDBOX CERTIFICATION
+Nessuna modifica DEV e nessuna fixture fake DEV. PostgreSQL TEST reale ha certificato
+candidate filtering, season isolation e storico INACTIVE; pair/triple sono certificate con
+fixture profile TEST deterministici. Non eseguita certificazione DEV di pair GK/A/triple
+per non assumere sufficienza del calendario/rating corrente.
+
+29. FULL REGRESSION
+mvn -Dmaven.repo.local=C:\Users\user\.m2\repository clean test
+Tests run: 304, Failures: 0, Errors: 0, Skipped: 1, BUILD SUCCESS.
+Wrapper non modificato; Maven locale equivalente usato per il problema ambientale noto.
+
+30. GIT DIFF --CHECK
+Pulito prima della regressione e nel controllo finale.
+
+31. GIT DIFF --STAT
+Nessun output: tutti i file B57 sono untracked e git diff --stat non li include finche
+non staged. Nessuno staging eseguito.
+
+32. GIT STATUS --SHORT
+?? BLOCCO-57-REPORT.txt
+?? backend/src/main/java/it/fantacalciointelligence/backend/calendarintelligence/
+?? backend/src/test/java/it/fantacalciointelligence/backend/calendarintelligence/
+Nessuno staging.
+
+33. RISCHI / GAP RESIDUI
+- Il current matchday deve essere fornito dal caller: non esiste ancora una policy centrale.
+- RESCHEDULED non e uno status distinto; usa POSTPONED poi aggiornamento a SCHEDULED.
+- Formula V2 necessita calibrazione su utilizzo reale, senza cambiare la scala difficulty.
+- Manca endpoint/paginazione e adapter player/roster completo.
+
+34. B58
+Integrare B57 nella futura asta live/rosa come segnale informativo, con current matchday,
+role filter, roster exclusion, pagination e metadati B50/B51/B56 separati dal calendar score.
+
+35. B59
+Rafforzare feed fixture/rating, freshness, gestione reschedule e certificazioni real-data;
+non introdurre probabilita finche non esiste una fonte certificata.
+
+Nessun commit, push o staging eseguito.
+
+============================================================
+B57 CERTIFICATION FIX - DATA FRESHNESS CLOCK
+============================================================
+
+ROOT CAUSE
+Il test costruiva source_observed_at con CURRENT_TIMESTAMP PostgreSQL e il servizio
+calcolava evaluatedAt separatamente con OffsetDateTime.now(UTC) nella JVM. I due clock e
+i due istanti non erano condivisi. Duration.toHours() tronca le frazioni: una distanza
+nominale di 100 ore poteva diventare 99h 59m 59s e quindi produrre 99 ore.
+
+FILES CHANGED
+- backend/src/main/java/.../freshness/DataFreshnessService.java
+- backend/src/main/java/.../freshness/FreshnessClockConfiguration.java
+- backend/src/test/java/.../freshness/DataFreshnessServiceTest.java
+- BLOCCO-57-REPORT.txt
+I file calendarintelligence B57 non sono stati modificati dal certification fix.
+
+EXACT FIX
+DataFreshnessService riceve java.time.Clock e usa OffsetDateTime.now(clock). La produzione
+fornisce Clock.systemUTC() tramite configurazione Spring. Il test costruisce direttamente
+il service con Clock.fixed su un Instant UTC e salva nello schema PostgreSQL timestamp
+derivati dallo stesso istante fisso, eliminando la race DB/JVM e la sensibilita DST.
+
+BUSINESS BEHAVIOR UNCHANGED
+Soglie DB, categorie FRESH/AGING/STALE/MISSING, inclusivita dei boundary, warning e uso di
+Duration.toHours() sono invariati. Un test aggiuntivo dimostra che esattamente 100 ore
+produce 100, mentre 100 ore meno un secondo produce correttamente 99 per troncamento.
+
+TARGETED TEST
+DataFreshnessServiceTest: 5 test, 0 failures, 0 errors, 0 skipped, BUILD SUCCESS.
+Eseguito una sola volta dopo la correzione, senza retry o sleep.
+
+FULL REGRESSION
+Tests run: 305, Failures: 0, Errors: 0, Skipped: 1, BUILD SUCCESS.
+L'incremento da 304 a 305 e il nuovo test deterministico del boundary sub-hour.
+
+GIT DIFF --CHECK
+Pulito. Solo warning informativi LF/CRLF sui due file freshness tracked; nessun whitespace
+error. Nessuna soglia o formula B57 modificata.
+
+GIT STATUS --SHORT
+M backend/src/main/java/it/fantacalciointelligence/backend/freshness/DataFreshnessService.java
+M backend/src/test/java/it/fantacalciointelligence/backend/freshness/DataFreshnessServiceTest.java
+?? BLOCCO-57-REPORT.txt
+?? backend/src/main/java/it/fantacalciointelligence/backend/calendarintelligence/
+?? backend/src/main/java/it/fantacalciointelligence/backend/freshness/FreshnessClockConfiguration.java
+?? backend/src/test/java/it/fantacalciointelligence/backend/calendarintelligence/
+Nessun commit, push o staging.

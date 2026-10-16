@@ -1,0 +1,23 @@
+\set ON_ERROR_STOP on
+BEGIN;
+CREATE TEMP TABLE stage_value(player_id text,player_name text,role text,current_club_id text,club text,reference_season text,source_mix text,history_seasons_available text,small_sample_flag text,data_confidence_score text,fantasy_quality_score text,usage_score text,production_score text,consistency_score text,discipline_score text,goalkeeper_specific_score text,player_value_score text,role_rank text,role_percentile text,ranking_status text,algorithm_version text,component_payload_json text,evidence_json text,input_fingerprint text) ON COMMIT DROP;
+\copy stage_value FROM 'data/statistics/value-model/player-fantasy-value-import.csv' WITH (FORMAT csv,HEADER true)
+DO $$ BEGIN
+ IF (SELECT count(*) FROM stage_value)<>495 THEN RAISE EXCEPTION 'Value profile row count != 495'; END IF;
+ IF EXISTS (SELECT 1 FROM stage_value GROUP BY player_id HAVING count(*)<>1) THEN RAISE EXCEPTION 'Duplicate staged value player'; END IF;
+ IF EXISTS (SELECT 1 FROM stage_value s LEFT JOIN seasons se ON se.code=s.reference_season LEFT JOIN player_performance_feature_profiles b ON b.player_id=s.player_id::bigint AND b.reference_season_id=se.id AND b.algorithm_version='B49_FEATURES_V1' WHERE se.id IS NULL OR b.id IS NULL OR b.role_code<>s.role::char(1) OR b.data_confidence_score<>s.data_confidence_score::numeric) THEN RAISE EXCEPTION 'B49 reference gate failed'; END IF;
+ IF EXISTS (SELECT 1 FROM stage_value WHERE algorithm_version<>'B50_FANTASY_VALUE_V1' OR role NOT IN ('P','D','C','A') OR ranking_status NOT IN ('RANKED','INSUFFICIENT_EVIDENCE') OR input_fingerprint !~ '^[0-9a-f]{64}$' OR jsonb_typeof(component_payload_json::jsonb)<>'object' OR jsonb_typeof(evidence_json::jsonb)<>'object') THEN RAISE EXCEPTION 'Invalid staged value contract'; END IF;
+ IF EXISTS (SELECT 1 FROM stage_value s JOIN seasons se ON se.code=s.reference_season JOIN player_value_profiles p ON p.player_id=s.player_id::bigint AND p.reference_season_id=se.id AND p.algorithm_version=s.algorithm_version WHERE (p.role_code,p.fantasy_quality_score,p.usage_score,p.production_score,p.consistency_score,p.discipline_score,p.goalkeeper_specific_score,p.player_value_score,p.data_confidence_score,p.ranking_status,p.role_rank,p.role_percentile,p.component_payload,p.evidence,p.input_fingerprint) IS DISTINCT FROM (s.role::char(1),nullif(s.fantasy_quality_score,'')::numeric,nullif(s.usage_score,'')::numeric,nullif(s.production_score,'')::numeric,nullif(s.consistency_score,'')::numeric,nullif(s.discipline_score,'')::numeric,nullif(s.goalkeeper_specific_score,'')::numeric,nullif(s.player_value_score,'')::numeric,s.data_confidence_score::numeric,s.ranking_status,nullif(s.role_rank,'')::int,nullif(s.role_percentile,'')::numeric,s.component_payload_json::jsonb,s.evidence_json::jsonb,s.input_fingerprint::char(64))) THEN RAISE EXCEPTION 'Immutable value profile version conflict'; END IF;
+END $$;
+\if :preflight
+ROLLBACK;
+\echo 'FANTASY VALUE PREFLIGHT: PASS'
+\quit
+\endif
+INSERT INTO player_value_algorithms(version,reference_season_id,status,model_family,minimum_components,definition_fingerprint)
+SELECT 'B50_FANTASY_VALUE_V1',id,'ACTIVE','RULE_BASED_FANTASY_VALUE',2,'e6de34fa0f1bd5a409945538a39b836ddd6b365cca8b94fe589457b733e7a281' FROM seasons WHERE code='2026/2027' ON CONFLICT(version) DO NOTHING;
+INSERT INTO player_value_profiles(player_id,reference_season_id,algorithm_version,role_code,fantasy_quality_score,usage_score,production_score,consistency_score,discipline_score,goalkeeper_specific_score,player_value_score,data_confidence_score,ranking_status,role_rank,role_percentile,component_payload,evidence,input_fingerprint)
+SELECT s.player_id::bigint,se.id,s.algorithm_version,s.role,nullif(s.fantasy_quality_score,'')::numeric,nullif(s.usage_score,'')::numeric,nullif(s.production_score,'')::numeric,nullif(s.consistency_score,'')::numeric,nullif(s.discipline_score,'')::numeric,nullif(s.goalkeeper_specific_score,'')::numeric,nullif(s.player_value_score,'')::numeric,s.data_confidence_score::numeric,s.ranking_status,nullif(s.role_rank,'')::int,nullif(s.role_percentile,'')::numeric,s.component_payload_json::jsonb,s.evidence_json::jsonb,s.input_fingerprint FROM stage_value s JOIN seasons se ON se.code=s.reference_season WHERE NOT EXISTS(SELECT 1 FROM player_value_profiles p WHERE p.player_id=s.player_id::bigint AND p.reference_season_id=se.id AND p.algorithm_version=s.algorithm_version);
+DO $$ BEGIN IF (SELECT count(*) FROM player_value_profiles WHERE algorithm_version='B50_FANTASY_VALUE_V1')<>495 THEN RAISE EXCEPTION 'Final B50 count != 495'; END IF; END $$;
+COMMIT;
+\echo 'FANTASY VALUE IMPORT: PASS'

@@ -1,0 +1,93 @@
+FANTACALCIO INTELLIGENCE - F02 INVENTORY AFTER
+Data: 2026-08-22
+Root: C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\frontend
+
+ROOT CONFIGURATION
+- .env.example
+- .env.test
+- .gitignore
+- .node-version
+- .prettierignore
+- .prettierrc.json
+- eslint.config.js
+- index.html
+- package.json
+- package-lock.json
+- tsconfig.json
+- tsconfig.app.json
+- tsconfig.node.json
+- vite.config.ts
+
+PRESERVED F01
+- f01-frontend-preflight.txt
+- f01-frontend-architecture.txt
+- _f01_work\f01-file-inventory.txt
+
+F02 REPORTS/EVIDENCE
+- f02-00-toolchain-recovery.txt
+- f02-project-foundation.txt
+- _f02_work\f02-file-inventory-before.txt
+- _f02_work\f02-file-inventory-after.txt
+- _f02_work\f02-toolchain-before-after.txt
+- _f02_work\f02-validation-output.txt
+
+APPLICATION SOURCE
+- src\main.tsx
+- src\vite-env.d.ts
+- src\app\bootstrap\App.tsx
+- src\app\bootstrap\App.test.tsx
+- src\app\bootstrap\env.ts
+- src\app\bootstrap\env.test.ts
+- src\app\providers\AppProviders.tsx
+- src\app\providers\queryClient.ts
+- src\app\router\AppRouter.tsx
+- src\pages\FoundationPage.tsx
+- src\pages\FoundationPage.module.css
+- src\pages\NotFoundPage.tsx
+- src\api\client\httpClient.ts
+- src\api\client\httpClient.test.ts
+- src\api\contracts\apiError.ts
+- src\api\errors\AppError.ts
+- src\styles\global.css
+- src\styles\tokens.css
+- src\styles\tokens\README.md
+- src\test\setup.ts
+- src\test\server.ts
+
+STRUCTURE MARKERS
+- public\README.md
+- e2e\README.md
+- src\assets\README.md
+- src\components\README.md
+- src\components\ui\README.md
+- src\components\data-display\README.md
+- src\components\feedback\README.md
+- src\components\navigation\README.md
+- src\domain\README.md
+- src\features\README.md
+- src\hooks\README.md
+- src\layouts\README.md
+- src\state\README.md
+- src\utils\README.md
+
+GENERATED / IGNORED
+- node_modules\ (rigenerabile con npm ci)
+- dist\ (rigenerabile con npm run build)
+
+LOCKFILE SAFETY
+- package-lock.json: presente
+- pnpm-lock.yaml: assente
+- yarn.lock: assente
+- lockfile count: 1
+
+DELETION SUMMARY
+- File preesistenti cancellati: 0
+- Backend file cancellati: 0
+- node_modules generato e stato rimosso una volta dopo verifica assoluta per superare
+  un lock OneDrive durante npm ci, quindi rigenerato integralmente dal package-lock.
+
+GIT SUMMARY
+- frontend: untracked (nessun git add/commit richiesto o eseguito)
+- backend: modifiche/untracked preesistenti invariati
+- commit: NO
+- push: NO

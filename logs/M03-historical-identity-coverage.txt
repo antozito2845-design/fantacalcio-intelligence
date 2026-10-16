@@ -1,0 +1,621 @@
+
+================================================================================
+M03.2 - HISTORICAL IDENTITY COVERAGE
+================================================================================
+
+================================================================================
+1. GIT STATUS
+================================================================================
+
+>>> git status --short
+ M frontend/src/features/core/SquadManagementFlows.test.tsx
+ M frontend/src/layouts/GlobalSearch.tsx
+?? FANTAFOOT-FINAL-STATE.txt
+?? FANTAFOOT-FULL-AUDIT.txt
+?? FANTAFOOT-TARGETED-AUDIT.txt
+?? project-audit-current.txt
+?? project-file-list.txt
+EXIT=0
+
+================================================================================
+2. DATABASE SAFETY
+================================================================================
+DATABASE_URL=jdbc:postgresql://localhost:5432/fantacalcio_intelligence
+DATABASE_USERNAME=fantacalcio_app
+DATABASE_PASSWORD=<REDACTED>
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=fantacalcio_intelligence
+LOCAL_DEV_DB_CERTIFIED=YES
+
+================================================================================
+3. HISTORICAL STATISTICS SCHEMA
+================================================================================
+
+>>> psql.exe -h localhost -p 5432 -U fantacalcio_app -d fantacalcio_intelligence -v ON_ERROR_STOP=1 -P pager=off -c 
+SELECT
+    table_name,
+    column_name,
+    data_type
+FROM information_schema.columns
+WHERE table_schema = 'public'
+  AND table_name IN (
+      'player_season_statistics',
+      'player_season_statistics_clubs',
+      'player_competition_season_statistics'
+  )
+ORDER BY table_name, ordinal_position;
+
+              table_name              |     column_name      |        data_type         
+--------------------------------------+----------------------+--------------------------
+ player_competition_season_statistics | id                   | bigint
+ player_competition_season_statistics | player_id            | bigint
+ player_competition_season_statistics | club_id              | bigint
+ player_competition_season_statistics | season_id            | bigint
+ player_competition_season_statistics | source               | character varying
+ player_competition_season_statistics | source_external_id   | character varying
+ player_competition_season_statistics | competition_code     | character varying
+ player_competition_season_statistics | competition_name     | character varying
+ player_competition_season_statistics | competition_type     | character varying
+ player_competition_season_statistics | country_code         | character
+ player_competition_season_statistics | appearances          | integer
+ player_competition_season_statistics | starts               | integer
+ player_competition_season_statistics | minutes_played       | integer
+ player_competition_season_statistics | goals                | integer
+ player_competition_season_statistics | assists              | integer
+ player_competition_season_statistics | yellow_cards         | integer
+ player_competition_season_statistics | second_yellow_cards  | integer
+ player_competition_season_statistics | red_cards            | integer
+ player_competition_season_statistics | expected_goals       | numeric
+ player_competition_season_statistics | expected_assists     | numeric
+ player_competition_season_statistics | source_url           | text
+ player_competition_season_statistics | source_page_sha256   | character
+ player_competition_season_statistics | import_batch_id      | bigint
+ player_competition_season_statistics | imported_at          | timestamp with time zone
+ player_competition_season_statistics | updated_at           | timestamp with time zone
+ player_season_statistics             | id                   | bigint
+ player_season_statistics             | player_id            | bigint
+ player_season_statistics             | club_id              | bigint
+ player_season_statistics             | season_id            | bigint
+ player_season_statistics             | source               | character varying
+ player_season_statistics             | appearances          | integer
+ player_season_statistics             | starts               | integer
+ player_season_statistics             | minutes_played       | integer
+ player_season_statistics             | average_rating       | numeric
+ player_season_statistics             | fantasy_average      | numeric
+ player_season_statistics             | goals                | integer
+ player_season_statistics             | assists              | integer
+ player_season_statistics             | penalties_scored     | integer
+ player_season_statistics             | penalties_missed     | integer
+ player_season_statistics             | yellow_cards         | integer
+ player_season_statistics             | red_cards            | integer
+ player_season_statistics             | own_goals            | integer
+ player_season_statistics             | goals_conceded       | integer
+ player_season_statistics             | clean_sheets         | integer
+ player_season_statistics             | penalties_saved      | integer
+ player_season_statistics             | expected_goals       | numeric
+ player_season_statistics             | expected_assists     | numeric
+ player_season_statistics             | imported_at          | timestamp with time zone
+ player_season_statistics             | updated_at           | timestamp with time zone
+ player_season_statistics             | source_external_id   | character varying
+ player_season_statistics             | penalties_taken      | integer
+ player_season_statistics             | saves                | integer
+ player_season_statistics             | source_updated_at    | timestamp with time zone
+ player_season_statistics             | import_batch_id      | bigint
+ player_season_statistics_clubs       | id                   | bigint
+ player_season_statistics_clubs       | statistics_id        | bigint
+ player_season_statistics_clubs       | club_name            | character varying
+ player_season_statistics_clubs       | normalized_club_name | character varying
+ player_season_statistics_clubs       | source_order         | smallint
+(59 righe)
+EXIT=0
+
+================================================================================
+4. PLAYER SEASON STATISTICS COVERAGE
+================================================================================
+
+>>> psql.exe -h localhost -p 5432 -U fantacalcio_app -d fantacalcio_intelligence -v ON_ERROR_STOP=1 -P pager=off -c 
+SELECT
+    s.code AS season,
+    COUNT(*) AS statistics_rows,
+    COUNT(DISTINCT stats.player_id) AS distinct_players,
+    COUNT(DISTINCT stats.source) AS sources
+FROM player_season_statistics stats
+JOIN seasons s
+    ON s.id = stats.season_id
+GROUP BY s.code
+ORDER BY s.code;
+
+  season   | statistics_rows | distinct_players | sources 
+-----------+-----------------+------------------+---------
+ 2024/2025 |             679 |              679 |       1
+ 2025/2026 |             663 |              663 |       1
+(2 righe)
+EXIT=0
+
+>>> psql.exe -h localhost -p 5432 -U fantacalcio_app -d fantacalcio_intelligence -v ON_ERROR_STOP=1 -P pager=off -c 
+SELECT
+    s.code AS season,
+    stats.source,
+    COUNT(*) AS rows,
+    COUNT(DISTINCT stats.player_id) AS distinct_players
+FROM player_season_statistics stats
+JOIN seasons s
+    ON s.id = stats.season_id
+GROUP BY s.code, stats.source
+ORDER BY s.code, stats.source;
+
+  season   |   source    | rows | distinct_players 
+-----------+-------------+------+------------------
+ 2024/2025 | FANTACALCIO |  679 |              679
+ 2025/2026 | FANTACALCIO |  663 |              663
+(2 righe)
+EXIT=0
+
+================================================================================
+5. HISTORICAL IDENTITY POPULATION
+================================================================================
+
+>>> psql.exe -h localhost -p 5432 -U fantacalcio_app -d fantacalcio_intelligence -v ON_ERROR_STOP=1 -P pager=off -c 
+SELECT
+    COUNT(DISTINCT player_id) AS players_with_any_statistics
+FROM player_season_statistics;
+
+ players_with_any_statistics 
+-----------------------------
+                         907
+(1 riga)
+EXIT=0
+
+>>> psql.exe -h localhost -p 5432 -U fantacalcio_app -d fantacalcio_intelligence -v ON_ERROR_STOP=1 -P pager=off -c 
+SELECT
+    COUNT(DISTINCT player_id) AS players_with_pre_current_statistics
+FROM player_season_statistics stats
+JOIN seasons s ON s.id = stats.season_id
+WHERE s.current_season = FALSE;
+
+ players_with_pre_current_statistics 
+-------------------------------------
+                                 907
+(1 riga)
+EXIT=0
+
+>>> psql.exe -h localhost -p 5432 -U fantacalcio_app -d fantacalcio_intelligence -v ON_ERROR_STOP=1 -P pager=off -c 
+SELECT
+    COUNT(DISTINCT r.player_id) AS players_with_pre_current_roles
+FROM player_roles r
+JOIN seasons s ON s.id = r.season_id
+WHERE s.current_season = FALSE;
+
+ players_with_pre_current_roles 
+--------------------------------
+                            907
+(1 riga)
+EXIT=0
+
+================================================================================
+6. HISTORICAL IDENTITIES NOT IN CURRENT CATALOG
+================================================================================
+
+>>> psql.exe -h localhost -p 5432 -U fantacalcio_app -d fantacalcio_intelligence -v ON_ERROR_STOP=1 -P pager=off -c 
+WITH historical AS (
+    SELECT DISTINCT stats.player_id
+    FROM player_season_statistics stats
+    JOIN seasons s ON s.id = stats.season_id
+    WHERE s.current_season = FALSE
+
+    UNION
+
+    SELECT DISTINCT r.player_id
+    FROM player_roles r
+    JOIN seasons s ON s.id = r.season_id
+    WHERE s.current_season = FALSE
+),
+current_catalog AS (
+    SELECT DISTINCT p.id AS player_id
+    FROM players p
+    JOIN player_reconciliation_results rec
+        ON rec.player_id = p.id
+    JOIN seasons s
+        ON s.id = rec.season_id
+       AND s.current_season = TRUE
+    JOIN player_registrations registration
+        ON registration.player_id = p.id
+       AND registration.season_id = s.id
+    JOIN season_clubs sc
+        ON sc.season_id = s.id
+       AND sc.club_id = registration.club_id
+    JOIN player_roles role
+        ON role.player_id = p.id
+       AND role.season_id = s.id
+       AND role.source = 'FANTACALCIO'
+    WHERE p.active = TRUE
+      AND registration.registration_status = 'ACTIVE'
+      AND role.fantasy_role IS NOT NULL
+)
+SELECT
+    COUNT(*) AS historical_identities,
+    COUNT(*) FILTER (
+        WHERE current.player_id IS NULL
+    ) AS historical_not_current_catalog,
+    COUNT(*) FILTER (
+        WHERE current.player_id IS NOT NULL
+    ) AS historical_still_current
+FROM historical h
+LEFT JOIN current_catalog current
+    ON current.player_id = h.player_id;
+
+ERRORE:  errore di sintassi a o presso "current_catalog"
+RIGA 15: current_catalog AS (
+         ^
+EXIT=1
+
+================================================================================
+7. INACTIVE PLAYERS WITH HISTORICAL DATA
+================================================================================
+
+>>> psql.exe -h localhost -p 5432 -U fantacalcio_app -d fantacalcio_intelligence -v ON_ERROR_STOP=1 -P pager=off -c 
+WITH historical AS (
+    SELECT DISTINCT player_id
+    FROM player_season_statistics
+
+    UNION
+
+    SELECT DISTINCT player_id
+    FROM player_roles
+)
+SELECT
+    COUNT(*) AS inactive_players_with_history
+FROM players p
+JOIN historical h
+    ON h.player_id = p.id
+WHERE p.active = FALSE;
+
+ inactive_players_with_history 
+-------------------------------
+                           484
+(1 riga)
+EXIT=0
+
+>>> psql.exe -h localhost -p 5432 -U fantacalcio_app -d fantacalcio_intelligence -v ON_ERROR_STOP=1 -P pager=off -c 
+WITH historical_seasons AS (
+    SELECT
+        stats.player_id,
+        s.code AS season
+    FROM player_season_statistics stats
+    JOIN seasons s ON s.id = stats.season_id
+
+    UNION
+
+    SELECT
+        r.player_id,
+        s.code AS season
+    FROM player_roles r
+    JOIN seasons s ON s.id = r.season_id
+)
+SELECT
+    p.id,
+    p.display_name,
+    p.active,
+    STRING_AGG(
+        DISTINCT hs.season,
+        ', '
+        ORDER BY hs.season
+    ) AS historical_seasons
+FROM players p
+JOIN historical_seasons hs
+    ON hs.player_id = p.id
+WHERE p.active = FALSE
+GROUP BY p.id, p.display_name, p.active
+ORDER BY p.display_name
+LIMIT 40;
+
+  id  |      display_name      | active |  historical_seasons  
+------+------------------------+--------+----------------------
+  756 | Abdelhamid Sabiri      | f      | 2025/2026
+  750 | Abdou Harroui          | f      | 2024/2025, 2025/2026
+  683 | Adam Masina            | f      | 2024/2025, 2025/2026
+  677 | Ademola Lookman        | f      | 2024/2025, 2025/2026
+  893 | Adrian Benedyczak      | f      | 2024/2025, 2025/2026
+  974 | Adrian Rus             | f      | 2025/2026
+  623 | Adrian Semper          | f      | 2025/2026
+  682 | Adrien Tameze          | f      | 2024/2025, 2025/2026
+ 1009 | Aguiar Tomich Isaac    | f      | 2025/2026
+  765 | Agustin Alvarez        | f      | 2025/2026
+  900 | Albert Gronbaek        | f      | 2025/2026
+  625 | Alberto Cerri          | f      | 2024/2025
+  944 | Alberto Costa          | f      | 2024/2025
+  813 | Alberto Dossena        | f      | 2024/2025, 2025/2026
+  610 | Alberto Grassi         | f      | 2024/2025, 2025/2026
+  920 | Alberto Manzoni        | f      | 2024/2025
+  982 | Alessandro Arena       | f      | 2025/2026
+  886 | Alessandro Bellemo     | f      | 2024/2025
+  663 | Alessandro Berardi     | f      | 2024/2025
+  736 | Alessandro Bianco      | f      | 2024/2025, 2025/2026
+  962 | Alessandro Calligaris  | f      | 2024/2025, 2025/2026
+  868 | Alessandro Dellavalle  | f      | 2024/2025
+  718 | Alessandro Di Pardo    | f      | 2024/2025, 2025/2026
+  669 | Alessandro Florenzi    | f      | 2024/2025
+  888 | Alessandro Gabrielloni | f      | 2024/2025, 2025/2026
+  993 | Alessandro Nunziante   | f      | 2025/2026
+  568 | Alessandro Plizzari    | f      | 2024/2025
+  769 | Alessandro Sorrentino  | f      | 2024/2025
+  577 | Alessio Cragno         | f      | 2024/2025
+  834 | Alessio Furlanetto     | f      | 2024/2025, 2025/2026
+  885 | Alessio Iovine         | f      | 2024/2025
+ 1000 | Alex Sala              | f      | 2025/2026
+  984 | Alexander Lind         | f      | 2025/2026
+  597 | Alexis Sanchez         | f      | 2024/2025, 2025/2026
+  881 | Ali Jasim              | f      | 2024/2025
+  800 | Amin Sarr              | f      | 2024/2025, 2025/2026
+  959 | Amine Salama           | f      | 2024/2025
+  906 | Amir Richardson        | f      | 2024/2025, 2025/2026
+  931 | Anas Haj Mohamed       | f      | 2024/2025
+  956 | Anass Salah-Eddine     | f      | 2024/2025, 2025/2026
+(40 righe)
+EXIT=0
+
+================================================================================
+8. HISTORICAL IDENTITY MATRIX
+================================================================================
+
+>>> psql.exe -h localhost -p 5432 -U fantacalcio_app -d fantacalcio_intelligence -v ON_ERROR_STOP=1 -P pager=off -c 
+WITH role_players AS (
+    SELECT DISTINCT
+        r.player_id,
+        r.season_id
+    FROM player_roles r
+    WHERE r.source = 'FANTACALCIO'
+),
+stat_players AS (
+    SELECT DISTINCT
+        player_id,
+        season_id
+    FROM player_season_statistics
+),
+all_pairs AS (
+    SELECT player_id, season_id FROM role_players
+    UNION
+    SELECT player_id, season_id FROM stat_players
+)
+SELECT
+    s.code AS season,
+    COUNT(DISTINCT ap.player_id) AS historical_identities,
+    COUNT(DISTINCT rp.player_id) AS with_fantacalcio_role,
+    COUNT(DISTINCT sp.player_id) AS with_statistics,
+    COUNT(DISTINCT pr.player_id) AS with_registration
+FROM seasons s
+LEFT JOIN all_pairs ap
+    ON ap.season_id = s.id
+LEFT JOIN role_players rp
+    ON rp.season_id = s.id
+   AND rp.player_id = ap.player_id
+LEFT JOIN stat_players sp
+    ON sp.season_id = s.id
+   AND sp.player_id = ap.player_id
+LEFT JOIN player_registrations pr
+    ON pr.season_id = s.id
+   AND pr.player_id = ap.player_id
+GROUP BY s.id, s.code, s.start_year
+ORDER BY s.start_year;
+
+  season   | historical_identities | with_fantacalcio_role | with_statistics | with_registration 
+-----------+-----------------------+-----------------------+-----------------+-------------------
+ 2024/2025 |                   679 |                   679 |             679 |                 0
+ 2025/2026 |                   663 |                   663 |             663 |                 0
+ 2026/2027 |                   513 |                   513 |               0 |               513
+(3 righe)
+EXIT=0
+
+================================================================================
+9. HISTORICAL CLUB COVERAGE
+================================================================================
+
+>>> psql.exe -h localhost -p 5432 -U fantacalcio_app -d fantacalcio_intelligence -v ON_ERROR_STOP=1 -P pager=off -c 
+SELECT
+    s.code AS season,
+    COUNT(DISTINCT stats.player_id) AS players_with_stats,
+    COUNT(DISTINCT CASE
+        WHEN clubs.statistics_id IS NOT NULL
+        THEN stats.player_id
+    END) AS players_with_historical_club
+FROM player_season_statistics stats
+JOIN seasons s
+    ON s.id = stats.season_id
+LEFT JOIN player_season_statistics_clubs clubs
+    ON clubs.statistics_id = stats.id
+GROUP BY s.code
+ORDER BY s.code;
+
+  season   | players_with_stats | players_with_historical_club 
+-----------+--------------------+------------------------------
+ 2024/2025 |                679 |                            0
+ 2025/2026 |                663 |                            0
+(2 righe)
+EXIT=0
+
+================================================================================
+10. EXAMPLE FORMER PLAYERS
+================================================================================
+
+>>> psql.exe -h localhost -p 5432 -U fantacalcio_app -d fantacalcio_intelligence -v ON_ERROR_STOP=1 -P pager=off -c 
+WITH historical AS (
+    SELECT DISTINCT
+        stats.player_id,
+        s.code AS season
+    FROM player_season_statistics stats
+    JOIN seasons s
+        ON s.id = stats.season_id
+    WHERE s.current_season = FALSE
+
+    UNION
+
+    SELECT DISTINCT
+        r.player_id,
+        s.code AS season
+    FROM player_roles r
+    JOIN seasons s
+        ON s.id = r.season_id
+    WHERE s.current_season = FALSE
+),
+current_catalog AS (
+    SELECT DISTINCT p.id
+    FROM players p
+    JOIN player_reconciliation_results rec
+        ON rec.player_id = p.id
+    JOIN seasons s
+        ON s.id = rec.season_id
+       AND s.current_season = TRUE
+    JOIN player_registrations registration
+        ON registration.player_id = p.id
+       AND registration.season_id = s.id
+    JOIN season_clubs sc
+        ON sc.season_id = s.id
+       AND sc.club_id = registration.club_id
+    JOIN player_roles role
+        ON role.player_id = p.id
+       AND role.season_id = s.id
+       AND role.source = 'FANTACALCIO'
+    WHERE p.active = TRUE
+      AND registration.registration_status = 'ACTIVE'
+      AND role.fantasy_role IS NOT NULL
+)
+SELECT
+    p.id,
+    p.display_name,
+    p.active,
+    STRING_AGG(
+        DISTINCT h.season,
+        ', '
+        ORDER BY h.season
+    ) AS seasons
+FROM historical h
+JOIN players p
+    ON p.id = h.player_id
+LEFT JOIN current_catalog c
+    ON c.id = p.id
+WHERE c.id IS NULL
+GROUP BY p.id, p.display_name, p.active
+ORDER BY p.display_name
+LIMIT 50;
+
+ERRORE:  errore di sintassi a o presso "current_catalog"
+RIGA 21: current_catalog AS (
+         ^
+EXIT=1
+
+================================================================================
+11. PLAYER DETAIL HISTORICAL LIMITATION
+================================================================================
+
+CONTEXT_AROUND_LINE=25
+  23:     public PlayerDetailResponse findById(
+  24:             Long playerId,
+  25:             String seasonCode
+  26:     ) {
+  27:         Map<String, Object> player = jdbcClient.sql("""
+  28:                 SELECT
+  29:                     p.id,
+
+CONTEXT_AROUND_LINE=35
+  33:                     s.id AS season_id
+  34:                 FROM players p
+  35:                 JOIN player_registrations pr
+  36:                     ON pr.player_id = p.id
+  37:                 JOIN seasons s
+  38:                     ON s.id = pr.season_id
+  39:                 JOIN clubs c
+
+CONTEXT_AROUND_LINE=42
+  40:                     ON c.id = pr.club_id
+  41:                 WHERE p.id = :playerId
+  42:                   AND s.code = :seasonCode
+  43:                 """)
+  44:                 .param("playerId", playerId)
+  45:                 .param("seasonCode", seasonCode)
+  46:                 .query()
+
+CONTEXT_AROUND_LINE=45
+  43:                 """)
+  44:                 .param("playerId", playerId)
+  45:                 .param("seasonCode", seasonCode)
+  46:                 .query()
+  47:                 .listOfRows()
+  48:                 .stream()
+  49:                 .findFirst()
+
+CONTEXT_AROUND_LINE=52
+  50:                 .orElseThrow(() ->
+  51:                         new ResourceNotFoundException(
+  52:                                 "Giocatore non trovato"
+  53:                         )
+  54:                 );
+  55: 
+  56:         Long seasonId = ((Number) player.get("season_id"))
+
+CONTEXT_AROUND_LINE=130
+ 128:                             tactics.defensive_line,
+ 129:                             tactics.pressing_level
+ 130:                         FROM player_registrations pr
+ 131:                         JOIN club_season_tactics tactics
+ 132:                             ON tactics.club_id = pr.club_id
+ 133:                             AND tactics.season_id = pr.season_id
+ 134:                         LEFT JOIN coaches coach
+
+CONTEXT_AROUND_LINE=198
+ 196:                             club.name AS club_name,
+ 197:                             (SELECT STRING_AGG(history.club_name, '|' ORDER BY history.source_order)
+ 198:                              FROM player_season_statistics_clubs history
+ 199:                              WHERE history.statistics_id = stats.id) AS historical_clubs,
+ 200:                             stats.appearances,
+ 201:                             stats.starts,
+ 202:                             stats.minutes_played,
+
+CONTEXT_AROUND_LINE=199
+ 197:                             (SELECT STRING_AGG(history.club_name, '|' ORDER BY history.source_order)
+ 198:                              FROM player_season_statistics_clubs history
+ 199:                              WHERE history.statistics_id = stats.id) AS historical_clubs,
+ 200:                             stats.appearances,
+ 201:                             stats.starts,
+ 202:                             stats.minutes_played,
+ 203:                             stats.average_rating,
+
+CONTEXT_AROUND_LINE=229
+ 227:                             stats.source_updated_at,
+ 228:                             stats.import_batch_id
+ 229:                         FROM player_season_statistics stats
+ 230:                         JOIN seasons s
+ 231:                             ON s.id = stats.season_id
+ 232:                         LEFT JOIN clubs club
+ 233:                             ON club.id = stats.club_id
+
+CONTEXT_AROUND_LINE=245
+ 243:                                         rs.getString("source_external_id"),
+ 244:                                         rs.getString("club_name"),
+ 245:                                         splitHistoricalClubs(rs.getString("historical_clubs")),
+ 246:                                         rs.getObject("appearances", Integer.class),
+ 247:                                         rs.getObject("starts", Integer.class),
+ 248:                                         rs.getObject("minutes_played", Integer.class),
+ 249:                                         rs.getBigDecimal("average_rating"),
+
+================================================================================
+12. FINAL GIT STATUS
+================================================================================
+
+>>> git status --short
+ M frontend/src/features/core/SquadManagementFlows.test.tsx
+ M frontend/src/layouts/GlobalSearch.tsx
+?? FANTAFOOT-FINAL-STATE.txt
+?? FANTAFOOT-FULL-AUDIT.txt
+?? FANTAFOOT-TARGETED-AUDIT.txt
+?? project-audit-current.txt
+?? project-file-list.txt
+EXIT=0
+
+================================================================================
+M03.2 FINAL SUMMARY
+================================================================================
+MODE=READ_ONLY
+DATABASE_MUTATIONS=NONE
+FILES_MODIFIED_BY_AUDIT=NONE
+LOG_FILE=C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\logs\M03-historical-identity-coverage.txt

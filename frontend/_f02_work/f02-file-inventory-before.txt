@@ -1,0 +1,20 @@
+FANTACALCIO INTELLIGENCE - F02 INVENTORY BEFORE
+Data: 2026-08-22
+Root: C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\frontend
+
+Elementi presenti prima di F02:
+- C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\frontend\_f01_work\
+- C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\frontend\_f01_work\f01-file-inventory.txt
+- C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\frontend\f01-frontend-preflight.txt
+- C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\frontend\f01-frontend-architecture.txt
+
+Stato iniziale frontend: EMPTY salvo evidenze F01.
+Package manifest iniziale: assente.
+Lockfile iniziali: nessuno.
+Codice sorgente iniziale: assente.
+
+Git prima di F02:
+- Branch master.
+- frontend interamente untracked per la presenza dei soli report F01.
+- numerose modifiche/untracked backend, data, scripts e report erano preesistenti.
+- nessuna pulizia, indicizzazione, cancellazione, commit o push eseguiti.

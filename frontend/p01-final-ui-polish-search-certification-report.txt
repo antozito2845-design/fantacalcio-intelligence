@@ -1,0 +1,161 @@
+FANTACALCIO INTELLIGENCE
+P01 FINAL UI POLISH + SEARCH FIX
+
+DATE=2026-08-23
+
+========================================
+INITIAL AUDIT
+========================================
+
+SEARCH_ROOT_CAUSE=The AppShell topbar rendered an uncontrolled SearchInput with no state, submit handler, query, result UI, or navigation; the field was purely decorative.
+SEARCH_BACKEND_CAPABILITIES=GET /api/v1/players supports the search parameter for player-name catalog search and club filtering; GET /api/v1/clubs exposes the active club catalog. No generic statistics-search endpoint or semantic statistics-search contract exists.
+CALENDAR_CONTROL_ISSUES=Calendar controls used page-local raw controls with a 10px wrapping flex layout, inconsistent button/select styling, narrow spacing, and no distinct matchday/club groups.
+GLOBAL_CONTROL_ISSUES=Structural audit found the existing shared control system, global focus-visible rule, and route-specific control groups generally coherent. The confirmed inconsistencies were the Calendar raw controls and the non-functional topbar search. No speculative restyling was applied elsewhere.
+
+========================================
+GLOBAL SEARCH
+========================================
+
+STATUS=PASS
+FILES_CREATED=src/layouts/GlobalSearch.tsx
+FILES_MODIFIED=src/layouts/AppShell.tsx; src/layouts/AppShell.module.css; src/layouts/AppShell.test.tsx
+SEARCH_CAPABILITIES=Real player-name search plus active-club name matching; no unsupported statistics search promise.
+PLAYER_SEARCH=PASS - server-side GET /api/v1/players?search=... with Zod validation and a maximum of 6 displayed results.
+CLUB_SEARCH=PASS - real GET /api/v1/clubs data filtered by club name; selection navigates to /players?club=<real-slug>.
+STATISTICS_SEARCH=NOT_SUPPORTED_BY_BACKEND - deliberately omitted; placeholder changed to "Cerca giocatori e squadre…".
+ENTER_KEY=PASS
+RESULT_UI=PASS - accessible live result region with player detail links and club catalog actions.
+ZERO_RESULTS=PASS
+LOADING=PASS
+ERROR=PASS - live alert text with no fabricated fallback data.
+ACCESSIBILITY=PASS - search landmark, associated label, native search input, submit button, keyboard Enter/Escape, focus-visible inherited from the design system.
+TESTS_ADDED=3 global-search tests covering typing, Enter, request contract, navigable valid result, submit click, loading, zero results, API error, and Escape.
+
+========================================
+CALENDAR CONTROLS
+========================================
+
+STATUS=PASS
+PREVIOUS_BUTTON=Shared secondary Button; 44px mobile runtime height; hover, focus-visible and disabled behavior inherited from the design system.
+MATCHDAY_SELECT=Shared labelled Select; coherent 44px mobile height and bounded responsive column.
+NEXT_BUTTON=Shared secondary Button; 44px mobile runtime height; hover, focus-visible and disabled behavior inherited from the design system.
+CLUB_SELECT=Shared labelled Select in a dedicated responsive group.
+DESKTOP=PASS - two-column toolbar with grouped matchday navigation and club analysis.
+MOBILE=PASS - three-column matchday row plus full-width club row; no horizontal overflow at 390px.
+DARK=PASS
+LIGHT=PASS
+
+========================================
+MATCHUP DIFFICULTY
+========================================
+
+STATUS=PASS
+BACKEND_SOURCE=backend/src/main/java/it/fantacalciointelligence/backend/calendarintelligence/B69RoleMatchupScorer.java; CalendarDifficulty.java; backend/src/main/java/it/fantacalciointelligence/backend/fixture/B69FixtureMatchupService.java; B69RoleDifficultyResponse.java
+ALGORITHM=Weighted mean of the available 0-100 role signals. The weighted total is divided by available weight, rounded HALF_UP to two decimals, then classified by CalendarDifficulty.fromScore.
+SCORE_MODEL=0-100 difficultyScore; a higher score means a less favorable matchup. Missing signals are excluded and remaining weights are renormalized. No available signal returns null score, SCONOSCIUTA/UNKNOWN, NO_EVIDENCE and 0.00 coverage.
+THRESHOLDS=FACILE/EASY score < 50; MEDIA/MEDIUM score >= 50 and < 70; DIFFICILE/HARD score >= 70; SCONOSCIUTA/UNKNOWN when score is null.
+FACTORS=P: opponent attack 50%, opponent venue 25%, opponent overall 15%, own defensive weakness 10%. D: opponent attack 40%, opponent overall 20%, opponent venue 20%, own defensive weakness 20%. C: opponent overall 30%, opponent defense 25%, opponent attack 15%, opponent venue 15%, own attacking weakness 15%. A: opponent defense 45%, opponent overall 20%, opponent venue 15%, own attacking weakness 20%. Venue uses opponent away rating when the analyzed club is home and opponent home rating when away. Weakness is 100 minus the own rating.
+ROLE_SPECIFIC=True - separate P/D/C/A signal weights.
+EVIDENCE=Backend evidenceTier derives from weighted coverage: HIGH >= 90; MEDIUM >= 70; LOW >= 40; MINIMAL < 40; NO_EVIDENCE with no signal.
+COVERAGE=evidenceCoverage equals the sum of weights of available signals multiplied by 100. Missing factors lower coverage; available factors are renormalized for the score.
+UI_EXPLANATION=Expandable "Come leggere la difficoltà" legend explains direction, exact thresholds, real factor families, role specificity and coverage. Each backend score is shown as score/100 or an em dash when unavailable.
+TOOLTIP_OR_LEGEND=PASS - native keyboard-accessible details/summary legend.
+NO_FAKE_REASONING=True - UI explicitly states coverage is not a generated motivation and displays no invented per-match reasoning.
+
+DIFFICULTY_ALGORITHM_SOURCE=B69RoleMatchupScorer.java and CalendarDifficulty.java
+DIFFICULTY_SCORE=Weighted 0-100 role score, two decimals, null without evidence.
+DIFFICULTY_THRESHOLDS=EASY <50; MEDIUM 50-<70; HARD >=70; UNKNOWN null.
+DIFFICULTY_FACTORS=Opponent overall/attack/defense/venue ratings plus inverse own attack/defense rating, weighted by P/D/C/A.
+ROLE_SPECIFIC=True
+COVERAGE_BEHAVIOR=Available signal weight percentage; absent signals reduce coverage and remaining weights are renormalized.
+EVIDENCE_BEHAVIOR=HIGH >=90; MEDIUM >=70; LOW >=40; MINIMAL <40; NO_EVIDENCE with zero signals.
+
+========================================
+GLOBAL CONTROL AUDIT
+========================================
+
+STATUS=PASS
+ROUTES_REVIEWED=/; /players; /players/:id; /auction; /auction/live; /auction/live/:sessionId; /squad; /lineup; /calendar; /scouting; /admin; /profile; /login; /access-denied; 404
+BUTTONS=PASS - shared and route controls retain coherent sizing/states; Calendar migrated to shared Button.
+SELECTS=PASS - shared and route filter selects retain coherent sizing; Calendar migrated to shared Select.
+INPUTS=PASS - shared/global focus-visible, theme tokens and mobile minimum heights remain active.
+SEARCH=PASS - functional global search plus existing route filters.
+PAGINATION=PASS - existing Players pagination retains disabled and spacing behavior.
+MOBILE=PASS - runtime audited at 390px.
+TABLET=PASS - runtime audited at 768px.
+DESKTOP=PASS - runtime audited at 1440px.
+DARK=PASS - default dark runtime path.
+LIGHT=PASS - dashboard theme control set data-theme=light successfully.
+ISSUES_FIXED=Functional topbar search; honest placeholder; accessible real result states; Calendar grouping, shared controls, spacing and responsive layout; backend-grounded matchup legend and score presentation.
+
+========================================
+QUALITY GATES
+========================================
+
+SERVER_REQUIRED=OFF
+TYPECHECK=PASS
+LINT=PASS
+TESTS=PASS
+TEST_COUNT=85
+TEST_FAILURES=0
+TEST_ERRORS=0
+BUILD=PASS
+FORMAT_CHECK=PASS
+DEPENDENCY_AUDIT=PASS - npm audit found 0 vulnerabilities.
+
+========================================
+RUNTIME
+========================================
+
+SERVER_REQUIRED=ON
+RUNTIME_INTEGRATION_SMOKE=PASS - backend started with .\mvnw.cmd spring-boot:run using dev profile; Vite started with package script. Public routes rendered real PostgreSQL-backed data; protected /admin and /profile correctly redirected to /login.
+GLOBAL_SEARCH_RUNTIME=PASS - real query "Abankwah" returned backend player Abankwah, Udinese, role D, linking to /players/44; button interaction passed and Enter is covered by passing integration test.
+CALENDAR_RUNTIME=PASS - previous/matchday/next/club controls rendered responsively; real club selection loaded matchup UI.
+MATCHUP_EXPLANATION_RUNTIME=PASS - legend opened and displayed backend-grounded weighted-role explanation.
+VIEWPORT_390=PASS
+VIEWPORT_768=PASS
+VIEWPORT_1440=PASS
+DARK_MODE=PASS
+LIGHT_MODE=PASS
+CONSOLE_ERRORS=0
+REACT_WARNINGS=0
+UNCAUGHT_EXCEPTIONS=0
+HORIZONTAL_OVERFLOW=0 across /, /players, /calendar, /auction, /lineup, /scouting, protected-route redirects, /access-denied and 404 at audited viewports.
+
+========================================
+BACKEND PROTECTION
+========================================
+
+BACKEND_SOURCE_MODIFIED=False
+BLOCKING_BACKEND_GAPS=0
+
+========================================
+DATA INTEGRITY
+========================================
+
+NO_FAKE_BUSINESS_DATA=True
+NO_FAKE_SEARCH_RESULTS=True
+NO_FAKE_MATCHUP_REASONING=True
+
+========================================
+REGRESSION
+========================================
+
+F01_F18_REGRESSION=PASS - 85/85 frontend tests.
+AUTH_REGRESSION=PASS
+API_REGRESSION=PASS
+QUERY_REGRESSION=PASS
+DEPLOY_READINESS_REGRESSION=PASS
+
+========================================
+FINAL
+========================================
+
+P01=PASS
+SEARCH=PASS
+CALENDAR_CONTROLS=PASS
+MATCHUP_EXPLANATION=PASS
+GLOBAL_UI_POLISH=PASS
+DEPLOY_BLOCKERS=0
+PROJECT_STATE=READY_FOR_DEPLOYMENT
+CERTIFICATION=PASS

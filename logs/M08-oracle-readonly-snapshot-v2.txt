@@ -1,0 +1,83 @@
+﻿
+======================================================================
+M08.2B ORACLE TARGETED READ-ONLY SNAPSHOT
+======================================================================
+REMOTE_MUTATIONS=NONE
+DEPLOY_EXECUTED=NO
+=== BACKEND JAR ===
+REMOTE_JAR_SIZE=62032880
+
+=== FRONTEND ROOT ===
+REMOTE_FRONTEND_FOUND=YES
+README.md|121
+assets/AdminPage--gvgsyFe.js|14309
+assets/AdminPage-BPax7CVS.css|2416
+assets/AuctionPage-C43GYRRI.js|3371
+assets/CalendarPage-DPs6pEx3.js|4273
+assets/DesignSystemPage-Dnt-Wij2.js|9660
+assets/FeaturePage-Bw_1vyQU.css|3107
+assets/FeaturePage.module-CGjck9qI.js|596
+assets/Intelligence-aQCZUjeT.css|3122
+assets/Intelligence.module-BxinMgaH.js|397
+assets/LineupPage-DgNzLrtc.js|5316
+assets/LiveAuctionPage-wcK1SRM4.js|4338
+assets/PlayerDetailPage-B7drn3Ov.js|3280
+assets/PlayersPage-QrKScR5p.js|5993
+assets/ScoutingPage-YO2VOA1H.js|4237
+assets/SquadPage-Du--5cW8.js|8450
+assets/StatusPage-CXudE7Bt.js|340
+assets/chunk-62JRHF6Z-D7DyR7Id.js|100193
+assets/index-DRu2-DW7.css|30601
+assets/index-Du_bLW4h.js|335562
+assets/useMutation-eE957Xcy.js|2255
+index.html|615
+REMOTE_FRONTEND_FILE_COUNT=22
+
+=== FRONTEND INDEX ===
+REMOTE_INDEX_SIZE=615
+REMOTE_INDEX_SHA256=1f6c5204f2ff0c6d6de4808cd4dead4c82038294bfb3af5bfd7bd0a531ed781a
+REMOTE_INDEX_ASSETS_BEGIN
+assets/chunk-62JRHF6Z-D7DyR7Id.js
+assets/index-DRu2-DW7.css
+assets/index-Du_bLW4h.js
+REMOTE_INDEX_ASSETS_END
+
+=== FLYWAY REAL VERSION ===
+FLYWAY_LATEST_RANK=70|VERSION=69|DESCRIPTION=extend production automation identity enrichment|SUCCESS=true
+FLYWAY_LATEST_RANK=69|VERSION=68|DESCRIPTION=create production automation runs|SUCCESS=true
+FLYWAY_LATEST_RANK=68|VERSION=67|DESCRIPTION=create b67 auction price model|SUCCESS=true
+FLYWAY_LATEST_RANK=67|VERSION=66.1|DESCRIPTION=correct transfermarkt competition classifications|SUCCESS=true
+FLYWAY_LATEST_RANK=66|VERSION=66|DESCRIPTION=support complete operational performance population|SUCCESS=true
+FLYWAY_SUCCESS_COUNT=70
+FLYWAY_FAILED_COUNT=0
+
+=== DB COUNTS READ ONLY ===
+PLAYERS_TOTAL=1020
+SEASONS_TOTAL=3
+ERROR:  column "current" does not exist
+LINE 1: ...LECT 'CURRENT_SEASON=' || code FROM seasons WHERE current = ...
+                                                             ^
+
+=== SERVICES ===
+BACKEND_ACTIVE=active
+NGINX_ACTIVE=active
+{"groups":["liveness","readiness"],"status":"UP"}
+REMOTE_READ_ONLY=YES
+FILES_WRITTEN_REMOTE=NO
+SERVICES_RESTARTED=NO
+DATABASE_MUTATIONS=NONE
+DEPLOY_EXECUTED=NO
+
+STDERR_BEGIN
+sha256sum: /opt/fantacalcio/backend/backend.jar: Permission denied
+
+======================================================================
+M08.2B FINAL SUMMARY
+======================================================================
+SSH_EXIT=0
+SSH_STDERR_EMPTY=NO
+REMOTE_READ_ONLY=YES
+DATABASE_MUTATIONS=NONE
+DEPLOY_EXECUTED=NO
+M08_ORACLE_SNAPSHOT_STATUS=COLLECTED
+LOG_FILE=C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\logs\M08-oracle-readonly-snapshot-v2.txt

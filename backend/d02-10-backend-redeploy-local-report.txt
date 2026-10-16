@@ -1,0 +1,7 @@
+===== D02.10 LOCAL REDEPLOY =====
+JAR=C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\backend\target\backend-0.0.1-SNAPSHOT.jar
+JAR_SIZE=62030432
+BACKEND_BUILD=PASS
+BACKEND_UPLOAD=PASS
+D02_10_LOCAL_STATUS=PASS
+===== D02.10 LOCAL END =====

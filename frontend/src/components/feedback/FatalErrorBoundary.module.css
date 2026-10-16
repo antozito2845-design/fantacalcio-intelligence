@@ -1,0 +1,29 @@
+.page {
+  display: grid;
+  min-block-size: 100vh;
+  padding: var(--space-6);
+  place-items: center;
+}
+.panel {
+  inline-size: min(100%, 34rem);
+  padding: clamp(1.5rem, 5vw, 3rem);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-1);
+  box-shadow: var(--shadow-card);
+  text-align: center;
+}
+.panel > svg {
+  color: var(--color-danger);
+}
+.eyebrow {
+  margin-block: var(--space-4) var(--space-2);
+  color: var(--color-danger);
+  font-size: var(--font-size-label);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.panel p:not(.eyebrow) {
+  color: var(--color-text-secondary);
+}

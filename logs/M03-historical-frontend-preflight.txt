@@ -1,0 +1,763 @@
+
+================================================================================
+M03.5A - HISTORICAL FRONTEND PREFLIGHT
+================================================================================
+
+================================================================================
+1. GIT STATUS
+================================================================================
+ M frontend/src/features/core/SquadManagementFlows.test.tsx
+ M frontend/src/layouts/GlobalSearch.tsx
+?? FANTAFOOT-FINAL-STATE.txt
+?? FANTAFOOT-FULL-AUDIT.txt
+?? FANTAFOOT-TARGETED-AUDIT.txt
+?? backend/src/main/java/it/fantacalciointelligence/backend/player/HistoricalPlayerCatalogController.java
+?? backend/src/main/java/it/fantacalciointelligence/backend/player/HistoricalPlayerCatalogResponse.java
+?? backend/src/main/java/it/fantacalciointelligence/backend/player/HistoricalPlayerCatalogService.java
+?? backend/src/test/java/it/fantacalciointelligence/backend/player/HistoricalPlayerCatalogServiceTest.java
+?? project-audit-current.txt
+?? project-file-list.txt
+GIT_EXIT=0
+
+================================================================================
+FILE: frontend\src\features\core\api.ts
+================================================================================
+   1: import { z } from 'zod';
+   2: import { httpRequest } from '@/api/client/httpClient';
+   3: 
+   4: const numeric = z.number();
+   5: const nullableNumber = numeric.nullable();
+   6: const playerSchema = z.object({
+   7:   id: numeric,
+   8:   name: z.string(),
+   9:   club: z.string(),
+  10:   clubSlug: z.string(),
+  11:   fantacalcioRole: z.string(),
+  12:   gazzettaRole: z.string().nullable(),
+  13:   fantamarktRole: z.string().nullable(),
+  14:   sourcesCount: numeric,
+  15: });
+  16: export const playerPageSchema = z.object({
+  17:   content: z.array(playerSchema),
+  18:   page: numeric,
+  19:   size: numeric,
+  20:   totalElements: numeric,
+  21:   totalPages: numeric,
+  22: });
+  23: const evaluationSchema = z
+  24:   .object({
+  25:     projectedFantasyAverage: nullableNumber,
+  26:     projectedAppearances: nullableNumber,
+  67:     sourceUpdatedAt: z.string().nullish(),
+  68:     importBatchId: nullableNumber.optional(),
+  69:   })
+  70:   .passthrough();
+  71: 
+  72: export const playerDetailSchema = z.object({
+  73:   id: numeric,
+  74:   name: z.string(),
+  75:   club: z.string(),
+  76:   clubSlug: z.string(),
+  77:   roles: z.record(z.string(), z.string()),
+  78:   tacticalProfile: z
+  94:     .nullable(),
+  95:   clubTactics: z.unknown().nullable(),
+  96:   evaluation: evaluationSchema,
+  97:   statistics: playerSeasonStatisticsSchema.array(),
+  98: });
+  99: const auctionPlayerSchema = z.object({
+ 100:   position: numeric,
+ 101:   playerId: numeric,
+ 102:   playerName: z.string(),
+ 103:   club: z.string(),
+ 104:   fantasyRole: z.string(),
+ 105:   intelligenceScore: numeric,
+ 106:   minimumPrice: numeric,
+ 107:   recommendedPrice: numeric,
+ 108:   maximumPrice: numeric,
+ 109:   budgetPercentage: numeric,
+ 110:   reliabilityScore: nullableNumber,
+ 111:   potentialScore: nullableNumber,
+ 112:   riskScore: nullableNumber,
+ 113:   starterProbability: nullableNumber,
+ 114:   availabilityStatus: z.string().nullable(),
+ 115:   availabilityMatchday: nullableNumber,
+ 116:   strengths: z.array(z.string()),
+ 117:   risks: z.array(z.string()),
+ 118:   finalRecommendation: z.string(),
+ 119: });
+ 120: export const rankingSchema = z.object({
+ 121:   season: z.string(),
+ 122:   budget: numeric,
+ 123:   teams: numeric,
+ 124:   defenseModifier: z.boolean(),
+ 125:   role: z.string().nullable(),
+ 126:   club: z.string().nullable(),
+ 127:   maximumPrice: nullableNumber,
+ 128:   recommendation: z.string().nullable(),
+ 129:   excludeUnavailable: z.boolean(),
+ 130:   totalPlayers: numeric,
+ 131:   players: z.array(auctionPlayerSchema),
+ 132: });
+ 133: export const strategySchema = z.object({
+ 134:   season: z.string(),
+ 135:   totalBudget: numeric,
+ 136:   teams: numeric,
+ 137:   defenseModifier: z.boolean(),
+ 138:   totalRequiredPlayers: numeric,
+ 139:   totalPlannedSpending: numeric,
+ 140:   expectedRemainingBudget: numeric,
+ 141:   withinBudget: z.boolean(),
+ 142:   strategySummary: z.string(),
+ 143:   roles: z.array(
+ 144:     z
+ 145:       .object({
+ 146:         role: z.string(),
+ 147:         requiredSlots: numeric,
+ 148:         budgetPercentage: numeric,
+ 149:         allocatedBudget: numeric,
+ 150:         plannedSpending: numeric,
+ 151:         remainingRoleBudget: numeric,
+ 152:         warnings: z.array(z.string()),
+ 153:       })
+ 154:       .passthrough(),
+ 155:   ),
+ 156:   globalWarnings: z.array(z.string()),
+ 157: });
+ 158: const squadPlayerSchema = z.object({
+ 159:   id: numeric,
+ 160:   playerId: numeric,
+ 161:   playerName: z.string(),
+ 162:   club: z.string(),
+ 163:   role: z.string(),
+ 164:   purchasePrice: numeric,
+ 165: });
+ 166: export const squadSchema = z.object({
+ 167:   id: numeric,
+ 168:   name: z.string(),
+ 169:   season: z.string(),
+ 170:   initialBudget: numeric,
+ 171:   spentBudget: numeric,
+ 172:   remainingBudget: numeric,
+ 173:   totalPlayers: numeric,
+ 174:   maximumPlayers: numeric,
+ 175:   roles: z.record(z.string(), z.object({ current: numeric, maximum: numeric, remaining: numeric })),
+ 176:   players: z.array(squadPlayerSchema),
+ 177: });
+ 178: const leagueConfigurationSchema = z.object({
+ 179:   id: numeric,
+ 180:   name: z.string(),
+ 181:   season: z.string(),
+ 182:   teamsCount: numeric,
+ 183:   totalBudget: numeric,
+ 184:   goalkeepersCount: numeric,
+ 185:   defendersCount: numeric,
+ 186:   midfieldersCount: numeric,
+ 187:   forwardsCount: numeric,
+ 188:   maxSubstitutions: numeric,
+ 189:   defenseModifier: z.boolean(),
+ 190:   captainBonus: z.boolean(),
+ 191:   voteSource: z.string(),
+ 192:   active: z.boolean(),
+ 193: });
+ 194: export const analysisSchema = z
+ 195:   .object({
+ 196:     squadId: numeric,
+ 197:     squadName: z.string(),
+ 198:     season: z.string(),
+ 199:     totalPlayers: numeric,
+ 200:     maximumPlayers: numeric,
+ 201:     remainingSlots: numeric,
+ 202:     constraintsValid: z.boolean(),
+ 203:     squadComplete: z.boolean(),
+ 204:     summary: z.string(),
+ 205:     roles: z.array(
+ 206:       z.object({
+ 207:         role: z.string(),
+ 208:         currentPlayers: numeric,
+ 209:         maximumPlayers: numeric,
+ 210:         remainingSlots: numeric,
+ 211:         complete: z.boolean(),
+ 212:         coverageStatus: z.string(),
+ 213:         warnings: z.array(z.string()),
+ 214:       }),
+ 215:     ),
+ 216:     globalWarnings: z.array(z.string()),
+ 217:   })
+ 218:   .passthrough();
+ 219: export const sessionSchema = z.object({
+ 220:   id: numeric,
+ 221:   squadId: numeric,
+ 222:   season: z.string(),
+ 223:   leagueTeams: numeric,
+ 224:   totalBudget: numeric,
+ 225:   defenseModifier: z.boolean(),
+ 226:   status: z.string(),
+ 227:   playerStateInitialized: z.boolean(),
+ 228:   currentPlayerId: nullableNumber,
+ 229:   currentPrice: nullableNumber,
+ 230:   version: numeric,
+ 231:   createdAt: z.string(),
+ 232:   updatedAt: z.string(),
+ 233: });
+ 234: export const stateSchema = z.object({
+ 235:   session: sessionSchema,
+ 236:   spentBudget: numeric,
+ 237:   remainingBudget: numeric,
+ 238:   purchases: z.array(z.unknown()),
+ 239:   players: z.array(
+ 240:     z.object({
+ 241:       playerId: numeric,
+ 242:       playerName: z.string(),
+ 243:       role: z.string(),
+ 244:       availability: z.string(),
+ 245:     }),
+ 246:   ),
+ 247:   availabilityComplete: z.boolean(),
+ 248: });
+ 249: 
+ 250: function params(values: Record<string, string | number | boolean | undefined>) {
+ 251:   const p = new URLSearchParams();
+ 252:   Object.entries(values).forEach(([key, value]) => {
+ 253:     if (value !== undefined && value !== '') p.set(key, String(value));
+ 254:   });
+ 255:   return p.toString();
+ 263: ) {
+ 264:   return schema.parse(await httpRequest<unknown>(path, { ...init, signal, getAuthorization }));
+ 265: }
+ 266: 
+ 267: export const featureApi = {
+ 268:   players: (
+ 269:     filters: { search?: string; club?: string; role?: string; page: number; size: number },
+ 270:     signal?: AbortSignal,
+ 271:   ) => parsed(`/players?${params(filters)}`, playerPageSchema, signal),
+ 272:   player: (id: string, signal?: AbortSignal) =>
+ 273:     parsed(`/players/${id}`, playerDetailSchema, signal),
+ 274:   ranking: (role: string, signal?: AbortSignal) =>
+ 275:     parsed(
+ 276:       `/auction/intelligence-rankings?${params({ role: role || undefined, limit: 100 })}`,
+ 277:       rankingSchema,
+ 278:       signal,
+ 279:     ),
+ 280:   strategy: (signal?: AbortSignal) => parsed('/auction/strategy', strategySchema, signal),
+ 281:   squad: (auth: () => string | undefined, signal?: AbortSignal) =>
+ 315:       body: JSON.stringify({ squadId }),
+ 316:     }),
+ 317:   sessionState: (auth: () => string | undefined, id: string, signal?: AbortSignal) =>
+ 318:     parsed(`/auction/sessions/${id}/state`, stateSchema, signal, auth),
+ 319: };
+ 320: export type PlayerPage = z.infer<typeof playerPageSchema>;
+ 321: export type PlayerSeasonStatistics = z.infer<typeof playerSeasonStatisticsSchema>;
+ 322: export type Squad = z.infer<typeof squadSchema>;
+
+================================================================================
+FILE: frontend\src\pages\PlayersPage.tsx
+================================================================================
+   1: import { useEffect, useState } from 'react';
+   2: import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+   3: import { Link, useSearchParams } from 'react-router-dom';
+   4: import { AppShell } from '@/layouts/AppShell';
+   5: import { featureApi } from '@/features/core/api';
+   6: import { useAuth } from '@/auth/useAuth';
+   7: import { AppError } from '@/api/errors/AppError';
+   8: import { queryKeys } from '@/api/queryKeys';
+   9: import styles from '@/features/core/FeaturePage.module.css';
+  10: 
+  11: export function PlayersPage() {
+  12:   const auth = useAuth();
+  13:   const qc = useQueryClient();
+  14:   const [url, setUrl] = useSearchParams();
+  15:   const [search, setSearch] = useState(url.get('search') ?? '');
+  16:   const [selected, setSelected] = useState<{ id: number; name: string } | null>(null);
+  17:   const [purchasePrice, setPurchasePrice] = useState('1');
+  18:   const role = url.get('role') ?? '';
+  19:   const club = url.get('club') ?? '';
+  20:   const page = Number(url.get('page') ?? 0);
+  21:   useEffect(() => {
+  22:     const id = window.setTimeout(() => {
+  23:       setUrl((current) => {
+  24:         const next = new URLSearchParams(current);
+  25:         const currentSearch = current.get('search') ?? '';
+  26:         if (search === currentSearch) return current;
+  27:         if (search) next.set('search', search);
+  28:         else next.delete('search');
+  29:         next.set('page', '0');
+  30:         return next;
+  31:       }, { replace: true });
+  32:     }, 350);
+  33:     return () => window.clearTimeout(id);
+  34:   }, [search, setUrl]);
+  35:   const query = useQuery({
+  36:     queryKey: ['players', { search: url.get('search') ?? '', role, club, page }],
+  37:     queryFn: ({ signal }) =>
+  38:       featureApi.players(
+  39:         {
+  40:           search: url.get('search') ?? undefined,
+  41:           role: role || undefined,
+  42:           club: club || undefined,
+  43:           page,
+  44:           size: 25,
+  45:         },
+  46:         signal,
+  47:       ),
+  48:     placeholderData: keepPreviousData,
+  49:   });
+  50:   const squad = useQuery({
+  51:     queryKey: queryKeys.squad,
+  52:     queryFn: ({ signal }) => featureApi.squad(auth.getAuthorization, signal),
+  53:     enabled: auth.status === 'authenticated',
+  54:     retry: false,
+  55:   });
+  56:   const add = useMutation({
+  57:     mutationFn: () => featureApi.addPlayer(auth.getAuthorization, selected!.id, Number(purchasePrice)),
+  58:     onSuccess: (next) => {
+  59:       qc.setQueryData(queryKeys.squad, next);
+  60:       void qc.invalidateQueries({ queryKey: queryKeys.squadAnalysis });
+  61:       void qc.invalidateQueries({ queryKey: ['lineup'] });
+  62:       setSelected(null);
+  63:       setPurchasePrice('1');
+  64:     },
+  65:   });
+  66:   const duplicate = squad.data?.players.some((entry) => entry.playerId === selected?.id) ?? false;
+  67:   const missingSquad = squad.error instanceof AppError && squad.error.status === 404;
+  68:   const update = (key: string, value: string) => {
+  69:     const next = new URLSearchParams(url);
+  70:     if (value) next.set(key, value);
+  71:     else next.delete(key);
+  72:     if (key !== 'page') next.set('page', '0');
+  73:     setUrl(next);
+  74:   };
+  75:   return (
+  76:     <AppShell>
+  77:       <div className={styles.page}>
+  78:         <header className={styles.hero}>
+  79:           <div>
+  80:             <span className={styles.eyebrow}>Player intelligence</span>
+  81:             <h1>Giocatori</h1>
+  82:             <p className={styles.muted}>
+  83:               {query.data ? `${query.data.totalElements} profili reali` : 'Catalogo Serie A'}
+  84:             </p>
+  85:           </div>
+  86:         </header>
+  87:         <section className={`${styles.panel} ${styles.filters}`} aria-label="Filtri giocatori">
+  88:           <label>
+  89:             Cerca
+  90:             <input
+  91:               value={search}
+  92:               onChange={(e) => setSearch(e.target.value)}
+  93:               placeholder="Nome giocatore"
+  94:             />
+  95:           </label>
+  96:           <label>
+  97:             Ruolo
+  98:             <select value={role} onChange={(e) => update('role', e.target.value)}>
+  99:               <option value="">Tutti</option>
+ 100:               {['P', 'D', 'C', 'A'].map((x) => (
+ 101:                 <option key={x}>{x}</option>
+ 102:               ))}
+ 103:             </select>
+ 104:           </label>
+ 105:           <label>
+ 106:             Club
+ 107:             <input
+ 108:               value={club}
+ 109:               onChange={(e) => update('club', e.target.value)}
+ 110:               placeholder="Club esatto"
+ 111:             />
+ 112:           </label>
+ 113:           <button
+ 114:             className={`${styles.button} ${styles.secondary}`}
+ 115:             onClick={() => {
+ 116:               setSearch('');
+ 117:               setUrl({});
+ 118:             }}
+ 119:           >
+ 120:             Azzera
+ 121:           </button>
+ 122:         </section>
+ 123:         <section className={styles.panel} aria-live="polite">
+ 124:           {auth.status === 'authenticated' && missingSquad && (
+ 125:             <p>Per acquistare dal catalogo, <Link to="/squad">crea prima la tua rosa</Link>.</p>
+ 126:           )}
+ 127:           {selected && squad.data && (
+ 128:             <div className={styles.filters} aria-label="Acquista dal catalogo">
+ 129:               <div className={styles.metric}><span>Giocatore selezionato</span><strong>{selected.name}</strong></div>
+ 130:               <label>Prezzo acquisto<input type="number" min="1" value={purchasePrice} onChange={(event) => setPurchasePrice(event.target.value)} /></label>
+ 131:               <button className={styles.button} disabled={duplicate || Number(purchasePrice) < 1 || add.isPending} onClick={() => add.mutate()}>Conferma acquisto</button>
+ 132:               <button className={`${styles.button} ${styles.secondary}`} onClick={() => setSelected(null)}>Annulla</button>
+ 133:               {duplicate && <p className={styles.error}>Il giocatore è già nella rosa.</p>}
+ 134:               {add.isError && <p className={styles.error} role="alert">{add.error instanceof AppError ? add.error.message : 'Acquisto rifiutato.'}</p>}
+ 135:             </div>
+ 136:           )}
+ 137:           {query.isPending ? (
+ 138:             <div className={styles.status}>Caricamento catalogo…</div>
+ 139:           ) : query.isError ? (
+ 140:             <div className={`${styles.status} ${styles.error}`}>
+ 141:               Contratto giocatori non disponibile.{' '}
+ 142:               <button className={styles.button} onClick={() => void query.refetch()}>
+ 143:                 Riprova
+ 144:               </button>
+ 145:             </div>
+ 146:           ) : query.data.content.length === 0 ? (
+ 147:             <div className={styles.status}>Nessun giocatore corrisponde ai filtri.</div>
+ 148:           ) : (
+ 149:             <>
+ 150:               <div className={`${styles.tableWrap} ${styles.desktopTable}`}>
+ 151:                 <table className={styles.table}>
+ 152:                   <thead>
+ 153:                     <tr>
+ 154:                       <th>Giocatore</th>
+ 155:                       <th>Ruolo</th>
+ 156:                       <th>Club</th>
+ 157:                       <th>Fonti</th>
+ 158:                       {squad.data && <th>Rosa</th>}
+ 159:                     </tr>
+ 160:                   </thead>
+ 161:                   <tbody>
+ 162:                     {query.data.content.map((p) => (
+ 163:                       <tr key={p.id}>
+ 164:                         <td>
+ 165:                           <Link to={`/players/${p.id}`} state={{ from: '/players' }}>{p.name}</Link>
+ 166:                         </td>
+ 167:                         <td>
+ 168:                           <span className={styles.role}>{p.fantacalcioRole}</span>
+ 169:                         </td>
+ 170:                         <td>{p.club}</td>
+ 171:                         <td>{p.sourcesCount}</td>
+ 172:                         {squad.data && <td><button className={`${styles.button} ${styles.secondary}`} disabled={squad.data.players.some((entry) => entry.playerId === p.id)} onClick={() => setSelected({ id: p.id, name: p.name })}>{squad.data.players.some((entry) => entry.playerId === p.id) ? 'Già in rosa' : 'Aggiungi'}</button></td>}
+ 173:                       </tr>
+ 174:                     ))}
+ 175:                   </tbody>
+ 176:                 </table>
+ 177:               </div>
+ 178:               <div className={styles.cards}>
+ 179:                 {query.data.content.map((p) => (
+ 180:                   <article className={styles.card} key={p.id}>
+ 181:                     <Link to={`/players/${p.id}`} state={{ from: '/players' }}>
+ 182:                       <strong>{p.name}</strong>
+ 183:                     </Link>
+ 184:                     <span>
+ 185:                       <span className={styles.role}>{p.fantacalcioRole}</span> · {p.club}
+ 186:                     </span>
+ 187:                     {squad.data && <button className={`${styles.button} ${styles.secondary}`} disabled={squad.data.players.some((entry) => entry.playerId === p.id)} onClick={() => setSelected({ id: p.id, name: p.name })}>{squad.data.players.some((entry) => entry.playerId === p.id) ? 'Già in rosa' : 'Aggiungi alla rosa'}</button>}
+ 188:                   </article>
+ 189:                 ))}
+ 190:               </div>
+ 191:               <div className={styles.pager}>
+ 192:                 <button
+ 193:                   className={`${styles.button} ${styles.secondary}`}
+ 194:                   disabled={page === 0}
+ 195:                   onClick={() => update('page', String(page - 1))}
+ 196:                 >
+ 197:                   Precedente
+ 198:                 </button>
+ 199:                 <span>
+ 200:                   {page + 1} / {Math.max(query.data.totalPages, 1)}
+ 201:                 </span>
+ 202:                 <button
+ 203:                   className={`${styles.button} ${styles.secondary}`}
+ 204:                   disabled={page + 1 >= query.data.totalPages}
+ 205:                   onClick={() => update('page', String(page + 1))}
+ 206:                 >
+ 207:                   Successiva
+ 208:                 </button>
+ 209:               </div>
+ 210:             </>
+ 211:           )}
+ 212:         </section>
+ 213:       </div>
+ 214:     </AppShell>
+ 215:   );
+ 216: }
+
+================================================================================
+4. PLAYERS PAGE STYLE IMPORT
+================================================================================
+import styles from '@/features/core/FeaturePage.module.css';
+
+================================================================================
+5. ROUTER INVENTORY
+================================================================================
+
+FILE=frontend\src\app\router\AppRouter.tsx
+  16: const PlayersPage = lazy(async () => ({
+  17:   default: (await import('@/pages/PlayersPage')).PlayersPage,
+  38: const ComingSoonPage = lazy(async () => ({
+  39:   default: (await import('@/pages/ComingSoonPage')).ComingSoonPage,
+  44:     { path: '/players', element: <PlayersPage /> },
+  50:     { path: '/analysis', element: <ComingSoonPage title="Analisi" /> },
+  51:     { path: '/statistics', element: <ComingSoonPage title="Statistiche" /> },
+  52:     { path: '/comparator', element: <ComingSoonPage title="Comparatore" /> },
+  53:     { path: '/market', element: <ComingSoonPage title="Market" /> },
+  54:     { path: '/settings', element: <ComingSoonPage title="Impostazioni" /> },
+  81:       <RouterProvider router={router} />
+
+================================================================================
+6. NAVIGATION INVENTORY
+================================================================================
+
+FILE=frontend\src\app\router\AppRouter.tsx
+  16: const PlayersPage = lazy(async () => ({
+  17:   default: (await import('@/pages/PlayersPage')).PlayersPage,
+  44:     { path: '/players', element: <PlayersPage /> },
+  45:     { path: '/players/:id', element: <PlayerDetailPage /> },
+
+FILE=frontend\src\components\navigation\BackButton.test.tsx
+  13:       <BackButton fallbackTo="/players" />
+  22:       <MemoryRouter initialEntries={['/squad', '/players/7']} initialIndex={1}>
+  32:       <MemoryRouter initialEntries={[{ pathname: '/players/7', state: { from: '/squad' } }]}>
+
+FILE=frontend\src\features\core\PlayerFlows.test.tsx
+  40:       http.get('/api/v1/players', ({ request }) => {
+  52:     window.history.replaceState({}, '', '/players');
+  70:       http.get('/api/v1/players/47', () =>
+  87:     window.history.replaceState({}, '', '/players/47');
+ 103:       http.get('/api/v1/players/88', () =>
+ 124:     window.history.replaceState({}, '', '/players/88');
+ 149:       http.get('/api/v1/players/89', () =>
+ 167:     window.history.replaceState({}, '', '/players/89');
+
+FILE=frontend\src\features\core\SquadManagementFlows.test.tsx
+   8: import { PlayersPage } from '@/pages/PlayersPage';
+  35:   totalPlayers: 0,
+  36:   maximumPlayers: 25,
+  38:   players: [],
+ 100:           totalPlayers: 0,
+ 101:           maximumPlayers: 25,
+ 124:       totalPlayers: 1,
+ 126:       players: [
+ 144:           totalPlayers: 0,
+ 145:           maximumPlayers: 25,
+ 154:       http.get('/api/v1/players', () =>
+ 163:       http.post('/api/v1/squad/players', async ({ request }) => {
+ 167:       http.patch('/api/v1/squad/players/77', async ({ request }) => {
+ 173:           players: [{ ...acquired.players[0], purchasePrice: 20 }],
+ 176:       http.delete('/api/v1/squad/players/77', () => HttpResponse.json(emptySquad)),
+ 197:       http.get('/api/v1/players', () =>
+ 207:       http.post('/api/v1/squad/players', () =>
+ 210:           totalPlayers: 1,
+ 213:           players: [
+ 226:     renderPage(<PlayersPage />, '/players');
+
+FILE=frontend\src\layouts\AppShell.test.tsx
+  54:       Giocatori: '/players',
+ 103:       http.get('/api/v1/players', ({ request }) => {
+ 114:       '/players/7',
+ 120:       http.get('/api/v1/players', async () => {
+ 138:       http.get('/api/v1/players', () => new HttpResponse(null, { status: 500 })),
+
+FILE=frontend\src\layouts\AppShell.tsx
+  24:   ['Giocatori', SearchCheck, '/players'],
+
+FILE=frontend\src\pages\PlayerDetailPage.tsx
+   5: import { featureApi, type PlayerSeasonStatistics } from '@/features/core/api';
+  13:   value: (statistic: PlayerSeasonStatistics) => string;
+  45: function sourceLabel(statistic: PlayerSeasonStatistics): string {
+  62:         <BackButton fallbackTo="/players" />
+  68:             <Link to="/players">Torna al catalogo</Link>
+
+FILE=frontend\src\pages\PlayersPage.tsx
+  11: export function PlayersPage() {
+  36:     queryKey: ['players', { search: url.get('search') ?? '', role, club, page }],
+  38:       featureApi.players(
+  66:   const duplicate = squad.data?.players.some((entry) => entry.playerId === selected?.id) ?? false;
+ 165:                           <Link to={`/players/${p.id}`} state={{ from: '/players' }}>{p.name}</Link>
+ 172:                         {squad.data && <td><button className={`${styles.button} ${styles.secondary}`} disabled={squad.data.players.some((entry) => entry.playerId === p.id)} onClick={() => setSelected({ id: p.id, name: p.name })}>{squad.data.players.some((entry) => entry.playerId === p.id) ? 'Già in rosa' : 'Aggiungi'}</button></td>}
+ 181:                     <Link to={`/players/${p.id}`} state={{ from: '/players' }}>
+ 187:                     {squad.data && <button className={`${styles.button} ${styles.secondary}`} disabled={squad.data.players.some((entry) => entry.playerId === p.id)} onClick={() => setSelected({ id: p.id, name: p.name })}>{squad.data.players.some((entry) => entry.playerId === p.id) ? 'Già in rosa' : 'Aggiungi alla rosa'}</button>}
+
+FILE=frontend\src\pages\SquadPage.tsx
+  52:     queryFn: ({ signal }) => featureApi.players({ search: search.trim(), page: 0, size: 10 }, signal),
+  80:   const duplicate = current?.players.some((entry) => entry.playerId === selected?.id) ?? false;
+  82:   const emptySlotsAfterAdd = current ? Math.max(0, current.maximumPlayers - current.totalPlayers - 1) : 0;
+  95:           <Link className={styles.button} to="/players">Apri il catalogo</Link>
+ 132:               <div className={styles.metric}><span>Giocatori</span><strong>{current.totalPlayers}/{current.maximumPlayers}</strong></div>
+ 158:               {current.players.length === 0 ? <p>Nessun giocatore ancora inserito.</p> : (
+ 161:                   <tbody>{current.players.map((entry) => (
+ 163:                       <td><Link to={`/players/${entry.playerId}`} state={{ from: '/squad' }}>{entry.playerName}</Link></td>
+
+================================================================================
+7. SEASON SURFACE
+================================================================================
+
+FILE=frontend\src\api\dashboardApi.ts
+   9:   seasonSchema,
+  42:   seasons: () => getValidated('/seasons', seasonSchema.array()),
+  44:   players: (season?: string) =>
+  45:     getValidated(query('/players', { season, page: 0, size: 5 }), playerPageSchema),
+  46:   auction: (season?: string) =>
+  48:       query('/auction/intelligence-rankings', { season, budget: 500, teams: 8, limit: 5 }),
+  51:   fixtures: (season?: string, matchday = 1) =>
+  52:     getValidated(query(`/fixtures/matchday/${matchday}`, { season }), fixtureSchema.array()),
+  54:     season?: string,
+  60:       query('/lineups/recommended', { season, matchday, squadId }),
+  64:   scouting: (season?: string) =>
+  65:     getValidated(query('/scouting/arrivals', { season }), scoutingArrivalSchema.array()),
+  68:   readiness: (season: string | undefined, getAuthorization: () => string | undefined) =>
+  70:       query('/admin/catalog/readiness', { season }),
+
+FILE=frontend\src\app\bootstrap\App.test.tsx
+  18:     http.get('/api/v1/seasons', () =>
+  29:         season: '2026-2027',
+  45:         season: '2026-2027',
+
+FILE=frontend\src\features\admin\AdminPage.test.tsx
+  23:   season: '2026-2027',
+  36:   season: '2026-2027',
+  73:     season: '2026-2027',
+  83:     http.get('/api/v1/seasons', () =>
+  90:         season: '2026-2027',
+ 115:             season: '2026-2027',
+ 140:           season: '2026-2027',
+ 176:         season: '2026-2027',
+
+FILE=frontend\src\features\intelligence\api.ts
+  21:   season: z.string(),
+  83:   season: z.string(),
+  97: export const seasonSchema = z.object({
+ 137:   seasons: (signal?: AbortSignal) => parse('/seasons', seasonSchema.array(), signal),
+ 141:     season?: string,
+ 147:       `/lineups/recommended?${qs({ season, matchday, squadId })}`,
+ 161:     season: string,
+ 164:   ) => parse(`/scouting/arrivals?${qs({ season, ...filters })}`, scoutingSchema.array(), signal),
+
+FILE=frontend\src\features\intelligence\IntelligencePages.test.tsx
+  32:   season: '2026-2027',
+  54:   season: '2026-2027',
+  74:         season: '2026-2027',
+ 135:     http.get('/api/v1/seasons', () =>
+ 183:     expect(target?.searchParams.get('season')).toBe('2026-2027');
+ 292:           id: 1, name: 'Rosa incompleta', season: '2026-2027', initialBudget: 500,
+
+FILE=frontend\src\pages\RealDashboardPage.test.tsx
+  24:   season: '2026-2027',
+  35:   season: '2026-2027',
+  82:     http.get('/api/v1/seasons', () =>
+  93:         season: '2026-2027',
+ 129:     expect(target?.searchParams.get('season')).toBe('2026-2027');
+
+FILE=frontend\src\pages\RealDashboardPage.tsx
+  82:   const seasons = useQuery({ queryKey: queryKeys.seasons, queryFn: dashboardApi.seasons });
+  84:   const currentSeason = seasons.data?.find((season) => season.current)?.code;
+  86:     queryKey: queryKeys.players(currentSeason),
+  87:     queryFn: () => dashboardApi.players(currentSeason),
+  88:     enabled: seasons.isSuccess,
+  91:     queryKey: queryKeys.auction(currentSeason),
+  92:     queryFn: () => dashboardApi.auction(currentSeason),
+  93:     enabled: Boolean(currentSeason),
+  96:     queryKey: queryKeys.fixtures(currentSeason, 1),
+  97:     queryFn: () => dashboardApi.fixtures(currentSeason, 1),
+  98:     enabled: Boolean(currentSeason),
+ 107:     queryKey: queryKeys.lineup(squad.data?.season ?? currentSeason, 1, squad.data?.id),
+ 110:         squad.data?.season ?? currentSeason,
+ 116:       Boolean(currentSeason) && squad.isSuccess && squad.data.totalPlayers >= 11,
+ 119:     queryKey: queryKeys.scouting(currentSeason),
+ 120:     queryFn: () => dashboardApi.scouting(currentSeason),
+ 121:     enabled: Boolean(currentSeason),
+ 124:     queryKey: queryKeys.admin(currentSeason),
+ 125:     queryFn: () => dashboardApi.readiness(currentSeason, auth.getAuthorization),
+ 126:     enabled: auth.isAdmin && Boolean(currentSeason),
+ 143:               {currentSeason
+ 144:                 ? `Stagione corrente ${currentSeason}`
+ 183:               value={currentSeason ?? '—'}
+ 184:               helper={seasons.isError ? 'non disponibile' : 'fonte backend'}
+
+================================================================================
+8. PLAYER FRONTEND TESTS
+================================================================================
+
+FILE=frontend\src\features\core\PlayerFlows.test.tsx
+  36: describe('catalogo giocatori', () => {
+  37:   it('naviga dalla prima alla seconda pagina e torna alla prima', async () => {
+  40:       http.get('/api/v1/players', ({ request }) => {
+  55:     expect((await screen.findAllByText('Prima pagina')).length).toBeGreaterThan(0);
+  56:     await userEvent.click(screen.getByRole('button', { name: 'Successiva' }));
+  57:     expect((await screen.findAllByText('Seconda pagina')).length).toBeGreaterThan(0);
+  58:     expect(screen.getByText('2 / 2')).toBeVisible();
+  59:     await waitFor(() => expect(window.location.search).toContain('page=1'));
+  61:     await userEvent.click(screen.getByRole('button', { name: 'Precedente' }));
+  62:     expect((await screen.findAllByText('Prima pagina')).length).toBeGreaterThan(0);
+  63:     expect(requestedPages).toEqual(expect.arrayContaining(['0', '1']));
+  67: describe('storico giocatore', () => {
+  68:   it('renderizza tutte le stagioni storiche restituite dal contratto backend', async () => {
+  70:       http.get('/api/v1/players/47', () =>
+  90:     expect(await screen.findByText('Giocatore storico reale')).toBeVisible();
+  91:     expect(screen.getByRole('button', { name: 'Indietro' })).toBeVisible();
+  92:     expect(screen.getByRole('columnheader', { name: /^Gol$/ })).toBeVisible();
+  93:     expect(screen.getByRole('columnheader', { name: /^Assist$/ })).toBeVisible();
+  94:     expect(screen.queryByRole('columnheader', { name: /^Gol subiti$/ })).not.toBeInTheDocument();
+  95:     expect(screen.getByText('2025/2026')).toBeVisible();
+  96:     expect(screen.getByText('2024/2025')).toBeVisible();
+ 100: describe('statistiche ruolo portiere', () => {
+ 101:   it('mostra le metriche goalkeeper reali e la fonte per ogni stagione', async () => {
+ 103:       http.get('/api/v1/players/88', () =>
+ 127:     expect(await screen.findByText('Portiere reale')).toBeVisible();
+ 128:     expect(screen.getByRole('columnheader', { name: /^Gol subiti$/ })).toBeVisible();
+ 129:     expect(screen.getByRole('columnheader', { name: /^Parate effettuate$/ })).toBeVisible();
+ 130:     expect(screen.getByRole('columnheader', { name: /^Rigori parati$/ })).toBeVisible();
+ 131:     expect(
+ 132:       screen.getByRole('columnheader', { name: /^Porte inviolate \/ Clean sheet$/ }),
+ 134:     expect(screen.queryByRole('columnheader', { name: /^Gol$/ })).not.toBeInTheDocument();
+ 135:     expect(screen.queryByRole('columnheader', { name: /^Assist$/ })).not.toBeInTheDocument();
+ 137:     const row = screen.getByRole('row', { name: /2025\/2026/ });
+ 138:     expect(row).toHaveTextContent('FANTACALCIO · FANTACALCIO-88');
+ 139:     expect(row).toHaveTextContent('31');
+ 140:     expect(row).toHaveTextContent('2790');
+ 141:     expect(row).toHaveTextContent('28');
+ 142:     expect(row).toHaveTextContent('92');
+ 143:     expect(row).toHaveTextContent('3');
+ 144:     expect(row).toHaveTextContent('12');
+ 147:   it('segnala ogni metrica goalkeeper nulla senza trasformarla in zero', async () => {
+ 149:       http.get('/api/v1/players/89', () =>
+ 170:     expect(await screen.findByText('Portiere senza dati')).toBeVisible();
+ 171:     const row = screen.getByRole('row', { name: /2025\/2026/ });
+ 172:     expect(within(row).getAllByText('Dato non disponibile')).toHaveLength(6);
+ 173:     expect(row).not.toHaveTextContent(/\b0\b/);
+
+================================================================================
+FILE: frontend\package.json
+================================================================================
+   5:   "type": "module",
+   6:   "engines": {
+   7:     "node": "22.x",
+   8:     "npm": ">=10"
+   9:   },
+  10:   "scripts": {
+  11:     "dev": "vite",
+  12:     "build": "tsc -b && vite build",
+  13:     "preview": "vite preview",
+  14:     "test": "vitest",
+  15:     "test:run": "vitest run",
+  16:     "lint": "eslint . --max-warnings 0",
+  17:     "format": "prettier --write .",
+  18:     "format:check": "prettier --check .",
+  19:     "typecheck": "tsc -b --pretty false"
+  20:   },
+  21:   "dependencies": {
+  22:     "@tanstack/react-query": "^5.101.4",
+  23:     "lucide-react": "^1.33.0",
+  24:     "react": "^19.2.8",
+
+================================================================================
+10. FINAL GIT STATUS
+================================================================================
+ M frontend/src/features/core/SquadManagementFlows.test.tsx
+ M frontend/src/layouts/GlobalSearch.tsx
+?? FANTAFOOT-FINAL-STATE.txt
+?? FANTAFOOT-FULL-AUDIT.txt
+?? FANTAFOOT-TARGETED-AUDIT.txt
+?? backend/src/main/java/it/fantacalciointelligence/backend/player/HistoricalPlayerCatalogController.java
+?? backend/src/main/java/it/fantacalciointelligence/backend/player/HistoricalPlayerCatalogResponse.java
+?? backend/src/main/java/it/fantacalciointelligence/backend/player/HistoricalPlayerCatalogService.java
+?? backend/src/test/java/it/fantacalciointelligence/backend/player/HistoricalPlayerCatalogServiceTest.java
+?? project-audit-current.txt
+?? project-file-list.txt
+GIT_EXIT=0
+
+================================================================================
+M03.5A SUMMARY
+================================================================================
+MODE=READ_ONLY
+FILES_MODIFIED_BY_PREFLIGHT=NONE
+DATABASE_MUTATIONS=NONE
+LOG_FILE=C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\logs\M03-historical-frontend-preflight.txt

@@ -1,0 +1,63 @@
+===== D02.13 LOCAL DATABASE DATA AUDIT =====
+DATE=2026-08-24T15:53:05.9582989+02:00
+
+=== POSTGRES VERSION ===
+psql (PostgreSQL) 17.10
+
+=== RELEVANT TABLE COUNTS ===
+auction_player_states=0
+club_season_tactics=0
+club_statistical_source_links=189
+club_strength_ratings=20
+clubs=192
+fantasy_squad_players=115
+fantasy_squads=6
+fixture_import_batches=7
+fixture_import_rows=382
+fixtures=380
+foreign_player_scouting_reports=0
+import_batches=12
+player_availabilities=23
+player_availability_history=0
+player_competition_season_statistics=1039
+player_development_assessments=494
+player_evaluations=479
+player_identity_aliases=0
+player_identity_profiles=991
+player_identity_provenance=5990
+player_import_rows=6015
+player_market_values=513
+player_performance_algorithms=4
+player_performance_feature_definitions=76
+player_performance_feature_profiles=1989
+player_reconciliation_results=498
+player_registration_events=0
+player_registrations=536
+player_roles=2828
+player_season_statistics=1342
+player_season_statistics_clubs=0
+player_source_mappings=1949
+player_statistical_source_links=0
+player_statistics_import_batches=6
+player_statistics_import_rows=2381
+player_strategic_data_observations=0
+player_tactical_profiles=0
+player_transfer_claims=13
+player_value_algorithms=1
+player_value_profiles=495
+players=1020
+season_clubs=21
+seasons=3
+
+=== EXACT COUNTS ===
+players=1020
+fixtures=380
+player_roles=2828
+player_registrations=536
+player_season_statistics=1342
+import_batches=12
+
+=== DATABASE SIZE ===
+36 MB
+
+===== D02.13 AUDIT END =====

@@ -1,0 +1,562 @@
+================================================================================
+FANTAFOOT / FANTACALCIO-INTELLIGENCE
+M07 — FRONTEND COMPLETENESS CERTIFICATION
+Data certificazione: 2026-09-02 (Europe/Rome)
+================================================================================
+
+1. VERDETTO
+================================================================================
+
+M07_STATUS=CLOSED_GREEN
+ALL_GREEN=YES
+
+Il frontend React e' completo e coerente rispetto alle API di prodotto realmente
+esposte dal backend locale e alle funzionalita' certificate da M01-M06. Le feature
+principali sono raggiungibili dalla UI, i flussi protetti verificabili sono verdi
+con backend reale, non risultano route/link/button critici morti e gli stati
+loading/empty/error/null sono adeguati.
+
+Non sono state aggiunte feature speculative, API o dati simulati. Le sezioni per
+cui non esiste un contratto backend di prodotto sono dichiarate esplicitamente
+come non disponibili. Nessun dato nullable e' stato convertito artificialmente in
+zero.
+
+Perimetro operativo rispettato: ambiente locale Windows, database dev locale,
+browser reale senza MSW, nessuna mutation dati, nessuna migration, nessun cambio
+schema, nessun git add/commit/push, nessun deploy e nessun contatto Oracle.
+
+
+2. PRECHECK
+================================================================================
+
+STATICO
+ROOT=C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence
+BRANCH_ATTESO=stabilization/m01-local-green
+BRANCH_RILEVATO=stabilization/m01-local-green
+HEAD_ATTESO=a40557e4132189fbb7aa02e869cf126072e03945
+HEAD_INIZIALE=a40557e4132189fbb7aa02e869cf126072e03945
+HEAD_FINALE=a40557e4132189fbb7aa02e869cf126072e03945
+WORKSPACE_NON_CLEAN_ATTESO=YES
+WORKSPACE_PREESISTENTE_PRESERVATO=YES
+
+TOOLCHAIN
+Java: OpenJDK Temurin 21.0.11 LTS
+Node: v22.21.0
+npm: 10.9.4, invocato tramite il CLI ufficiale incluso in Node
+Maven wrapper assoluto: backend\mvnw.cmd
+Maven: 3.9.16
+Maven local repository: C:\Users\user\.m2\repository
+
+Il wrapper npm globale ereditava un prefix roaming non valido; non e' stata
+installata, scaricata o riparata alcuna dipendenza. E' stato usato direttamente il
+CLI npm ufficiale gia' presente in C:\Program Files\nodejs.
+
+Il primo comando Maven di compile aveva una quotatura Windows errata della
+property maven.repo.local ed e' terminato prima della compilazione, senza usare DB
+o modificare dati. Il comando e' stato immediatamente ripetuto con wrapper assoluto
+e property atomica corretta; l'esito certificato e' verde.
+
+Compatibilita' Git: durante la fotografia conclusiva un probe read-only con
+`git branch --show-current` e' stato respinto dal vecchio client locale (exit 1,
+nessun effetto sul repository). L'evidenza finale autorevole e' stata acquisita
+con `git symbolic-ref --short HEAD`, come richiesto. Nessun comando Git mutativo e'
+stato eseguito.
+
+HTTP RUNTIME DEV
+Precheck iniziale: porte 8080 e 5173 non attive; i runtime sono stati avviati
+localmente con i sidecar M07 previsti.
+Stato finale:
+- 0.0.0.0:8080 LISTENING, backend PID 22328;
+- 127.0.0.1:5173 LISTENING, Vite PID 20368;
+- GET http://127.0.0.1:8080/actuator/health -> HTTP 200,
+  body status=UP;
+- GET http://127.0.0.1:5173/ -> HTTP 200.
+
+
+3. ROUTE INVENTORY
+================================================================================
+
+Evidenza: STATICO (AppRouter, lazy import, AppShell/nav e guard auth), integrata
+da BROWSER DOM REALE per le route principali.
+
+ROUTE                         PAGE/COMPONENT                  NAV_REACHABLE                 AUTH_REQUIRED                       BACKEND_DEPENDENCY                         STATUS
+/                             RealDashboardPage               YES, logo/home                NO                                  dashboard/system/seasons/clubs             OK
+/players                      PlayersPage                     YES, nav Giocatori             NO                                  current player catalog                     OK
+/players/history              HistoricalPlayersPage           YES, CTA da Players            NO                                  historical player catalog                  OK
+/players/history/:id          HistoricalPlayerDetailPage      YES, link dalla lista          NO                                  historical player detail/stats             OK
+/players/:id                  PlayerDetailPage                YES, link catalog/search/etc.  NO                                  current detail/stats/evaluation            OK
+/auction                      AuctionPage                     YES, nav Asta                  NO                                  intelligence rankings/strategy             OK
+/auction/live                 LiveAuctionPage                 YES, launcher/nav              YES                                 persistent auction sessions                OK
+/auction/live/:sessionId      LiveAuctionPage                 YES, launcher/recovery         YES                                 persistent auction session detail         OK
+/squad                        SquadPage                       YES, nav Rosa                  YES                                 squad/league/squad-analysis                OK
+/lineup                       LineupPage                      YES, nav Formazione            NO route; API auth, CTA login anonima        recommended lineup                         OK
+/calendar                     CalendarPage                    YES, nav Calendario             NO                                  fixtures/matchups                          OK
+/scouting                     ScoutingPage                    YES, nav Scouting               NO                                  scouting arrivals                          OK
+/analysis                     ComingSoonPage                  YES, nav Analisi                NO                                  none supported                             NOT_SUPPORTED_DECLARED
+/statistics                   ComingSoonPage                  YES, nav Statistiche            NO                                  none supported                             NOT_SUPPORTED_DECLARED
+/comparator                   ComingSoonPage                  YES, nav Comparatore             NO                                  none supported                             NOT_SUPPORTED_DECLARED
+/market                       ComingSoonPage                  YES, nav Mercato                NO                                  none supported                             NOT_SUPPORTED_DECLARED
+/settings                     ComingSoonPage                  YES, nav Impostazioni            NO                                  none supported                             NOT_SUPPORTED_DECLARED
+/design-system                DesignSystemPage                NO product nav; URL interna     NO                                  none; component demo                       INTERNAL_NON_PRODUCT
+/login                        LoginPage                       YES, auth flow                  PublicOnlyRoute                     authentication                              OK
+/profile                      ProfilePage                     YES, menu utente                YES                                 authenticated profile                      OK
+/admin                        AdminPage                       solo ruolo admin                ADMIN                               admin read/refresh subset                  OK_GUARDED
+/admin/status                 StatusPage                      solo ruolo admin                ADMIN                               system/admin status                        OK_GUARDED
+/access-denied                AccessDeniedPage                via guard                       NO                                  none                                       OK
+*                             NotFoundPage                    fallback                       NO                                  none                                       OK
+
+DEAD_ROUTE_CRITICAL=0
+ROUTE_WITHOUT_PAGE_CRITICAL=0
+
+`FoundationPage.tsx` esiste ma non e' importata o registrata: e' un artefatto
+interno obsoleto, non una feature promessa. Classificazione:
+PAGE_WITHOUT_ROUTE_NONCRITICAL=1, PAGE_WITHOUT_ROUTE_CRITICAL=0.
+
+
+4. PAGE/FEATURE INVENTORY
+================================================================================
+
+Evidenza principale: STATICO. Le righe marcate BROWSER sono state inoltre
+verificate nel DOM reale contro il backend locale.
+
+- Dashboard — query reali per stato sistema, stagione, club, conteggi, auction e
+  fixture; loading/error/null gestiti. BROWSER: stagione 2026/27, sistema UP,
+  498 giocatori e 20 club, nessun blank/crash.
+- Players — catalogo corrente, filtri e link di dettaglio; loading, catalogo
+  vuoto, errore e paginazione gestiti. BROWSER: 498 record, ID dinamico 44.
+- Current Player Detail — dettaglio, statistiche ed evaluation tipizzati; ruoli
+  con provenienza, nullable espliciti, 404 distinto da errore di servizio, retry
+  solo per errori recuperabili e BackButton. BROWSER: ID dinamico 44.
+- Historical Players — selezione stagione, catalogo e link detail; loading,
+  empty/error/null gestiti. BROWSER: stagione dinamica 2025/26, 663 record.
+- Historical Player Detail — profilo/stats e BackButton; dati mancanti mostrati
+  come non disponibili. BROWSER: ID dinamico 756, minuti mancanti resi come
+  "Dato non disponibile".
+- Auction — ranking e strategia da API reali; loading/error/empty/null gestiti.
+  BROWSER: 5 ranking e 4 gruppi ruolo.
+- Live Auction — launcher, recupero sessione, stati DRAFT/ACTIVE/COMPLETED,
+  errori e sola lettura coerenti. BROWSER autenticato: rosa 23/25, budget residuo
+  121, creazione disponibile ma non eseguita.
+- Squad — rosa, budget, contatori ruolo e squad analysis; stati auth/error/empty
+  gestiti. BROWSER autenticato: 23/25, speso 879, residuo 121.
+- Lineup — esperienza anonima con CTA login; esperienza autenticata con lineup
+  consigliata, motivazioni e fallback. BROWSER: 3-4-3, score 88.46, 11/11 e
+  panchina reali.
+- Calendar — fixture/matchup reali con loading/error/empty/null. BROWSER: 10
+  fixture.
+- Scouting — arrivals reali; empty state esplicito. BROWSER: 0 righe, nessun
+  dato inventato.
+- Login/Profile — entrypoint e profilo coerenti con AuthProvider e guard.
+- Admin/Status — visibili solo al ruolo admin e protetti da AdminRoute; l'utente
+  standard verificato non riceve voci admin.
+- AccessDenied/NotFound — fallback espliciti, nessuna blank page.
+- Analysis/Statistics/Comparator/Market/Settings — pagine roadmap che dichiarano
+  correttamente la funzione non disponibile. Non contengono dati finti o CTA
+  operative simulate: UI_WITHOUT_API_CRITICAL=0.
+- DesignSystem — pagina dimostrativa interna non inclusa nella navigazione
+  prodotto; controlli demo classificati non-product.
+
+Schemi Zod/tipi e funzioni API sono presenti per le aree prodotto sopra elencate.
+Gli stati loading, empty, error e null sono verificati staticamente e coperti da
+test mirati/di regressione. Non sono stati trovati href verso route inesistenti,
+CTA prodotto prive di azione o nesting interattivo invalido critico.
+
+DEAD_LINK_CRITICAL=0
+DEAD_BUTTON_CRITICAL=0
+UNHANDLED_ERROR_STATE_CRITICAL=0
+NULL_RENDERING_RISK_CRITICAL=0
+AUTH_MISMATCH_CRITICAL=0
+NAVIGATION_GAP_CRITICAL=0
+
+
+5. BACKEND <-> FRONTEND CONTRACT MAP
+================================================================================
+
+Audit STATICO: 50 classi `@RestController` rilevate e classificate per intenzione,
+senza imporre una pagina prodotto agli endpoint tecnici/amministrativi.
+
+BACKEND AREA                    ENDPOINT GROUP                         FRONTEND COVERAGE                  EXPECTED_UI                  STATUS / NOTES
+System/seasons/clubs            health/status, seasons, clubs          dashboard, filtri, admin status    YES                          COVERED
+Current players                catalog/detail/stats/evaluation        Players + PlayerDetail             YES                          COVERED
+Historical players             catalog/detail/stats                   Historical list/detail             YES                          COVERED
+Auction intelligence            rankings/strategy                     Auction + dashboard                YES                          COVERED
+Persistent auction sessions     launcher/session/lifecycle             LiveAuctionPage                    YES, auth                    COVERED
+League/squad/analysis            ownership, roster, analysis            SquadPage                          YES, auth                    COVERED
+Recommended lineup              recommendation/reasons                 LineupPage                         YES, auth API                COVERED
+Fixtures/matchups               calendar and matchup data              Calendar + dashboard               YES                          COVERED
+Scouting arrivals               arrivals                               Scouting + dashboard               YES                          COVERED_EMPTY_VALID
+Admin read/refresh              admin status/refresh subset            AdminPage/StatusPage               ADMIN ONLY                   COVERED_GUARDED
+Availability/import/source      ingestion, refresh, reconciliation     no product page                    NO, technical/admin          NOT_EXPECTED_UI
+Transfer verification           verification workflows                no product page                    NO, technical/internal       NOT_EXPECTED_UI
+Evaluation generation           generation/maintenance                 no product page                    NO, internal/admin           NOT_EXPECTED_UI
+Club strength                   analytical support                     consumed indirectly/no page        NO standalone UI             INTERNAL
+User provisioning               provisioning/security                  no product page                    NO, admin/technical           NOT_EXPECTED_UI
+Debug/actuator/technical        diagnostics                            no product page                    NO                           INTERNAL
+Alternative analytics           price/pairing/development strategies   no standalone product page         NO, internal                 INTERNAL
+
+API_WITHOUT_UI_CRITICAL=0. Gli endpoint senza UI sono esclusivamente admin,
+tecnici, import/debug o analitici interni. Non e' stata inventata una UI per
+coprirli.
+
+
+6. CURRENT PLAYER DETAIL
+================================================================================
+
+STATICO
+- route reale: /players/:id;
+- link presenti da catalogo, ricerca globale, auction, squad, lineup e scouting;
+- nome, club, ruoli per fonte, statistiche ed evaluation renderizzati;
+- ruoli mostrati come `FONTE: RUOLO`, evitando l'ambiguita' `D · D · D`;
+- nullable mostrati come non disponibili e mai come zero inventato;
+- AppError 404 -> "Giocatore non trovato", senza retry inutile;
+- errori servizio non-404 -> "Profilo non disponibile" con pulsante Riprova;
+- BackButton riporta al catalogo;
+- nessun nested interactive HTML invalido rilevato.
+
+TEST AUTOMATICI
+- copertura rendering `FANTACALCIO: A`;
+- copertura distinta di 404 e 500/retry;
+- regressione detail/stats/provenienza verde.
+
+HTTP RUNTIME DEV
+- catalogo totale 498;
+- ID dinamico selezionato 44;
+- detail HTTP reale con 3 fonti ruolo, 1 set statistiche ed evaluation presente.
+
+BROWSER DOM REALE
+- apertura dal catalogo tramite link UI, nessun URL ID hard-coded;
+- giocatore Abankwah, club Udinese, tre ruoli con fonte, evaluation e statistiche
+  2024/25 reali;
+- BackButton verificato verso il catalogo;
+- nessun mock/MSW.
+
+
+7. GLOBAL NAVIGATION
+================================================================================
+
+STATICO + BROWSER DOM REALE
+- Dashboard/Home: raggiungibile da shell/logo;
+- Players: voce di nav; detail raggiunto dal catalogo;
+- Historical Players: CTA user-facing dentro Players; detail dalla lista;
+- Squad: voce di nav protetta, redirect login anonimo;
+- Lineup: voce di nav, CTA login anonima e contenuto reale autenticato;
+- Live Auction: launcher/page protetti e raggiungibili;
+- Calendar, Auction e Scouting: voci reali e funzionanti;
+- Profile: menu topbar;
+- Admin: voce assente per utente standard, coerente con ruolo;
+- active state e menu mobile presenti;
+- nessun link menu produce 404.
+
+Il browser a 390x844 ha mostrato il controllo "Apri menu"; il menu e' stato
+aperto, la voce Giocatori selezionata e il drawer si e' richiuso. Il viewport e'
+stato poi ripristinato.
+
+Il difetto di overlay della sidebar espansa intercettava il centro di alcuni link
+nel contenuto. Dopo il fix, `elementFromPoint` sul link del giocatore ha risolto
+/players/44 e l'attivazione da tastiera con Enter ha aperto correttamente il
+dettaglio. Questo certifica anche un percorso accessibile da tastiera.
+
+
+8. STATIC QUALITY
+================================================================================
+
+TEST AUTOMATICI FINALI
+PRETTIER_EXIT=0
+TYPECHECK_EXIT=0
+LINT_EXIT=0
+GIT_DIFF_CHECK_EXIT=0
+GIT_DIFF_CHECK_LOGICAL_ERRORS=0
+
+Il check Prettier iniziale aveva segnalato 22 file gia' tracciati non conformi.
+E' stato applicato Prettier solo alla lista esplicita, con backup byte-per-byte
+temporaneo e successiva validazione/rimozione. La variazione Git finale attribuita
+a M07 comprende 10 file con sola formattazione e 5 file semantici/test; nessuna
+riscrittura backend.
+
+`git diff --check` finale: exit 0 e stdout vuoto. Il vecchio Git scrive su stderr
+soltanto warning LF/CRLF; sono warning di working-tree, non errori logici.
+
+Warning audit:
+- BROWSER_CONSOLE_ERRORS=0
+- BROWSER_CONSOLE_WARNINGS=0
+- HTML_HYDRATION_WARNINGS=0
+- nested anchor/button critici=0
+- duplicate key attribuibili al prodotto=0
+- uncontrolled/controlled input warnings=0
+
+
+9. RUNTIME BACKEND/FRONTEND
+================================================================================
+
+HTTP RUNTIME DEV
+Backend:
+- Spring Boot 4.1.0 / Java 21;
+- PostgreSQL dev locale `fantacalcio_intelligence`;
+- Flyway schema version 69, 70 migration validate, nessuna migration necessaria;
+- health finale HTTP 200/UP;
+- sidecar: logs\M07-backend-runtime.txt;
+- stderr sidecar vuoto: logs\M07-backend-runtime.stderr.txt.
+
+Frontend:
+- Vite reale su http://127.0.0.1:5173;
+- backend reale, MSW assente dal browser;
+- HTTP finale 200;
+- sidecar: logs\M07-vite-runtime.txt;
+- stderr sidecar vuoto: logs\M07-vite-runtime.stderr.txt.
+
+Una richiesta GET a `/api/v1/auction/intelligence-rankings` e' stata interrotta
+dal client mentre il browser navigava via dalla pagina; il backend ha registrato
+una `ClientAbortException` alle 12:19:57. Le richieste successive e l'health finale
+sono verdi. Classificazione: rumore di disconnessione client, non errore prodotto.
+
+Snapshot GET read-only con ID dinamici:
+- seasons=3, clubs=20;
+- current players=498, detail id=44, stats=1, evaluation presente;
+- historical season=2025/26, players=663, detail id=756, stats=1;
+- auction rankings=5, strategy role groups=4;
+- fixtures=10, scouting arrivals=0;
+- squad=23/25, remaining budget=121;
+- squad analysis complete=false, coerente con rosa incompleta;
+- lineup selected=11, complete=true;
+- accesso anonimo a squad -> 401 atteso.
+
+Due prime composizioni PowerShell di URL query hanno prodotto 400 per query
+mancante; sono state corrette e ricertificate. Tutte le richieste erano GET e non
+hanno mutato dati.
+
+
+10. BROWSER REAL E2E
+================================================================================
+
+BROWSER DOM REALE, sessione Codex in-app su http://127.0.0.1:5173.
+
+Flusso pubblico verificato:
+1. home/default route e dashboard reale;
+2. nav UI -> Players;
+3. catalogo reale e detail corrente con ID dinamico;
+4. BackButton al catalogo;
+5. CTA -> Historical Players;
+6. detail storico con ID dinamico e BackButton;
+7. Auction, Calendar, Scouting e placeholder dichiarato Analysis;
+8. Squad anonimo -> login e Lineup anonima -> CTA login.
+
+Flusso protetto verificato con le sole credenziali dev locali gia' configurate:
+1. login reale completato;
+2. Live Auction launcher reale;
+3. Squad reale;
+4. Lineup reale;
+5. assenza della nav admin per utente standard;
+6. guard diretta /admin -> login quando la sessione Basic in-memory viene
+   ricreata, quindi nuovo login e ritorno al launcher Live Auction.
+
+Le credenziali non sono stampate, salvate in file, report, screenshot o output;
+sono state mantenute solo in memoria durante l'autenticazione browser. Le variabili
+Node usate per la sessione sono state azzerate e il kernel JavaScript e' stato
+resettato. Resta soltanto la sessione autenticata dell'AuthProvider nel tab locale.
+
+Il primo tentativo browser aveva interpretato letteralmente i placeholder Spring
+`${VAR:default}` e ha ricevuto 401; i valori di default locali sono poi stati
+risolti esclusivamente in memoria e il login e' riuscito. Nessun valore sensibile
+e' mai apparso negli output.
+
+Nessun acquisto, aggiunta/rimozione giocatore, creazione asta, nomina, offerta,
+attivazione, completamento o refresh admin e' stato eseguito. Nessuna mutation DB.
+
+Esito browser finale:
+- URL lasciato aperto: http://127.0.0.1:5173/auction/live;
+- loading risolti, blank page=0, route 404 inattese=0, crash=0;
+- console errors=0, console warnings=0, HTML/hydration warnings=0;
+- tab marcato come deliverable e viewport standard ripristinato.
+
+
+11. FIX M07
+================================================================================
+
+M07_INTENTIONAL_SEMANTIC
+
+1. frontend/src/layouts/AppShell.module.css
+   La body del layout ora si sposta alla larghezza espansa quando la sidebar e'
+   hover/focus-within, impedendo che l'overlay intercetti i link del contenuto.
+
+2. frontend/src/layouts/AppShell.tsx
+   Rimosso il pulsante campanella "Notifiche", privo di backend e di azione reale.
+
+3. frontend/src/layouts/AppShell.test.tsx
+   Aggiunta regressione che certifica l'assenza del dead button Notifiche.
+
+4. frontend/src/pages/PlayerDetailPage.tsx
+   Ruoli con provenienza esplicita; 404 distinto dagli errori recuperabili; retry
+   presente solo per il profilo temporaneamente non disponibile.
+
+5. frontend/src/features/core/PlayerFlows.test.tsx
+   Test su provenienza ruolo e differenziazione 404/500 con retry.
+
+M07_INTENTIONAL_FORMAT_ONLY
+- frontend/src/api/dashboardApi.test.ts
+- frontend/src/app/bootstrap/env.ts
+- frontend/src/features/intelligence/IntelligencePages.test.tsx
+- frontend/src/features/intelligence/api.test.ts
+- frontend/src/pages/AuctionPage.tsx
+- frontend/src/pages/LineupPage.tsx
+- frontend/src/pages/RealDashboardPage.test.tsx
+- frontend/src/pages/RealDashboardPage.tsx
+- frontend/src/pages/ScoutingPage.tsx
+- frontend/src/pages/SquadPage.tsx
+
+BACKEND_FILES_MODIFIED_BY_M07=NONE
+MIGRATIONS_CREATED=NONE
+
+
+12. TEST AUTOMATICI FINALI
+================================================================================
+
+Frontend targeted finale:
+- comando Vitest su 8 file M07/core/intelligence;
+- test files: 8 passed / 8;
+- tests: 52 passed / 52;
+- failures=0, exit=0.
+
+Una precedente esecuzione parallela aveva prodotto un singolo falso negativo
+temporale in LineupPage (test non trovava "Titolare reale"). Il file e' stato
+ricertificato isolatamente 15/15 e la suite mirata finale e' stata deliberatamente
+eseguita in sequenza: 52/52 verde.
+
+Frontend full finale:
+- test files: 23 passed / 23;
+- tests: 127 passed / 127;
+- failures=0, exit=0;
+- duration=133.20s.
+
+Static/build finale:
+- Prettier check exit=0;
+- TypeScript `tsc -b --pretty false` exit=0;
+- ESLint `--max-warnings 0` exit=0;
+- production build exit=0;
+- Vite 8.2.2, 1.988 moduli trasformati, build 2.66s.
+
+Backend regression:
+- compile con wrapper assoluto e repository Maven esplicito: exit=0;
+- targeted: 30 test, failures=0, errors=0, skipped=0, exit=0;
+- aree: security, recommended lineup, live auction controller, historical
+  catalog/detail, current catalog e squad ownership;
+- DB test esplicito: `fantacalcio_intelligence_test`;
+- full backend suite: NOT_REQUIRED, poiche' M07 non modifica backend.
+
+
+13. GIT CLASSIFICATION
+================================================================================
+
+PREEXISTING — preservati, senza rollback/cancellazione:
+- backend/src/main/java/.../squadanalysis/SquadAnalysisController.java
+- backend/src/main/java/.../squadanalysis/SquadAnalysisService.java
+- backend/src/main/resources/application-dev.properties
+- backend/src/test/java/.../config/SecurityConfigurationTest.java
+- backend/src/test/java/.../squad/SquadOwnershipHttpIntegrationTest.java
+- backend/src/test/resources/application.properties
+- frontend/src/api/contracts/dashboard.ts
+- frontend/src/api/dashboardApi.ts
+- frontend/src/app/bootstrap/App.test.tsx
+- frontend/src/app/router/AppRouter.tsx
+- frontend/src/components/navigation/BackButton.module.css
+- frontend/src/components/navigation/BackButton.test.tsx
+- frontend/src/components/navigation/BackButton.tsx
+- frontend/src/features/core/SquadManagementFlows.test.tsx
+- frontend/src/features/core/api.test.ts
+- frontend/src/features/core/api.ts
+- frontend/src/features/intelligence/api.ts
+- frontend/src/layouts/GlobalSearch.tsx
+- frontend/src/pages/ComingSoonPage.tsx
+- frontend/src/pages/LiveAuctionPage.tsx
+- frontend/src/pages/PlayersPage.tsx
+- FANTAFOOT-FINAL-STATE.txt (untracked)
+- FANTAFOOT-FULL-AUDIT.txt (untracked)
+- FANTAFOOT-TARGETED-AUDIT.txt (untracked)
+- backend HistoricalPlayerCatalog* controller/response/service/test (untracked)
+- backend HistoricalPlayerDetail* controller/response/service/test (untracked)
+- frontend HistoricalPlayersPage* (untracked)
+- frontend HistoricalPlayerDetailPage* (untracked)
+- frontend LiveAuctionPage.test.tsx (untracked)
+- project-audit-current.txt e project-file-list.txt (untracked)
+
+M07_INTENTIONAL — 15 file tracciati:
+- 5 file semantici/test elencati nella sezione 11;
+- 10 file con sola formattazione elencati nella sezione 11;
+- report e sidecar `logs/M07-*`, esclusi dall'inventario Git del progetto.
+
+UNEXPECTED: nessuno.
+
+Controlli finali:
+- branch=stabilization/m01-local-green;
+- HEAD=a40557e4132189fbb7aa02e869cf126072e03945;
+- git diff --check exit=0, errori logici=0;
+- migration diff count=0;
+- file/directory temporanei M07 residui=0;
+- git add/commit/push=NO;
+- deploy=NO;
+- Oracle=NO.
+
+
+14. FINAL SUMMARY
+================================================================================
+
+M07 FINAL SUMMARY
+
+BRANCH_OK=YES
+HEAD_UNCHANGED=YES
+BACKEND_HEALTH_OK=YES
+FRONTEND_HTTP_OK=YES
+
+ROUTE_INVENTORY_OK=YES
+MAIN_NAVIGATION_OK=YES
+CURRENT_PLAYER_DETAIL_OK=YES
+HISTORICAL_PLAYERS_OK=YES
+HISTORICAL_PLAYER_DETAIL_OK=YES
+SQUAD_PAGE_OK=YES
+LINEUP_PAGE_OK=YES
+LIVE_AUCTION_PAGE_OK=YES
+
+DEAD_ROUTE_CRITICAL=0
+DEAD_LINK_CRITICAL=0
+DEAD_BUTTON_CRITICAL=0
+PAGE_WITHOUT_ROUTE_CRITICAL=0
+ROUTE_WITHOUT_PAGE_CRITICAL=0
+AUTH_MISMATCH_CRITICAL=0
+NULL_RENDERING_RISK_CRITICAL=0
+
+LOADING_STATES_OK=YES
+EMPTY_STATES_OK=YES
+ERROR_STATES_OK=YES
+NULL_STATES_OK=YES
+
+REAL_BROWSER_E2E_OK=YES
+BROWSER_CONSOLE_ERRORS=0
+BROWSER_CONSOLE_WARNINGS=0
+HTML_HYDRATION_WARNINGS=0
+
+PRETTIER_EXIT=0
+TYPECHECK_EXIT=0
+LINT_EXIT=0
+M07_TARGETED_TEST_EXIT=0
+M07_TARGETED_TESTS=52
+FULL_FRONTEND_EXIT=0
+FULL_FRONTEND_TESTS=127
+BUILD_EXIT=0
+
+BACKEND_COMPILE_EXIT=0
+BACKEND_TARGETED_EXIT=0
+BACKEND_FULL_SUITE_REQUIRED=NO
+BACKEND_FULL_SUITE_EXIT=NOT_REQUIRED
+
+DATABASE_MUTATIONS=NONE
+FILESYSTEM_TEMP_CLEANUP_OK=YES
+MIGRATIONS_CREATED=NONE
+UNEXPECTED_GIT_DIFFS=0
+COMMIT_CREATED=NO
+PUSH_EXECUTED=NO
+DEPLOY_EXECUTED=NO
+ORACLE_CONTACTED=NO
+
+M07_STATUS=CLOSED_GREEN
+ALL_GREEN=YES
+
+LOG_FILE=C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\logs\M07-frontend-completeness-certification.txt

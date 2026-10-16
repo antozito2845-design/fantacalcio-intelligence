@@ -1,0 +1,22 @@
+===== D02.15.1 FINAL REAL DATA SCOPE =====
+=== PLAYER_IMPORT_ROWS COLUMNS ===
+id
+batch_id
+row_number
+external_id
+external_name
+normalized_name
+club_name
+normalized_club_name
+fantasy_role
+quotation
+fantasy_market_value
+valid
+validation_error
+raw_data
+created_at
+
+=== PLAYER_IMPORT_ROWS FOREIGN KEYS ===
+batch_id -> import_batches.id
+PSQL_EXIT_CODE=0
+===== END =====

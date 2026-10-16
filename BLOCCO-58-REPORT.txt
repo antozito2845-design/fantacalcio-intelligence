@@ -1,0 +1,370 @@
+BLOCCO 58 - LIVE AUCTION ENGINE V1 - REPORT FINALE
+Data: 2026-08-13
+
+1. COMMIT INIZIALE
+ea04dfa feat: add calendar combination intelligence
+Commit richiesto dal prompt: verificato.
+
+2. WORKING TREE INIZIALE
+Eseguiti prima delle modifiche: git status --short, git log -1 --oneline,
+git diff --check. Working tree iniziale pulita; HEAD coincidente col commit richiesto.
+
+3. AUDIT LIVE AUCTION / LEGACY SERVICES
+- AuctionApiPriceService B51: resta autoritativo; B58 lo consuma tramite
+  SquadConstructionService B54, senza ricreare prezzi.
+- AuctionPriceService legacy: resta invariato e non e' usato da B58.
+- IntelligentAuctionRankingService e IntelligentAuctionStrategyService: restano
+  consumer legacy, invariati.
+- auctionlive.LiveAuctionStrategyService: resta endpoint strategico legacy. Non e'
+  stato rimosso; B58 non gli delega decisioni perche' la sua allocazione pre-B54
+  non espone targetPrice/contextualMaxPrice/FIT B54.1.
+- PlayerIntelligenceService e PlayerPairingService: restano invariati; B58 usa i
+  layer B54/B56/B57 piu' recenti.
+- SquadConstructionService B54: adapter autoritativo per budget, FIT, target,
+  contextual max, missing profile needs e candidate pool.
+- StrategicIntelligenceService B56: riusato senza modifiche attraverso un batch
+  input adapter basato sulle osservazioni B55.
+- CalendarCombinationScorer e FixtureWindowService B57: riusati senza modifiche;
+  un solo fixture-window batch per shortlist.
+- SquadService e tabelle fantasy_squads/fantasy_squad_players: disponibili per il
+  legacy persistito, ma B58 V1 accetta un solo roster normalizzato nella request.
+- Security: /api/v1/auction/** e' gia' pubblico; il nuovo endpoint segue la stessa
+  whitelist. Test 200/400/404 aggiunti.
+
+4. AVAILABLE / PARTIAL / MISSING
+AVAILABLE:
+- B51 calculateAll via singola valutazione B54;
+- B54 budget/FIT/target/contextual max;
+- osservazioni B55 e calcolatori B56;
+- fixture window e scorer B57;
+- player, ACTIVE registration, active club, ruolo FANTACALCIO, season;
+- roster request con prezzi pagati, budget residuo, P3/D8/C8/A6 e override slot;
+- defenseModifier, leagueTeams e totalBudget dalla request;
+- candidate pool attivo di ruolo, exclusion/bought filtering;
+- endpoint e gestione errori 400/404.
+PARTIAL:
+- current matchday e' opzionale: senza valore B57 resta INSUFFICIENT_EVIDENCE;
+- B56 dipende dalla copertura reale delle osservazioni e non converte missing in 0;
+- source roster persistita esiste, ma non ha ancora un adapter B58 squadId.
+MISSING (intenzionalmente non inventato):
+- stato d'asta persistito, prezzo finale, rival bids/behavior, probabilita' di
+  aggiudicazione e current matchday automatico affidabile.
+
+5. ARCHITETTURA
+Nuovo package liveauction con separazione tra controller, orchestratore/context,
+player validation, budget guard, batch B56, batch B57, alternative selection,
+pure decision engine e DTO/enum. Nessun mega-score e nessuna migrazione DB.
+
+6. CONTEXT MODEL
+LiveAuctionDecisionRequest contiene season, leagueTeams, total/remaining budget,
+defenseModifier, currentRole/player/bid, rosterSlots, bought players con paidPrice,
+currentMatchday/horizon, alternativeLimit ed excludedPlayerIds. La sola source V1
+e' la request; viene normalizzata in una SquadConstructionRequest B54.
+
+7. VALIDATION
+Obbligatori e validati: season, teams 6..12, budget 150..1000, remaining budget,
+defense flag, ruolo P/D/C/A, playerId positivo, proposedBid >=1 e <= remaining,
+horizon 1..10, matchday 1..38, paid prices >=1, playerId roster unici, current
+player non gia' comprato, remainingBudget = totalBudget - somma paidPrice.
+Il player deve esistere (404), essere active, avere ACTIVE registration, active
+club, season coerente e ruolo FANTACALCIO uguale al currentRole (400).
+
+8. ACTION SEMANTICS
+- ACQUISTA_ORA: bid <=75% target, FIT B54 >=65 e budget safe.
+- RILANCIA: value zone budget-safe; in caution solo con FIT >=70 e segnale B56
+  AVAILABLE >=65.
+- FERMATI: un credito sotto il contextual max B54.
+- LASCIA: completion reserve violata oppure bid >= contextual max B54.
+- ALTERNATIVA_MIGLIORE: alternativa attiva e non acquistata con affordability,
+  FIT/calendar context ed evidence comparabile realmente dominanti.
+- OSSERVA: caution zone priva di supporto forte.
+- INSUFFICIENT_EVIDENCE: B51/B54 assenti oppure evidence globale troppo debole
+  per trasformare OSSERVA in una call.
+Tutte le azioni sono raccomandazioni read-only: ACQUISTA_ORA non esegue acquisti.
+
+9. DECISION PRECEDENCE
+1 context validation; 2 budget safety; 3 B54 contextual max; 4 roster/FIT;
+5 alternative dominance; 6 price zone; 7 B56; 8 B57; 9 confidence.
+Upside, bonus, aerial e calendario non possono superare uno stop di budget/prezzo.
+
+10. PRICE ZONE POLICY
+VALUE_ZONE: bid <= targetPrice.
+CAUTION_ZONE: targetPrice < bid < contextualMaxPrice.
+STOP_ZONE: bid >= contextualMaxPrice.
+Nessuna top-player exception e nessun prezzo ricalcolato da B58.
+
+11. BUDGET SAFETY
+LiveAuctionBudgetGuard usa il contextualMaximumBid B54 e verifica che
+budgetAfterBid copra uno credito per ogni slot ancora da riempire dopo l'acquisto.
+futureBudgetProtected e currentRoleMinimumReserve arrivano da B54. Nessuna seconda
+sottrazione del future reserve. Test dedicati a double-reserve e ultimo slot verdi.
+
+12. B54 FIT INTEGRATION
+FIT, category, missing profile needs, average slot logic, premium coverage, bonus
+specialist, value depth, defense modifier e last-slot logic arrivano invariati da
+SquadConstructionService/SquadTargetScorer. B58 traduce il risultato in azione.
+
+13. B56 INTEGRATION
+Un'unica query batch legge le osservazioni B55 della shortlist. I metric fields
+discordanti non vengono risolti inventando valori; il conflitto e' passato ai
+calcolatori B56. StrategicIntelligenceService produce Bonus Opportunity, Role
+Advantage, Aerial Threat e Upside. AVAILABLE puo' rafforzare una caution call;
+PARTIAL/INSUFFICIENT non diventa zero. Upside non supera STOP_ZONE.
+
+14. B57 INTEGRATION
+Con matchday fornito, un fixture batch copre current candidate, alternative e
+massimo due club gia' comprati nello stesso ruolo. Per P un miglioramento calendar
+>=10 puo' compensare al massimo 5 punti FIT. Per A una alternativa con hard overlap
+peggiore non domina. D/C restano segnali secondari. B57 non modifica B51/B54.
+
+15. CURRENT MATCHDAY POLICY
+Policy scelta: currentMatchday opzionale e mai inventato. Se assente, nessuna query
+fixture e calendar status INSUFFICIENT_EVIDENCE; budget/FIT possono decidere.
+Default horizon solo quando il matchday e' fornito: 5; range esplicito 1..10.
+
+16. ALTERNATIVES ENGINE
+Pool derivato dai target B54 della stessa season/role, quindi active player,
+ACTIVE registration, active club, ruolo FANTACALCIO e B51/B50 disponibili.
+Esclusi current player, bought ed excluded IDs. Limite request 1..20 (default 10).
+Dominance: FIT non inferiore (eccezione P calendar limitata), B51 <= proprio target,
+B51 almeno 5 crediti sotto il current bid, evidence B56 non oltre 25 punti peggiore.
+Il solo costo inferiore non basta.
+
+17. OVERPAY POLICY
+Centralizzata nelle tre price zone. Bid al/oltre contextual max => LASCIA; un
+credito prima => FERMATI. Nessuna tolleranza specifica per player.
+
+18. ROLE-PHASE POLICY
+La fase e' currentRole P->D->C->A. B54 protegge i budget target dei ruoli futuri;
+in A futureBudgetProtected e' zero. Defense modifier e' inoltrato invariato a B54.
+
+19. ENDGAME / LAST SLOT
+B54 currentRoleMinimumReserve vale solo per gli altri slot del ruolo. Il guard
+calcola la completion reserve dopo il potenziale acquisto. Con un solo slot totale
+il reserve e' zero e l'intero budget sostenibile puo' essere usato.
+
+20. CONFIDENCE / EVIDENCE
+Confidence trasparente: 55% confidence B54, 20% completeness B56, 15% confidence
+B57, 10% alternative coverage. Senza matchday e' capped a 75. Soglie evidence:
+AVAILABLE >=75, PARTIAL >=40, altrimenti INSUFFICIENT_EVIDENCE. Recommendation
+strength resta separata dalla confidence.
+
+21. READ-ONLY GUARANTEE
+Endpoint e servizi orchestratori annotati @Transactional(readOnly=true) dove
+accedono al DB. Nessun insert/update/delete, nessuna chiamata a SquadService add,
+nessuna modifica budget o transaction. Le chiamate ripetute usano solo input e
+ordinamenti deterministici.
+
+22. API DECISION
+POST /api/v1/auction/live/decision. POST e' usato per il context complesso ma la
+semantica e' read-only. Response espone action, prezzi B51/B54, zona, budget prima
+e dopo, reserve, FIT, B56, B57, alternative, confidence/evidence, reasons, warnings
+e missingInputs. Segue la whitelist pubblica auction esistente.
+
+23. PERFORMANCE / NO N+1
+- SquadConstructionService.evaluate una volta => B51 calculateAll una volta;
+- candidate active query una volta;
+- B55/B56 observation query una volta per tutti gli IDs;
+- fixture window query zero volte senza matchday, una volta con matchday;
+- evaluation/shortlist e tie-break in memory;
+- nessuna query per alternativa.
+Test batch B58 e test B54 preesistente verificano le deleghe singole.
+
+24. DETERMINISTIC TIE-BREAK
+Shortlist: B54 auctionPriority desc, playerId asc.
+Dominance: FIT desc, calendar score desc, B51 asc, B56 completeness desc,
+playerId asc. Nessun random, rival assumption o clock implicito.
+
+25. REAL / SANDBOX CERTIFICATION
+Il DB TEST non contiene profili B50 persistiti sufficienti per un contesto live
+completo P/D/C/A; non sono stati creati dati artificiali e DEV non e' stato
+modificato. Certificazione eseguita con context/fixture deterministici unitari:
+value, caution, stop/overpay, alternative, GK calendar, attacker hard overlap,
+double reserve, endgame, B56 missing/AVAILABLE/PARTIAL/Upside e API 200/400/404.
+
+26. FILES CREATED / MODIFIED
+Creati 14 file main nel package backend/.../liveauction, 8 file test nel package
+test/.../liveauction e questo report. Nessun file B49/B50/B51/B54/B56/B57,
+frontend, migration, security configuration o wrapper modificato.
+
+27. TESTS ADDED
+42 test in 9 classi dopo B58.1: decision engine 17, policy 3, alternatives 2,
+budget 2, calendar batch 1, service batch 2, validation 10, controller 1,
+controller/security 4.
+
+28. TARGETED TESTS
+Suite B58 prima dell'ultimo ampliamento: 22 run, 0 failures, 0 errors, 0 skipped,
+BUILD SUCCESS. Gruppo finale decision/B56/B57: 14 run, 0 failures, 0 errors,
+0 skipped, BUILD SUCCESS. Suite B58/B58.1 finale: 42 run, 0 failures,
+0 errors, 0 skipped, BUILD SUCCESS. Tutti inclusi nella full regression.
+
+29. FULL REGRESSION
+Comando wrapper richiesto: .\mvnw.cmd clean test.
+Esito ambiente Codex: wrapper non avvia Maven per errore PowerShell preesistente
+"Impossibile eseguire l'indicizzazione in una matrice null / Cannot start maven".
+Wrapper non modificato.
+Comando equivalente: mvn -Dmaven.repo.local=C:\Users\user\.m2\repository clean test
+Tests run: 347
+Failures: 0
+Errors: 0
+Skipped: 1
+BUILD SUCCESS
+
+30. GIT DIFF --CHECK
+Eseguito prima della regression e dopo la creazione dei sorgenti: exit code 0,
+nessun errore. Rieseguito dopo il report nello stato finale.
+
+31. GIT DIFF --STAT
+Eseguito. Output vuoto perche', come richiesto, tutti i file B58 sono nuovi,
+untracked e non sono stati messi in staging; git diff non include untracked.
+Conteggio filesystem prima del report: 14 main + 8 test; report aggiunge 1 file.
+
+32. GIT STATUS --SHORT
+Stato prima del report:
+?? backend/src/main/java/it/fantacalciointelligence/backend/liveauction/
+?? backend/src/test/java/it/fantacalciointelligence/backend/liveauction/
+Stato finale include inoltre ?? BLOCCO-58-REPORT.txt. Nessuno staging/commit/push.
+
+33. RISKS / GAPS
+- B58 V1 accetta roster request, non squadId: un futuro adapter deve normalizzare
+  il persisted squad nello stesso request/context, senza duplicare logica.
+- La shortlist B54 e' limitata al cap interno di 100 e quella B58 a 20.
+- Calendar evidence richiede un bought player attivo dello stesso ruolo e un
+  currentMatchday esplicito; altrimenti resta insufficient senza penalita'.
+- B56 completeness dipende dalla copertura B55 reale.
+- Mancano test end-to-end con uno stato d'asta reale persistito, oggi assente.
+
+34. COSA DEVE FARE B59
+Definire, se richiesto, il lifecycle persistito dell'asta: sessione, chiamata
+corrente, player available/acquired/excluded e purchase command separato con
+concorrenza/idempotenza/audit. Aggiungere un adapter squadId -> unico LiveAuction
+Context e un resolver matchday centrale solo se affidabile. Non fondere decisione
+read-only e mutation.
+
+35. COSA RESTA PRIMA DEL FRONTEND
+- stabilizzare il contratto JSON/versioning e gli enum localizzati;
+- decidere request roster vs adapter squadId in B59;
+- aggiungere fixture end-to-end con dati B50/B51/B54/B55/B57 completi;
+- definire stato availability dell'asta e purchase flow separato;
+- aggiungere osservabilita'/metriche e test di carico della shortlist;
+- solo dopo, integrare UI live con reasons/warnings/missingInputs espliciti.
+
+STATO FINALE
+B58 implementato e regression verde. Repository lasciata modificata, untracked,
+non staged, non committata e non pushata, pronta per revisione utente.
+
+============================================================
+B58.1 PRICE SEMANTICS & ALTERNATIVE AVAILABILITY CERTIFICATION
+============================================================
+
+1. ISSUES FOUND
+- currentBid non distingueva prezzo corrente e offerta valutata;
+- il ranking alternative non conosceva automaticamente gli acquisti avversari;
+- soglie V1 erano leggibili ma distribuite tra engine e alternative service.
+
+2. CANONICAL PRICE SEMANTICS
+currentPrice e' il prezzo attuale informativo. proposedBid e' l'importo che il
+caller intende offrire e l'unico prezzo usato nelle decisioni economiche. Nessun
+incremento e nessun currentPrice+1 vengono inferiti.
+
+3. REQUEST CONTRACT
+Nuovi campi: currentPrice, proposedBid, unavailablePlayerIds,
+availabilityComplete. Restano roster bought, excluded IDs e current player.
+Validazioni: currentPrice >=1 se presente; proposedBid >= currentPrice;
+proposedBid <= remainingBudget; unavailable positivi/unici; nessuna sovrapposizione
+contraddittoria con current player o bought-by-user.
+
+4. EFFECTIVE / PROPOSED BID
+Il service normalizza una sola volta il bid effettivo. Precedence: proposedBid;
+currentBid deprecated e' accettato solo come alias legacy di proposedBid. Se sono
+presenti entrambi devono coincidere, altrimenti 400. currentPrice non e' mai un
+fallback del bid e non entra nei calcoli.
+
+5. BUDGET SAFETY BASIS
+LiveAuctionBudgetGuard riceve esclusivamente proposedBid/evaluatedBid. Anche
+budgetAfterBid = remainingBudget - proposedBid. Completion reserve, B54 future
+budget e currentRole minimum reserve restano invariati; double reserve non torna.
+Con ultimo slot la completion reserve dopo acquisto e' zero.
+
+6. STOP / FERMATI BOUNDARIES
+- proposedBid < target: VALUE_ZONE;
+- proposedBid == target: VALUE_ZONE;
+- target < proposedBid < contextualMax: CAUTION_ZONE;
+- proposedBid == contextualMax - 1: FERMATI;
+- proposedBid >= contextualMax: LASCIA, inclusi equality e greater-than.
+currentPrice safe non evita LASCIA quando proposedBid raggiunge lo stop.
+
+7. ALTERNATIVE AVAILABILITY MODEL
+unavailablePlayerIds e' il concetto canonico per player gia' acquistati dagli
+avversari o altrimenti non piu' acquistabili. Dal pool sono sempre esclusi bought
+dall'utente, unavailable, excluded manuali e current player, oltre ai filtri
+active/registration/club/role e B51/B54 gia' presenti.
+
+8. ALTERNATIVA_MIGLIORE GUARD
+availabilityComplete=true certifica che il caller ha fornito lo stato globale
+rilevante. Solo in quel caso l'engine puo' chiamare la dominance policy ed emettere
+ALTERNATIVA_MIGLIORE. Se false/null, le alternative possono essere valutate come
+contesto potenziale ma l'action e' vietata; response espone
+alternativeRecommendationAllowed=false e warning
+"Disponibilita globale alternative non certificata".
+
+9. BACKWARD COMPATIBILITY
+Il costruttore/JSON B58 con solo currentBid resta deterministico: currentBid e'
+interpretato esclusivamente come proposed bid legacy, non come currentPrice.
+L'alias e il relativo response field sono @Deprecated. availabilityComplete legacy
+default false, quindi il vecchio caller non puo' ricevere una falsa alternativa
+certificata.
+
+10. CENTRALIZED POLICY
+Creato LiveAuctionDecisionPolicy. Centralizza e testa:
+- immediate buy ratio 0.75;
+- strong fit 65;
+- caution fit 70;
+- B56 AVAILABLE support 65;
+- max stop distance 1;
+- alternative saving 5, evidence tolerance 25;
+- GK calendar delta 10 / fit compensation 5;
+- confidence weights, thresholds e missing-matchday cap.
+Engine e alternative service non contengono piu' queste soglie come magic number.
+
+11. FILES CHANGED / CREATED
+Creato LiveAuctionDecisionPolicy.java e LiveAuctionDecisionPolicyTest.java.
+Aggiornati request/response, decision service/engine, alternative service e i test
+B58 correlati. Nessun file B49-B57, migration, frontend, wrapper o security config
+modificato.
+
+12. TARGETED TESTS
+Comando: mvn -Dmaven.repo.local=C:\Users\user\.m2\repository
+-Dtest="it.fantacalciointelligence.backend.liveauction.*Test" test
+Tests run: 42; Failures: 0; Errors: 0; Skipped: 0; BUILD SUCCESS.
+Coperti price boundaries, budget sul proposed bid, policy boundaries, compatibility,
+validation unavailable, opponent exclusion e availability guard.
+
+13. FULL REGRESSION
+Wrapper richiesto riprovato e fallito prima di Maven col noto errore PowerShell
+"Impossibile eseguire l'indicizzazione in una matrice null / Cannot start maven".
+Wrapper non modificato. Equivalente Maven locale clean test:
+Tests run: 347
+Failures: 0
+Errors: 0
+Skipped: 1
+BUILD SUCCESS
+
+14. GIT DIFF --CHECK
+Eseguito prima e dopo B58.1: exit code 0, nessun errore.
+
+15. GIT STATUS --SHORT
+B58/B58.1 e report restano untracked, senza staging, commit o push. Stato finale
+riportato anche nell'output conclusivo del task.
+
+16. RESIDUAL RISKS
+- availabilityComplete e' un'attestazione del caller: B58 non puo' verificarla
+  senza uno stato asta globale;
+- currentBid deprecated dovra' essere rimosso in una futura API version;
+- non esiste ancora un adapter da auction session/squadId al context canonico;
+- nessuna availability o rival behavior viene inferita.
+
+17. WHAT REMAINS FOR B59
+Persistenza esplicita e auditabile dello stato asta globale, acquisti avversari,
+available/unavailable set, idempotenza e concorrenza; adapter verso l'unico
+LiveAuctionContext e purchase command separato dal decision endpoint read-only.

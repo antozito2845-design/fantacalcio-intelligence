@@ -1,0 +1,84 @@
+﻿
+==============================================================================
+M08.5 ORACLE POSTDEPLOY READ-ONLY CERTIFICATION
+==============================================================================
+REMOTE_MUTATIONS=NONE
+DATABASE_MUTATIONS=NONE
+SERVICES_RESTARTED=NO
+
+=== 1. SERVICES ===
+BACKEND_ACTIVE=active
+NGINX_ACTIVE=active
+
+=== 2. BACKEND HEALTH ===
+BACKEND_HEALTH_BODY={"groups":["liveness","readiness"],"status":"UP"}
+
+=== 3. DEPLOYED BACKEND HASH ===
+DEPLOYED_JAR_SHA256=e054af992d66d3fdd24d2006126b3b55daedf194e0dc6ea40673d28fabd3cd16
+DEPLOYED_BACKEND_HASH_MATCH=YES
+
+=== 4. FRONTEND ===
+DEPLOYED_FRONTEND_FILE_COUNT=27
+DEPLOYED_FRONTEND_INDEX_SHA256=639f6ad5aeb199db8a8e02ff8a0daf7002916aed27cab74e9a27f470683f3b2e
+FRONTEND_HTTP=200
+
+=== 5. PUBLIC PRODUCT API ===
+SEASONS_HTTP=200
+SEASONS_BODY_BEGIN
+[{"id":3,"code":"2026/2027","startYear":2026,"endYear":2027,"current":true},{"id":2,"code":"2025/2026","startYear":2025,"endYear":2026,"current":false},{"id":1,"code":"2024/2025","startYear":2024,"endYear":2025,"current":false}]
+SEASONS_BODY_END
+PLAYERS_HTTP=200
+PLAYERS_BODY_BEGIN
+{"content":[{"id":44,"name":"Abankwah","club":"Udinese","clubSlug":"udinese","fantacalcioRole":"D","gazzettaRole":"D","fantamarktRole":"D","sourcesCount":3}],"page":0,"size":1,"totalElements":498,"totalPages":498}
+PLAYERS_BODY_END
+HISTORICAL_PLAYERS_HTTP=200
+HISTORICAL_BODY_BEGIN
+{"content":[{"id":756,"name":"Abdelhamid Sabiri","active":false,"season":"2025/2026","club":"Fiorentina","clubSlug":"fiorentina","fantacalcioRole":"C","appearances":1,"fantasyAverage":6.00,"goals":0,"assists":0},{"id":750,"name":"Abdou Harroui","active":false,"season":"2025/2026","club":"Verona","clubSlug":"verona","fantacalcioRole":"C","appearances":18,"fantasyAverage":5.89,"goals":1,"assists":0},{"id":45,"name":"Aboukhlal","active":true,"season":"2025/2026","club":"Torino","clubSlug":"torino","fantacalcioRole":"A","appearances":12,"fantasyAverage":5.42,"goals":0,"assists":0},{"id":683,"name":"Adam Masina","active":false,"season":"2025/2026","club":"Torino","clubSlug":"torino","fantacalcioRole":"D","appearances":5,"fantasyAverage":5.80,"goals":0,"assists":1},{"id":420,"name":"Adams C.","active":true,"season":"2025/2026","club":"Torino","clubSlug":"torino","fantacalcioRole":"A","appearances":33,"fantasyAverage":6.67,"goals":6,"assists":3},{"id":46,"name":"Addai","active":true,"season":"2025/2026","club":"Como","clubSlug":"como","fantacalcioRole":"A","appearances":12,"fantasyAverage":6.54,"goals":3,"assists":0},{"id":677,"name":"Ademola Lookman","active":false,"season":"2025/2026","club":"Atalanta","clubSlug":"atalanta","fantacalcioRole":"A","appearances":11,"fantasyAverage":6.45,"goals":2,"assists":0},{"id":47,"name":"Adopo","active":true,"season":"2025/2026","club":"Cagliari","clubSlug":"cagliari","fantacalcioRole":"C","appearances":38,"fantasyAverage":5.86,"goals":1,"assists":1},{"id":893,"name":"Adrian Benedyczak","active":false,"season":"2025/2026","club":"Parma","clubSlug":"parma","fantacalcioRole":"A","appearances":13,"fantasyAverage":6.27,"goals":1,"assists":1},{"id":974,"name":"Adrian Rus","active":false,"season":"2025/2026","club":"Pisa","clubSlug":"pisa","fantacalcioRole":"D","appearances":0,"fantasyAverage":0.00,"goals":0,"assists":0},{"id":623,"name":"Adrian Semper","active":false,"season":"2025/2026","club":"Pisa","clubSlug":"pisa","fantacalcioRole":"P"
+HISTORICAL_BODY_END
+
+=== 6. FLYWAY ===
+LATEST_VERSION=69
+SUCCESS_COUNT=70
+FAILED_COUNT=0
+
+=== 7. DB READ ONLY ===
+PLAYERS_TOTAL=1020
+SEASONS_TOTAL=3
+
+=== 8. FINAL READ-ONLY SUMMARY ===
+BACKEND_ACTIVE=active
+NGINX_ACTIVE=active
+DEPLOYED_JAR_SHA256=e054af992d66d3fdd24d2006126b3b55daedf194e0dc6ea40673d28fabd3cd16
+DEPLOYED_FRONTEND_FILE_COUNT=27
+FRONTEND_HTTP=200
+SEASONS_HTTP=200
+PLAYERS_HTTP=200
+HISTORICAL_PLAYERS_HTTP=200
+REMOTE_MUTATIONS=NONE
+DATABASE_MUTATIONS=NONE
+SERVICES_RESTARTED=NO
+
+==============================================================================
+M08.5 FINAL SUMMARY
+==============================================================================
+SSH_EXIT=0
+SSH_STDERR_EMPTY=YES
+BACKEND_ACTIVE_OK=YES
+NGINX_ACTIVE_OK=YES
+BACKEND_HASH_OK=YES
+FRONTEND_FILE_COUNT_OK=YES
+FRONTEND_HTTP_OK=YES
+SEASONS_API_OK=YES
+PLAYERS_API_OK=YES
+HISTORICAL_API_OK=YES
+FLYWAY_VERSION_69_OK=YES
+FLYWAY_SUCCESS_70_OK=YES
+FLYWAY_FAILED_0_OK=YES
+REMOTE_MUTATIONS=NONE
+DATABASE_MUTATIONS=NONE
+SERVICES_RESTARTED=NO
+COMMIT_CREATED=NO
+PUSH_EXECUTED=NO
+M08_STATUS=CLOSED_GREEN
+ALL_GREEN=YES
+LOG_FILE=C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\logs\M08-oracle-postdeploy-certification.txt
