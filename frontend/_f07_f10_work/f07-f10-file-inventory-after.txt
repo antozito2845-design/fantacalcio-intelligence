@@ -1,4 +1,0 @@
-F07-F10 FINAL INVENTORY — 2026-08-22
-Added: src/features/core/api.ts, api.test.ts, FeaturePage.module.css; PlayersPage, PlayerDetailPage, AuctionPage, LiveAuctionPage, SquadPage; four contract maps; gap/validation/inventory reports; five main reports.
-Updated: AppRouter.tsx, AppShell.tsx, AppShell.module.css unchanged, feature CSS responsive correction.
-Backend source modifications by this macroblock: none. Backend files deleted: 0.

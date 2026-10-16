@@ -1,9 +1,0 @@
-﻿
-=== M10.3C DEFINITIVE ===
-ORIGINAL_TEST_RESTORED=YES
-BACKUP=C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\logs\M10.3C-final-backup-20260902-162506
-
-STATUS=BLOCKED
-REASON=ORIGINAL_OPEN_REVIEW_ASSERTION_NOT_FOUND
-TERMINAL_STAYS_OPEN=YES
-LOG_FILE=C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\logs\M10.3C-definitive.txt

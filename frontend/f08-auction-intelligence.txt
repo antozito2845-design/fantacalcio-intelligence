@@ -1,2 +1,0 @@
-F08 AUCTION INTELLIGENCE — PASS
-Real public intelligence ranking with role filter, recommended price/range/score and player links. Real strategy summary, per-role budgets and backend warnings. No invented budget or prices.

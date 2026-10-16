@@ -1,2 +1,0 @@
-F07 PLAYERS — PASS
-Real server-side catalog search/role/club/pagination, URL state and 350ms debounce; responsive table/cards; real detail with nullable evaluation/tactical/statistics sections; player-to-auction navigation; Zod boundaries and abort support. Runtime: 498 profiles and Akanji detail verified.

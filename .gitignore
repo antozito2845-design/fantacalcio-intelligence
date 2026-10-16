@@ -159,3 +159,15 @@ frontend/.env.*.local
 # Safe frontend environment templates may be versioned
 !frontend/.env.example
 !frontend/.env.production.example
+
+# Esclusione report e pdf di sviluppo
+*.txt
+*.pdf
+BLOCCO-*
+D02-*
+d02-*
+FANTAFOOT-*
+FINAL_*
+project-*
+B63_*
+!README.md

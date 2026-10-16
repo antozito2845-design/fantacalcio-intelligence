@@ -1,9 +1,0 @@
-﻿
-=== M10.3C FINAL2 ===
-
-=== PATCH LEGACY TEST ===
-
-STATUS=BLOCKED
-REASON=LEGACY_ASSERTION_NOT_FOUND
-TERMINAL_STAYS_OPEN=YES
-LOG_FILE=C:\Users\user\OneDrive\Desktop\Fantafoot\fantacalcio-intelligence\logs\M10.3C-final2.txt

@@ -1,9 +1,0 @@
-===== D02.14.1 MIGRATION SCOPE AUDIT =====
-DATE=2026-08-24T15:56:19.2128797+02:00
-=== CURRENT SEASON ===
-ERRORE:  la colonna "current" non esiste
-RIGA 3: SELECT id || '|' || code || '|current=' || current
-                                                   ^
-
-PSQL_EXIT_CODE=1
-===== D02.14.1 END =====

@@ -1,4 +1,0 @@
-F07-F10 INITIAL INVENTORY — captured 2026-08-22 before implementation
-Git status: pre-existing dirty worktree; frontend directory untracked as a whole. Backend had pre-existing modified/untracked B63-B72 work and was treated as protected.
-Existing frontend: React/Vite strict foundation, AppRouter, AppShell, AuthContext, centralized httpRequest, dashboard APIs, design system, 47 passing tests, F01-F06 reports.
-F07-F10 business feature files/routes/reports did not exist.

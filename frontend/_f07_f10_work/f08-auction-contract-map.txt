@@ -1,5 +1,0 @@
-F08 AUCTION CONTRACT MAP — 2026-08-22
-
-GET /api/v1/auction/intelligence-rankings — public. Query: season(current), budget(1000), teams(8), defenseModifier(true), role?, club?, maximumPrice?, recommendation?, excludeUnavailable(true), limit(50). Response AuctionRankingResponse{season,budget,teams,defenseModifier,filters,totalPlayers,players[]}; player fields include position/player identity/club/role, intelligenceScore, real min/recommended/max price, budgetPercentage, nullable component scores/availability, strengths, risks, finalRecommendation. Sort/rank server-owned. Errors 400/429/5xx.
-GET /api/v1/auction/strategy — public. Query season(current), budget(1000), teams(8), defenseModifier(true). Response AuctionStrategyResponse with totals, withinBudget, summary, per-role allocation/targets/warnings and globalWarnings. Errors 400/429/5xx.
-GET /api/v1/auction/prices/{playerId} and GET /api/v1/auction/rankings also exist; UI uses the richer intelligence ranking contract.
